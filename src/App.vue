@@ -1,11 +1,21 @@
 <template>
+    <Header />
+        <router-view />
+    <Footer />
+  </template>
   
-</template>
-
-<script setup>
-
-</script>
-
-<style>
-
-</style>
+  <script>
+    import Header from './components/Header.vue';
+    import Footer from './components/Footer.vue';
+  
+  export default {
+    name: 'App',
+    components: {
+      Header,
+      Footer
+    }
+  };
+  </script>
+  
+  <style>
+  </style>
