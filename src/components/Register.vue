@@ -1,6 +1,6 @@
 <template>
-    <div class="form-container" @submit.prevent="handleSubmit()">
-        <form>
+    <div class="form-container" @submit.prevent="handleSubmitRegister()">
+        <form v-if="!changingForms">
             <h2>Регистрация</h2>
             <div class="form-group">
                 <input type="text" v-model="username" placeholder="Ник пользователя">
@@ -20,6 +20,21 @@
             </div>
             <p v-if="errors.generalError" class="error-message">{{ errors.generalError }}</p>
             <button type="submit">Зарегистрироваться</button>
+            <p>У вас уже есть аккаунт ? <a @click="() => changingForms = true">Войти</a></p>
+        </form>
+
+        <form v-if="changingForms" @submit.prevent="handleSubmitLogin()">
+            <h2>Авторизация</h2>
+            <div class="form-group">
+                <input type="text" placeholder="Электронная почта">
+                <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Пароль">
+                <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
+            </div>
+            <button>Войти</button>
+            <p>У вас еще нет аккаунта ? <a @click="() => changingForms = false">Зарегистрироваться</a></p>
         </form>
     </div>
 </template>
@@ -27,6 +42,7 @@
 <script setup>
     import { ref, reactive } from "vue";
 
+    const changingForms = ref(false);
     const username = ref("");
     const email = ref("");
     const password = ref("");
@@ -65,7 +81,7 @@
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmitRegister = () => {
         errors.generalError = "";
         errors.username = "";
         errors.email = "";
@@ -79,20 +95,32 @@
             errors.generalError = "Пароли не совпадают";
             return 1;
         }
-        const users = JSON.parse(localStorage.setItem("users"));
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        
+        users.map(item => {
+            if(item.username == username.value){
+                errors.generalError = "Пользователь с таким ником уже существует";
+            }else if(item.email == email.value){
+                errors.generalError = "Пользователь с такой почтой уже существует";
+            }
+        });
+
+        if(errors.generalError){
+            return 1;
+        }
 
         const newUser = {
             username: username.value,
             email: email.value,
             password: password.value
         };
-        users.map(item => {
-            if(item.username == newUser.username){
-                errors.generalError = "Пользователь с таким ником уже существует";
-            }else if(item.email == newUser.email){
-                errors.generalError = "Пользователь с такой почтой уже существует";
-            }
-        })
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+    };
+
+    const handleSubmitLogin = () => {
+        
     };
 </script>
 
@@ -108,12 +136,14 @@
         justify-content: center;
     }
     form{
-        width: 300px;
+        width: 320px;
         display: flex;
         flex-direction: column;
         gap: 14px;
         padding: 20px;
         border-radius: 10px;
+        background-color: #13101B;
+        color: white;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
     h2{
@@ -121,9 +151,11 @@
     }
     input{
         width: calc(100% - 12px);
-        padding: 6px;
-        border: solid 1px;
+        padding: 8px;
+        background-color: rgba(196, 196, 196, 0.05);
+        border: none;
         border-radius: 6px;
+        color: white;
     }
     button{
         height: 30px;
@@ -138,6 +170,15 @@
         opacity: 0.7;
     }
     .error-message{
+        text-align: left;
         color: red;
+    }
+    p{
+        text-align: center;
+        font-size: 14px;
+    }
+    a{
+        color: #77BE1D;
+        cursor: pointer;
     }
 </style>
