@@ -1,11 +1,7 @@
 <template>
     <div class="form-container">
-        <form @submit.prevent="handleSubmitRegister()">
-            <h2>Регистрация</h2>
-            <div class="form-group">
-                <input type="text" v-model="username" placeholder="Ник пользователя">
-                <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
-            </div>
+        <form @submit.prevent="handleSubmitLogin()">
+            <h2>Авторизация</h2>
             <div class="form-group">
                 <input type="text" v-model="email" placeholder="Электронная почта">
                 <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
@@ -14,40 +10,27 @@
                 <input type="password" v-model="password" placeholder="Пароль">
                 <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
             </div>
-            <div class="form-group">
-                <input type="password" v-model="confirmPassword" placeholder="Подтвердите пароль">
-                <p v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</p>
-            </div>
             <p v-if="errors.generalError" class="error-message">{{ errors.generalError }}</p>
-            <button type="submit">Зарегистрироваться</button>
-            <p>У вас уже есть аккаунт ? <router-link to="/login">Войти</router-link></p>
+            <button type="submit">Войти</button>
+            <p>У вас еще нет аккаунта ? <router-link to="/register">Зарегистрироваться</router-link></p>
         </form>
-
-        
     </div>
+    
 </template>
 
 <script setup>
     import { ref, reactive } from "vue";
 
-    const username = ref("");
     const email = ref("");
     const password = ref("");
-    const confirmPassword = ref("");
 
     const errors = reactive({
         generalError: "",
-        username: "",
         email: "",
         password: "",
-        confirmPassword: ""
     });
 
     const validateData = () => {
-        if(!username.value.trim()){
-            errors.username = "Это поле обязательно для заполнения";
-        }
-        
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!email.value.trim()){
             errors.email = "Это поле обязательно для заполнения";
@@ -60,55 +43,28 @@
         }else if(password.value.trim().length < 6){
             errors.password = "Минимальная длина пароля 6 символов";
         }
-
-        if(!confirmPassword.value.trim()){
-            errors.confirmPassword = "Это поле обязательно для заполнения";
-        }else if(confirmPassword.value.trim().length < 6){
-            errors.confirmPassword = "Минимальная длина пароля 6 символов";
-        }
     };
 
-    const handleSubmitRegister = () => {
+    const handleSubmitLogin = () => {
         errors.generalError = "";
-        errors.username = "";
         errors.email = "";
         errors.password = "";
-        errors.confirmPassword = "";
         validateData();
-        
-        if(errors.username || errors.email || errors.password || errors.confirmPassword){
-            return 1;
-        }else if(password.value != confirmPassword.value){
-            errors.generalError = "Пароли не совпадают";
+
+        if(errors.email || errors.password){
             return 1;
         }
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
         
         users.map(item => {
-            if(item.username == username.value){
-                errors.generalError = "Пользователь с таким ником уже существует";
-            }else if(item.email == email.value){
-                errors.generalError = "Пользователь с такой почтой уже существует";
+            if(item.email == email.value && item.password == password.value){
+                alert("Успешный вход");
+                return 0;
             }
         });
-
-        if(errors.generalError){
-            return 1;
-        }
-
-        const newUser = {
-            id: users.length + 1,
-            username: username.value,
-            email: email.value,
-            password: password.value
-        };
-        users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(users));
-        alert("Успешная регистрация");
+        errors.generalError = "Неверный логин или пароль";
     };
-
-    
 </script>
 
 <style scoped>
