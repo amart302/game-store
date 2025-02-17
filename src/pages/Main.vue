@@ -1,11 +1,15 @@
 <template>
-    <main>
-    </main> 
+    <Header />
+      <main>
+      </main>
+    <Footer />
 </template>
   
-  <script>
-  
-  </script>
-  
-  <style>
-  </style>
+<script setup>
+  import Header from '../components/Header.vue';
+  import Footer from '../components/Footer.vue';
+
+</script>
+
+<style>
+</style>

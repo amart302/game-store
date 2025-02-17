@@ -97,7 +97,6 @@
     flex-direction: column;
     background: #06030F;
     color: #fff;
-    font-family: Arial, sans-serif;
   }
   
   .header-block-w,
