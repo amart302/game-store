@@ -20,6 +20,10 @@
 
 <script setup>
     import { ref, reactive } from "vue";
+    import { useRouter } from "vue-router";
+    localStorage.removeItem("userData");
+
+    const router = useRouter();
 
     const email = ref("");
     const password = ref("");
@@ -56,14 +60,15 @@
         }
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
-        
+        let check = false;
         users.map(item => {
             if(item.email == email.value && item.password == password.value){
-                alert("Успешный вход");
-                return 0;
+                check = true;
+                localStorage.setItem("userData", JSON.stringify(item));
+                setTimeout(() => router.push("/"), 1000);
             }
         });
-        errors.generalError = "Неверный логин или пароль";
+        if(!check) errors.generalError = "Неверный логин или пароль";
     };
 </script>
 

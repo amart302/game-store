@@ -29,6 +29,10 @@
 
 <script setup>
     import { ref, reactive } from "vue";
+    import { useRouter } from "vue-router";
+    localStorage.removeItem("userData");
+
+    const router = useRouter();
 
     const username = ref("");
     const email = ref("");
@@ -105,7 +109,8 @@
         };
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
-        alert("Успешная регистрация");
+        localStorage.setItem("userData", JSON.stringify(newUser));
+        setTimeout(() => router.push("/"), 1000);
     };
 
     
