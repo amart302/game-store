@@ -1,7 +1,7 @@
 <template>
     <div class="form-container" style="background-color: rgba(0, 0, 0, 0.4)">
-        <form @submit.prevent="updateUserData()" style="padding-top: 30px;">
-            <img class="cross" src="../assets/images/cross.png" alt="">
+        <form @submit="updateUserData()" style="padding-top: 30px;">
+            <img class="cross" src="../assets/images/cross.png" @click="props.showAndHideProfile()">
             <div class="profile-group">
                 <label>Ник пользователя:</label>
                 <input type="text" v-model="updateUsername">
@@ -19,6 +19,10 @@
 
 <script setup>
     import { reactive, ref } from 'vue';
+
+    const props = defineProps({
+        showAndHideProfile: Function
+    });
 
     const userData = JSON.parse(localStorage.getItem("userData"));
 

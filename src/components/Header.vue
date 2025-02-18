@@ -26,8 +26,8 @@
             <a href="/">Накопительная</a>
             <a href="/">Заработай</a>
           </div>
-          <div class="bl-pr">
-            <p>Hanzed Rules</p>
+          <div class="bl-pr" @click="() => showProfile = true">
+            <p>{{ (userData.username.length > 11) ? userData.username.slice(0, 8) + "..." : userData.username }}</p>
             <div class="pr-img"></div>
           </div>
         </div>
@@ -49,15 +49,23 @@
         </div>
       </div>
     </header>
+    <Profile v-if="showProfile" :showAndHideProfile="showAndHideProfile"/>
   </template>
   
-  <script >
+  <script>
+  import Profile from './Profile.vue';
+
   export default {
+    components: {
+      Profile
+    },
     data() {
       return {
-        selectedLang: 'RU', 
+        userData: JSON.parse(localStorage.getItem("userData")),
+        selectedLang: 'RU',
         selectedVal: '$',
         isDropdownVisible: false,
+        showProfile: false
       };
     },
     methods: {
@@ -77,6 +85,9 @@
           this.isDropdownVisible = false;
         }
       },
+      showAndHideProfile(){
+        this.showProfile = !this.showAndHideProfile;
+      }
     },
     mounted() {
       document.addEventListener('click', this.closeDropdown);
@@ -174,7 +185,9 @@
     margin-top: 16px;
   }
   .bl-pr{
+    width: 200px;
     display: flex;
+    justify-content: end;
     align-items: center;
     gap: 25px;
     cursor: pointer;
