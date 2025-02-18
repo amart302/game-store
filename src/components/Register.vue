@@ -48,6 +48,11 @@
     });
 
     const validateData = () => {
+        errors.generalError = "";
+        errors.username = "";
+        errors.email = "";
+        errors.password = "";
+        errors.confirmPassword = "";
         if(!username.value.trim()){
             errors.username = "Это поле обязательно для заполнения";
         }
@@ -73,16 +78,10 @@
     };
 
     const handleSubmitRegister = () => {
-        errors.generalError = "";
-        errors.username = "";
-        errors.email = "";
-        errors.password = "";
-        errors.confirmPassword = "";
         validateData();
         
-        if(errors.username || errors.email || errors.password || errors.confirmPassword){
-            return 1;
-        }else if(password.value != confirmPassword.value){
+        if(errors.username || errors.email || errors.password || errors.confirmPassword) return 1;
+        else if(password.value != confirmPassword.value){
             errors.generalError = "Пароли не совпадают";
             return 1;
         }
@@ -116,7 +115,7 @@
     
 </script>
 
-<style scoped>
+<style>
     .form-container{
         width: 100%;
         height: 100vh;
@@ -128,6 +127,7 @@
         justify-content: center;
     }
     form{
+        position: relative;
         width: 320px;
         display: flex;
         flex-direction: column;
@@ -138,10 +138,10 @@
         color: white;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
-    h2{
+    form h2{
         text-align: center;
     }
-    input{
+    form input{
         width: calc(100% - 12px);
         padding: 8px;
         background-color: rgba(196, 196, 196, 0.05);
@@ -149,7 +149,7 @@
         border-radius: 6px;
         color: white;
     }
-    button{
+    form button{
         height: 30px;
         cursor: pointer;
         background-color: #77BE1D;
@@ -158,18 +158,18 @@
         color: white;
         transition: all 0.2s;
     }
-    button:hover{
+    form button:hover{
         opacity: 0.7;
     }
     .error-message{
         text-align: left;
         color: red;
     }
-    p{
+    form p{
         text-align: center;
         font-size: 14px;
     }
-    a{
+    form a{
         color: #77BE1D;
         cursor: pointer;
     }

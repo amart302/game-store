@@ -2,6 +2,7 @@
     <Header />
       <main>
       </main>
+      <!-- <Porofile /> -->
     <Footer />
 </template>
   
@@ -9,6 +10,7 @@
   import Header from '../components/Header.vue';
   import Footer from '../components/Footer.vue';
   import { useRouter } from 'vue-router';
+import Porofile from '@/components/Porofile.vue';
 
   const router = useRouter();
   const userData = JSON.parse(localStorage.getItem("userData")) || null;
