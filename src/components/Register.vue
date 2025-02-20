@@ -1,6 +1,6 @@
 <template>
     <div class="form-container">
-        <form @submit.prevent="handleSubmitRegister()">
+        <form @submit.prevent="handleSubmitRegister()" style="width: 320px;">
             <h2>Регистрация</h2>
             <div class="form-group">
                 <input type="text" v-model="username" placeholder="Ник пользователя">
@@ -128,7 +128,6 @@
     }
     form{
         position: relative;
-        width: 320px;
         display: flex;
         flex-direction: column;
         gap: 14px;

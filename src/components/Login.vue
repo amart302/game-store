@@ -1,6 +1,6 @@
 <template>
     <div class="form-container">
-        <form @submit.prevent="handleSubmitLogin()">
+        <form @submit.prevent="handleSubmitLogin()" style="width: 320px;">
             <h2>Авторизация</h2>
             <div class="form-group">
                 <input type="text" v-model="email" placeholder="Электронная почта">

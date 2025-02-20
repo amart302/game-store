@@ -1,18 +1,24 @@
 <template>
     <div class="form-container" style="background-color: rgba(0, 0, 0, 0.4)">
-        <form @submit="updateUserData()" style="padding-top: 30px;">
+        <form @submit="updateUserData()" style="padding-top: 30px; display: flex; flex-direction: row; gap: 20px;">
             <img class="cross" src="../assets/images/cross.png" @click="props.showAndHideProfile()">
-            <div class="profile-group">
-                <label>Ник пользователя:</label>
-                <input type="text" v-model="updateUsername">
-                <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
+            <div class="form-child-container" style="align-items: center; gap: 10px;">
+                <img :src="avatar" class="avatar-icon">
+                <input type="file" @change="handleFileChange">
             </div>
-            <div class="profile-group">
-                <label>Электронная почта:</label>
-                <input type="text" v-model="updateEmail">
-                <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+            <div class="form-child-container">
+                <div class="profile-group">
+                    <label>Ник пользователя:</label>
+                    <input type="text" v-model="updateUsername">
+                    <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
+                </div>
+                <div class="profile-group">
+                    <label>Электронная почта:</label>
+                    <input type="text" v-model="updateEmail">
+                    <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+                </div>
+                <button type="submit">Обновить данные</button>
             </div>
-            <button type="submit">Обновить данные</button>
         </form>
     </div>
 </template>
@@ -49,6 +55,19 @@
         }
     };
 
+    let avatar = ref(localStorage.getItem("avatarIcon") || "../assets/images/avatarIcon.png");
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+  
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            avatar.value = e.target.result;
+        };
+          reader.readAsDataURL(file);
+        }
+    };
+
     const updateUserData = () => {
         validateData();
 
@@ -58,6 +77,7 @@
             if(item.id == userData.id){
                 item.username = updateUsername.value;
                 item.email = updateEmail.value;
+                localStorage.setItem("avatarIcon", avatar.value);
                 localStorage.setItem("userData", JSON.stringify(item));
                 
             }
@@ -74,5 +94,15 @@
         width: 16px;
         height: 16px;
         cursor: pointer;
+    }
+    .avatar-icon{
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+    }
+    .form-child-container{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
     }
 </style>

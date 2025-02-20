@@ -28,7 +28,7 @@
           </div>
           <div class="bl-pr" @click="() => showProfile = true">
             <p>{{ (userData.username.length > 11) ? userData.username.slice(0, 8) + "..." : userData.username }}</p>
-            <div class="pr-img"></div>
+            <img :src="avatar" class="pr-img">
           </div>
         </div>
   
@@ -61,6 +61,7 @@
     },
     data() {
       return {
+        avatar: localStorage.getItem("avatarIcon") || "../assets/images/avatarIcon.png",
         userData: JSON.parse(localStorage.getItem("userData")),
         selectedLang: 'RU',
         selectedVal: '$',
