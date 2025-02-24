@@ -1,19 +1,20 @@
 <template>
-  <router-view />
+  <div id="app">
+    <Main />
+  </div>
 </template>
-  
+
 <script>
-  import Header from './components/Header.vue';
-  import Footer from './components/Footer.vue';
+import Main from './Main.vue';
 
 export default {
   name: 'App',
   components: {
-    Header,
-    Footer
-  }
+    Main,
+  },
 };
 </script>
-  
+
 <style>
+@import './assets/main.css';
 </style>
