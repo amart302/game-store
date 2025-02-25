@@ -102,13 +102,14 @@
 
         const newUser = {
             id: users.length + 1,
+            avatarIcon: null,
             username: username.value,
             email: email.value,
             password: password.value
         };
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("userData", JSON.stringify(newUser));
+        localStorage.setItem("userSession", newUser.email);
         setTimeout(() => router.push("/"), 1000);
     };
 
@@ -125,6 +126,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 2;
     }
     form{
         position: relative;

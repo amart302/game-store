@@ -24,9 +24,9 @@
         <div class="bl-state">
           <a v-for="link in links" :key="link.text" :href="link.href">{{ link.text }}</a>
         </div>
-        <div class="bl-pr" @click="showProfile = true">
+        <div class="bl-pr" @click="() => showProfile = true">
           <p>{{ truncatedUsername }}</p>
-          <div class="pr-img"></div>
+          <img :src="userData.avatarIcon || 'src/assets/images/avatarIcon.png'" class="pr-img" />
         </div>
       </div>
 
@@ -36,7 +36,7 @@
           <p>Playnchill</p>
         </div>
         <div class="bl-in">
-          <input type="text" placeholder="Поиск" v-model="searchQuery" @keyup.enter="handleSearch" />
+          <input class="input-search" type="text" placeholder="Поиск" v-model="searchQuery" @keyup.enter="handleSearch" />
           <img src="../assets/images/on.png" alt="Search" />
         </div>
         <p style="color: #77BE1D;">Бесплатно</p>
@@ -62,7 +62,7 @@ export default {
     return {
       userData: JSON.parse(localStorage.getItem("userData")) || { username: "Гость" },
       selectedLang: 'RU',
-      selectedVal: '₽', // Изменил на рубли по умолчанию, как в твоём проекте
+      selectedVal: '₽',
       isDropdownVisible: false,
       showProfile: false,
       searchQuery: '',
@@ -234,8 +234,8 @@ export default {
 }
 
 .bl-pr .pr-img {
-  width: 48px;
-  height: 48px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   border: 3px solid #77BE1D;
   background-color: #fff;
@@ -288,7 +288,7 @@ export default {
   border-radius: 15px;
 }
 
-input[type='text'] {
+.input-search{
   padding: 0px 20px;
   width: 648px;
   height: 66px;

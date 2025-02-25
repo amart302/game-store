@@ -25,11 +25,11 @@
 
 <script>
 import axios from 'axios';
-import Header from './components/Header.vue';
-import Slider from './components/Slider.vue';
-import ProductCard from './components/ProductCard.vue';
-import OffersCards from './components/OffersCards.vue';
-import Footer from './components/Footer.vue';
+import Slider from '@/components/Slider.vue';
+import ProductCard from '@/components/ProductCard.vue';
+import OffersCards from '@/components/OffersCards.vue';
+import Footer from '@/components/Footer.vue';
+import Header from '@/components/Header.vue';
 
 export default {
   name: 'Main',
@@ -39,6 +39,9 @@ export default {
     ProductCard,
     OffersCards,
     Footer,
+  },
+  created(){
+    this.getUserData();
   },
   data() {
     return {
@@ -69,6 +72,15 @@ export default {
         console.error('Ошибка загрузки игр:', error);
       }
     },
+    getUserData(){
+      const userSession = localStorage.getItem("userSession");
+      const users = JSON.parse(localStorage.getItem("users"));
+      users.map(item => {
+        if(item.email == userSession){
+          localStorage.setItem("userData", JSON.stringify(item));
+        }
+      });
+    }
   },
 };
 </script>
