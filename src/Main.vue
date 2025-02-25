@@ -4,9 +4,9 @@
     <Slider />
     <main>
       <div class="mainBlock1">
-        <h1>Top <img src="../assets/images/lightning.svg" style="width: 1.2%" /> 4</h1>
+        <h1>Top <img src="../assets/images/lightning.svg" class="lightning-icon" /> 4</h1>
         <div class="smallProductCardsConteiner1">
-          <ProductCard v-for="game in topGames" :key="game.id" :game="game" />
+          <ProductCard v-for="game in topGames" :key="game.id" :game="game" :isTopOnly="true" />
         </div>
       </div>
       <OffersCards />
@@ -18,19 +18,6 @@
           <ProductCard v-for="game in catalogGames" :key="game.id" :game="game" />
         </div>
       </div>
-      <div class="mainBlock3">
-        <h2>Акции и скидки <span style="color: #77BE1D;">%</span></h2>
-        <div class="bigProductCardsConteiner">
-          <ProductCard v-for="game in discountGames" :key="game.id" :game="game" />
-        </div>
-      </div>
-      <div class="mainBlock4">
-        <img src="../assets/images/mainBlock4Img.png" alt="Blog banner" />
-        <h2>Свежее в блоге</h2>
-        <BlogCards />
-        <button class="publicationsBtn">Все публикации</button>
-      </div>
-      <Feedback />
     </main>
     <Footer />
   </div>
@@ -42,8 +29,6 @@ import Header from './components/Header.vue';
 import Slider from './components/Slider.vue';
 import ProductCard from './components/ProductCard.vue';
 import OffersCards from './components/OffersCards.vue';
-import BlogCards from './components/BlogCards.vue';
-import Feedback from './components/Feedback.vue';
 import Footer from './components/Footer.vue';
 
 export default {
@@ -53,24 +38,19 @@ export default {
     Slider,
     ProductCard,
     OffersCards,
-    BlogCards,
-    Feedback,
     Footer,
   },
   data() {
     return {
-      games: [],
+      hitGames: [],
+      newGames: [],
+      topGames: [],
+      gameCatalog: [],
     };
   },
   computed: {
-    topGames() {
-      return this.games.filter(game => game.top).slice(0, 4);
-    },
     catalogGames() {
-      return this.games.filter(game => !game.top && !game.hit).slice(0, 12);
-    },
-    discountGames() {
-      return this.games.filter(game => game.hit).slice(0, 4);
+      return this.gameCatalog.slice(0, 12);
     },
   },
   mounted() {
@@ -79,8 +59,12 @@ export default {
   methods: {
     async fetchGames() {
       try {
-        const response = await axios.get('https://67b2f3b8bc0165def8cf482b.mockapi.io/game/games');
-        this.games = response.data;
+        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
+        const data = response.data[0];
+        this.hitGames = data.hit_games;
+        this.newGames = data.new_games;
+        this.topGames = data.top_games.slice(0, 4);
+        this.gameCatalog = data.game_catalog;
       } catch (error) {
         console.error('Ошибка загрузки игр:', error);
       }
@@ -88,74 +72,49 @@ export default {
   },
 };
 </script>
-<style>
+
+<style scoped>
+#main {
+  background: linear-gradient(135deg, #0A071A 0%, #1C1435 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+
 main {
-  max-width: 1400px;
-  margin-inline: auto;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
-.mainBlock1,
-.mainBlock2,
-.mainBlock3,
-.mainBlock4 {
-  margin-top: 60px;
+.mainBlock1, .mainBlock2 {
+  margin-bottom: 60px;
 }
 
-.smallProductCardsConteiner1,
-.smallProductCardsConteiner2 {
+h1, h2 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  margin-bottom: 30px;
+  background: linear-gradient(90deg, #77BE1D, #97E238);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px rgba(119, 190, 29, 0.3);
+}
+
+.lightning-icon {
+  width: 24px;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 4px #77BE1D);
+}
+
+.smallProductCardsConteiner1, .smallProductCardsConteiner2 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 36px;
-}
-
-.bigProductCardsConteiner {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 36px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
 }
 
 .productCatalog {
-  display: flex;
-}
-
-.mainBlock4 img {
-  width: 100%;
-}
-
-.mainBlock4 h2 {
-  margin-top: 70px;
-  font-size: 26px;
-}
-
-.publicationsBtn {
-  border: solid 1px gray;
-  background: none;
-  width: 100%;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 50px;
-  color: #366edc;
-  font-size: 16px;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.publicationsBtn:hover {
-  background-color: #366edc;
-  color: white;
+  text-align: center;
 }
 </style>
-@media (max-width: 1500px) {
-  .arrowLeft {
-    left: 2%;
-  }
-  .arrowRight {
-    right: 2%;
-  }
-  .addCardBtn {
-    top: 56%;
-  }
-  .productImg {
-    height: 67%;
-  }
-}

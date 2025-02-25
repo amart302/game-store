@@ -31,7 +31,7 @@
       </div>
 
       <div class="header-block-c">
-        <div class="logo">
+        <div class="logo" @click="goToMain">
           <img src="../assets/images/logo.svg" alt="Logo" />
           <p>Playnchill</p>
         </div>
@@ -43,6 +43,7 @@
         <div class="bl-icon">
           <img src="../assets/images/like.png" alt="Избранное" @click="goToFavorites" />
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
+          <div class="uveda" v-if="basketCount > 0">{{ basketCount }}</div>
         </div>
       </div>
     </div>
@@ -61,10 +62,11 @@ export default {
     return {
       userData: JSON.parse(localStorage.getItem("userData")) || { username: "Гость" },
       selectedLang: 'RU',
-      selectedVal: '$',
+      selectedVal: '₽', // Изменил на рубли по умолчанию, как в твоём проекте
       isDropdownVisible: false,
       showProfile: false,
       searchQuery: '',
+      basketCount: 0,
       links: [
         { text: 'Отзывы', href: '#' },
         { text: 'Гарантии', href: '#' },
@@ -79,6 +81,13 @@ export default {
       const username = this.userData.username;
       return username.length > 11 ? username.slice(0, 8) + "..." : username;
     },
+  },
+  mounted() {
+    document.addEventListener('click', this.closeDropdown);
+    this.updateBasketCount();
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.closeDropdown);
   },
   methods: {
     toggleDropdown() {
@@ -107,20 +116,20 @@ export default {
       this.$router.push('/favorites');
     },
     goToCart() {
-      this.$router.push('/cart');
+      this.$router.push('/cart'); // Предполагается, что страница корзины будет позже
     },
-  },
-  mounted() {
-    document.addEventListener('click', this.closeDropdown);
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.closeDropdown);
+    goToMain() {
+      this.$router.push('/');
+    },
+    updateBasketCount() {
+      const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
+      this.basketCount = basket.length;
+    },
   },
 };
 </script>
 
-<style scoped>
-/* Ваши стили остаются без изменений */
+<style >
 .container-header {
   max-width: 1440px;
   margin-inline: auto;
@@ -128,7 +137,7 @@ export default {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  background: #06030F;
+  background: transparent;
   color: #fff;
 }
 
@@ -186,6 +195,7 @@ export default {
   text-align: left;
   border: none;
   background: #100D18;
+  color: #fff;
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease;
@@ -235,10 +245,31 @@ export default {
   display: flex;
   align-items: center;
   gap: 25px;
+  position: relative;
 }
 
 .bl-icon img {
   cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.bl-icon img:hover {
+  opacity: 0.7;
+}
+
+.uveda {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  background-color: #77BE1D;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 .logo {
@@ -247,6 +278,7 @@ export default {
   gap: 11px;
   font-size: 24px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .bl-in {
@@ -263,8 +295,12 @@ input[type='text'] {
   border: none;
   font-size: 18px;
   background: transparent;
-  color: #333;
+  color: #fff;
   transition: all 0.3s ease;
+}
+
+input[type='text']::placeholder {
+  color: #9D9AA6;
 }
 
 input[type='text']:focus {
@@ -280,5 +316,14 @@ input[type='text']:focus {
 
 .bl-in img:hover {
   opacity: 0.7;
+}
+
+.bl-cash {
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+.bl-cash:hover {
+  color: #77BE1D;
 }
 </style>

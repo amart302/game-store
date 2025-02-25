@@ -1,28 +1,44 @@
 <template>
   <div class="slider">
-    <div class="arrowLeft" @click="prevSlide"><img src="../assets/images/arrowLeftImg.svg" /></div>
+    <div class="arrowLeft" @click="prevSlide">
+      <img src="../assets/images/arrowLeftImg.svg" alt="Previous" />
+    </div>
     <div class="slide" :style="{ marginLeft: `${indent}rem` }">
       <img src="../assets/images/slideImg1.png" class="slideImg" />
       <div class="slide_information">
-        <h3>Покорите вершину без шума и пыли...</h3>
+        <h3>
+          Покорите вершину без шума и пыли. Перехитрите копов и участвуйте в еженедельных квалификационных заездах, чтобы добраться до Гранд-заезда — главной уличной гонки. Заполните свой гараж уникальными модифицированными машинами и покажите на улицах класс.
+        </h3>
       </div>
     </div>
     <div class="slide">
       <img src="../assets/images/slideImg2.png" class="slideImg" />
       <div class="slide_information">
-        <h3>Культовая серия гоночных видеоигр...</h3>
+        <h3>
+          Культовая серия гоночных видеоигр от компании Electronic Arts. Смысл игры заключается в управлении различными автомобилями на различных трассах. Существуют варианты игры как для персональных компьютеров, так и для различных игровых приставок, таких как Xbox и PlayStation.
+        </h3>
         <div class="slide_priceBlock">
           <span class="slide_priceWithDiscount">4 999 ₽</span>
           <span class="slide_discount">-25%</span>
           <span class="slide_priceWithoutDiscount">6 999 ₽</span>
         </div>
         <div class="slide_btnsBlock">
-          <button class="slideBtn">В корзину</button>
-          <button class="slideBtn">В избранное</button>
+          <button class="slideBtn" @click.stop="addToCart">В корзину</button>
+          <button class="slideBtn" @click.stop="addToFavourites">В избранное</button>
         </div>
       </div>
     </div>
-    <div class="arrowRight" @click="nextSlide"><img src="../assets/images/arrowRightImg.svg" /></div>
+    <div class="slide">
+      <img src="../assets/images/slideImg3.png" class="slideImg" />
+      <div class="slide_information">
+        <h3>
+          Компьютерная игра серии Need for Speed в жанре аркадных автогонок, разработанная студией Ghost Games и изданная компанией Electronic Arts для игровых приставок PlayStation 4 и Xbox One в ноябре 2015 года. Выход игры на персональные компьютеры состоялся в марте 2016 года[2]. Это двадцать вторая часть серии Need for Speed.
+        </h3>
+      </div>
+    </div>
+    <div class="arrowRight" @click="nextSlide">
+      <img src="../assets/images/arrowRightImg.svg" alt="Next" />
+    </div>
     <div class="counterClides">
       <div class="counter" :class="{ active: index === 1 }" id="counter1"></div>
       <div class="counter" :class="{ active: index === 2 }" id="counter2"></div>
@@ -36,33 +52,34 @@ export default {
   name: 'Slider',
   data() {
     return {
-      index: 2,
-      indent: 0,
+      index: 2, // Начальный слайд (второй по умолчанию)
+      indent: 0, // Смещение в rem
+      slideWidth: 160.6, // Ширина слайда из исходного JS
     };
   },
   methods: {
     prevSlide() {
       if (this.index > 1) {
-        this.indent += 160.6;
+        this.indent += this.slideWidth;
         this.index--;
       }
     },
     nextSlide() {
       if (this.index < 3) {
-        this.indent -= 160.6;
+        this.indent -= this.slideWidth;
         this.index++;
       }
+    },
+    addToCart() {
+      console.log('Добавлено в корзину из слайдера');
+    },
+    addToFavourites() {
+      console.log('Добавлено в избранное из слайдера');
     },
   },
 };
 </script>
 
-<style scoped>
-.counter.active {
-  background-color: white;
-  height: 5px;
-}
-</style>
 <style scoped>
 .slider {
   max-width: 1600px;
@@ -75,7 +92,6 @@ export default {
   gap: 60px;
   justify-content: center;
   align-items: center;
-  transition: all 0.6s;
   padding-bottom: 56px;
 }
 
