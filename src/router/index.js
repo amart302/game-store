@@ -3,9 +3,9 @@ import Register from '@/components/Register.vue';
 import Login from '@/components/Login.vue';
 import NotFound from '@/components/NotFound.vue';
 import Main from '@/Pages/Main.vue';
-import ProductCard from '@/components/ProductCard.vue';
 import Favorites from '@/components/Favorites.vue';
 import Basket from '@/components/Basket.vue';
+import ProductPage from '@/components/ProductPage.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,7 +28,7 @@ const router = createRouter({
     },
     {
       path: "/product",
-      component: ProductCard
+      component: ProductPage
     },
     {
       path: "/favourites",

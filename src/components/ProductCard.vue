@@ -59,7 +59,9 @@ export default {
   methods: {
     goToProductPage() {
       localStorage.setItem('currentProductInGames', this.game.name);
-      this.$router.push('/product');
+      console.log(this.game.name);
+      
+      // this.$router.push('/product');
     },
     addToCart() {
       let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
