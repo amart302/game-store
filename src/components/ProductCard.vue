@@ -121,7 +121,7 @@ export default {
 
 <style scoped>
 .productCard {
-  height: 570px;
+  height: 340px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -131,7 +131,7 @@ export default {
 
 .productImg {
   width: 100%;
-  height: 79%;
+  height: 220px;
   border-radius: 12px;
 }
 
@@ -167,14 +167,14 @@ export default {
   align-items: center;
   opacity: 0;
   position: absolute;
-  top: 67%;
-  left: 8%;
+  top: 50%;
+  left: 10%;
   color: white;
   font-weight: 500;
   font-size: 16px;
   background-color: #77be1d;
   border: none;
-  padding: 12px;
+  padding: 10px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;

@@ -98,7 +98,7 @@ main {
   padding: 40px 20px;
 }
 
-.mainBlock1, .mainBlock2 {
+.mainBlock1, .mainBlock2, .offersCardsConteiner {
   margin-bottom: 60px;
 }
 
@@ -122,11 +122,8 @@ h1, h2 {
 
 .smallProductCardsConteiner1, .smallProductCardsConteiner2 {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, minmax(300px, 1fr));
   gap: 30px;
 }
 
-.productCatalog {
-  text-align: center;
-}
 </style>

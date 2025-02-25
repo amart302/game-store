@@ -39,7 +39,6 @@
         <div class="langAndCurren" @click="toggleLangCurren">
           <span class="lang">RU /</span>
           <span class="currency">{{ currentCurrency }}</span>
-          <img src="../assets/images/arrowImg.svg" class="arrowImg" :style="{ transform: showLangCurren ? 'rotate(0deg)' : 'rotate(180deg)' }" />
         </div>
         <div class="langAndCurrenChange2" v-show="showLangCurren">
           <div class="changeLanguage">
@@ -82,10 +81,9 @@
   </script>
   <style scoped>
   footer {
-    border-block: solid 1px rgb(56, 56, 56);
+    border-top: solid 1px rgb(56, 56, 56);
     padding-block: 80px;
     margin-top: 80px;
-    margin-bottom: 26px;
   }
   
   .footerParentBlock {
