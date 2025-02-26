@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Register from '@/components/Register.vue';
-import Login from '@/components/Login.vue';
-import NotFound from '@/components/NotFound.vue';
 import Main from '@/Pages/Main.vue';
-import Favorites from '@/components/Favorites.vue';
-import Basket from '@/components/Basket.vue';
-import ProductPage from '@/components/ProductPage.vue';
+import NotFound from '@/Pages/NotFound.vue';
+import Register from '@/Pages/Register.vue';
+import Login from '@/Pages/Login.vue';
+import ProductPage from '@/Pages/ProductPage.vue';
+import Favourites from '@/Pages/Favourites.vue';
+import Basket from '@/Pages/Basket.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -32,7 +32,7 @@ const router = createRouter({
     },
     {
       path: "/favourites",
-      component: Favorites
+      component: Favourites
     },
     {
       path: "/basket",

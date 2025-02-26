@@ -121,6 +121,7 @@
     display: grid;
     grid-template-columns: 0.5fr 1fr 0.2fr 0.2fr;
     align-items: center;
+    margin-top: 40px;
   }
   
   .socialNetworkBlock a {

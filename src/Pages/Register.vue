@@ -105,7 +105,9 @@
             avatarIcon: null,
             username: username.value,
             email: email.value,
-            password: password.value
+            password: password.value,
+            basket: [],
+            favourites: []
         };
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));

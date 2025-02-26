@@ -113,10 +113,10 @@ export default {
       this.$emit('search', this.searchQuery);
     },
     goToFavorites() {
-      this.$router.push('/favorites');
+      this.$router.push('/favourites');
     },
     goToCart() {
-      this.$router.push('/cart'); // Предполагается, что страница корзины будет позже
+      this.$router.push('/basket'); // Предполагается, что страница корзины будет позже
     },
     goToMain() {
       this.$router.push('/');

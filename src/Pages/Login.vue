@@ -64,7 +64,7 @@
         users.map(item => {
             if(item.email == email.value && item.password == password.value){
                 check = true;
-                localStorage.setItem("userData", JSON.stringify(item));
+                localStorage.setItem("userSession", item.email);
                 setTimeout(() => router.push("/"), 1000);
             }
         });

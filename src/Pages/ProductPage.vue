@@ -44,20 +44,24 @@
               </div>
               <div class="product-info">
                 <table>
-                  <tr class="product-tr1">
-                    <td>Платформы</td>
-                    <td>Регион активации</td>
-                    <td>Тип товара</td>
-                  </tr>
-                  <tr class="product-tr2">
-                    <td>
-                      <span v-if="currentProduct.windows_available">Windows</span>
-                      <span v-if="currentProduct.mac_available">, Mac</span>
-                      <span v-if="currentProduct.linux_available">, Linux</span>
-                    </td>
-                    <td>Страны СНГ</td>
-                    <td>Ключ</td>
-                  </tr>
+                  <thead>
+                    <tr class="product-tr1">
+                      <td>Платформы</td>
+                      <td>Регион активации</td>
+                      <td>Тип товара</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="product-tr2">
+                      <td>
+                        <span v-if="currentProduct.windows_available">Windows</span>
+                        <span v-if="currentProduct.mac_available">, Mac</span>
+                        <span v-if="currentProduct.linux_available">, Linux</span>
+                      </td>
+                      <td>Страны СНГ</td>
+                      <td>Ключ</td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
               <div class="product-deystvia-2">
@@ -107,14 +111,16 @@
             <div v-if="activeTab === 'requirements'" class="product-sisTreb">
               <div class="product-sisTreb-title">Рекомендованные системные требования</div>
               <table class="product-sisTreb-table">
-                <tr :style="{ backgroundColor: 'transparent' }">
-                  <td>Платформы</td>
-                  <td>
-                    <span v-if="currentProduct.windows_available">Windows</span>
-                    <span v-if="currentProduct.mac_available">, Mac</span>
-                    <span v-if="currentProduct.linux_available">, Linux</span>
-                  </td>
-                </tr>
+                <tbody>
+                  <tr>
+                    <td>Платформы</td>
+                    <td>
+                      <span v-if="currentProduct.windows_available">Windows</span>
+                      <span v-if="currentProduct.mac_available">, Mac</span>
+                      <span v-if="currentProduct.linux_available">, Linux</span>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
             <div v-if="activeTab === 'activation'" class="product-activate">
@@ -167,9 +173,9 @@
   
   <script>
   import axios from 'axios';
-  import Header from './Header.vue';
-  import Footer from './Footer.vue';
-  import ProductCard from './ProductCard.vue';
+  import Footer from '@/components/Footer.vue';
+  import Header from '@/components/Header.vue';
+  import ProductCard from '@/components/ProductCard.vue';
   
   export default {
     name: 'ProductPage',

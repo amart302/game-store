@@ -74,12 +74,15 @@ export default {
     },
     getUserData(){
       const userSession = localStorage.getItem("userSession");
-      const users = JSON.parse(localStorage.getItem("users"));
-      users.map(item => {
-        if(item.email == userSession){
-          localStorage.setItem("userData", JSON.stringify(item));
-        }
-      });
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      let checkSession = users.find(item => item.email == userSession);
+      
+      if(checkSession){
+        localStorage.setItem("userData", JSON.stringify(checkSession));
+        checkSession = true;
+      }else{
+        this.$router.push('/register');
+      }
     }
   },
 };
@@ -87,7 +90,7 @@ export default {
 
 <style scoped>
 #main {
-  background: linear-gradient(135deg, #0A071A 0%, #1C1435 100%);
+  /* background: linear-gradient(135deg, #0A071A 0%, #1C1435 100%); */
   min-height: 100vh;
   color: #fff;
 }

@@ -57,9 +57,9 @@
   </template>
   
   <script>
-  import Header from './Header.vue';
-  import Footer from './Footer.vue';
-  import axios from 'axios';
+  import Footer from '@/components/Footer.vue';
+import Header from '@/components/Header.vue';
+import axios from 'axios';
   
   export default {
     name: 'Cart',
@@ -141,7 +141,6 @@
     position: relative;
     overflow: hidden;
   }
-  
   main {
     max-width: 1440px;
     margin: 0 auto;

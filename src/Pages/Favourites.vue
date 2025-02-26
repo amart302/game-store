@@ -20,9 +20,10 @@
 </template>
 
 <script>
-import Header from './Header.vue';
-import Footer from './Footer.vue';
-import ProductCard from './ProductCard.vue';
+import Footer from '@/components/Footer.vue';
+import Header from '@/components/Header.vue';
+import ProductCard from '@/components/ProductCard.vue';
+
 
 export default {
   name: 'Favorites',
@@ -48,6 +49,7 @@ export default {
 }
 
 main {
+    min-height: calc(100vh - 766px);
   max-width: 1440px;
   margin: 0 auto;
   padding: 40px 20px;

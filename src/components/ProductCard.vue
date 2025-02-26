@@ -61,7 +61,7 @@ export default {
       localStorage.setItem('currentProductInGames', this.game.name);
       console.log(this.game.name);
       
-      // this.$router.push('/product');
+      this.$router.push('/product');
     },
     addToCart() {
       let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
