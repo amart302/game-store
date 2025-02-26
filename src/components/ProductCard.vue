@@ -1,8 +1,8 @@
 <template>
   <div v-if="loading" class="productCard">
-    <Skeleton width="328px" height="220px" />
-    <Skeleton width="240px" height="24px" />
-    <Skeleton width="180px" height="24px" />
+    <Skeleton width="328px" height="220px"border-radius="12px" />
+    <Skeleton width="240px" height="24px" border-radius="8px" />
+    <Skeleton width="180px" height="24px" border-radius="8px" />
   </div>
   <div v-else class="productCard" @click="goToProductPage">
     <img :src="game.large_capsule_image" class="productImg" ref="productImage" />
@@ -195,7 +195,8 @@ export default {
   opacity: 0;
   position: absolute;
   top: 50%;
-  left: 10%;
+  left: 50%;
+  transform: translate(-50%);
   color: white;
   font-weight: 500;
   font-size: 16px;
@@ -268,7 +269,6 @@ export default {
 }
 .p-skeleton {
   background-color: #e0e0e0;
-  border-radius: 8px;
   animation: skeleton-animation 1.6s ease-in-out infinite;
 }
 @keyframes skeleton-animation {

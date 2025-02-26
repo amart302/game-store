@@ -142,6 +142,7 @@ import axios from 'axios';
     overflow: hidden;
   }
   main {
+    min-height: calc(100vh - 766px);
     max-width: 1440px;
     margin: 0 auto;
     padding: 60px 20px;
@@ -310,7 +311,7 @@ import axios from 'axios';
     transition: background 0.3s ease, transform 0.3s ease;
   }
 
-  .remove-btn svg path:hover {
+  .remove-btn:hover path {
     stroke: white;
   }
   
