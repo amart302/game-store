@@ -1,5 +1,10 @@
 <template>
-  <div class="productCard" @click="goToProductPage">
+  <div v-if="loading" class="productCard">
+    <Skeleton width="328px" height="220px" />
+    <Skeleton width="240px" height="24px" />
+    <Skeleton width="180px" height="24px" />
+  </div>
+  <div v-else class="productCard" @click="goToProductPage">
     <img :src="game.large_capsule_image" class="productImg" ref="productImage" />
     <div class="cardCategoriesBlock">
       <div class="hitBlock" v-if="!isTopOnly && isHit">Хит продаж</div>
@@ -32,8 +37,30 @@
 </template>
 
 <script>
+import Skeleton from 'primevue/skeleton';
+
 export default {
+  components: { Skeleton },
   name: 'ProductCard',
+  data(){
+    return{
+      loading: true
+    }
+  },
+  watch: {
+    game(newGame){
+      if(newGame){
+        this.startLoading();        
+      }
+    }
+  },
+  mounted(){
+    if(this.game){
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
+    }
+  },
   props: {
     game: {
       type: Object,
@@ -59,8 +86,6 @@ export default {
   methods: {
     goToProductPage() {
       localStorage.setItem('currentProductInGames', this.game.name);
-      console.log(this.game.name);
-      
       this.$router.push('/product');
     },
     addToCart() {
@@ -240,5 +265,21 @@ export default {
   height: 14px;
   background-color: #3d394a;
   border-radius: 50%;
+}
+.p-skeleton {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  animation: skeleton-animation 1.6s ease-in-out infinite;
+}
+@keyframes skeleton-animation {
+  0% {
+      background-color: rgba(224, 224, 224, 0.6);
+  }
+  50% {
+      background-color: rgba(224, 224, 224, 0.8);
+  }
+  100% {
+      background-color: rgba(224, 224, 224, 0.6);
+  }
 }
 </style>

@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: "/basket",
       component: Basket
-    }
+    },
   ],
 })
 

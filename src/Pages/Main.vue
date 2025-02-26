@@ -76,7 +76,6 @@ export default {
       const userSession = localStorage.getItem("userSession");
       const users = JSON.parse(localStorage.getItem("users")) || [];
       let checkSession = users.find(item => item.email == userSession);
-      
       if(checkSession){
         localStorage.setItem("userData", JSON.stringify(checkSession));
         checkSession = true;
