@@ -1,11 +1,11 @@
 <template>
-    <div class="product-page" :style="backgroundStyle">
+    <div class="product-page">
       <Header />
       <main v-if="currentProduct.name">
         <div class="product-information">
           <div class="product-container">
             <div class="product-img">
-              <img :src="currentProduct.large_capsule_image" alt="Product Image" />
+              <img :src="currentProduct.header_image" alt="Product Image" />
             </div>
             <div class="product-other">
               <div class="product-title">{{ currentProduct.name }}</div>
@@ -194,11 +194,6 @@
       };
     },
     computed: {
-      backgroundStyle() {
-        return this.currentProduct.header_image
-          ? { backgroundImage: `url(${this.currentProduct.header_image})` }
-          : {};
-      },
       galleryImages() {
         if (!this.currentProduct.name) return [];
         return [
@@ -220,10 +215,27 @@
     mounted() {
       document.title = `Playnchill | ${localStorage.getItem('currentProductInGames') || 'Product'}`;
       this.fetchProducts();
+      this.fetchProducts2();
       this.updateBasketCount();
       this.addEventListeners();
     },
     methods: {
+      async fetchProducts2() {
+        try {
+          const gameId = localStorage.getItem('currentProductInGames');
+          const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
+          const gameData = response.data[gameId];
+          if (gameData) {
+              console.log("Данные игры:", gameData.data);
+              this.currentProduct = gameData.data;
+          } else {
+              console.log("Steam API вернул неуспешный ответ", gameData);
+          }
+          
+        } catch (error) {
+          console.error("Ошибка при попытке получить данные продукта:", error);
+        }
+      },
       async fetchProducts() {
         try {
           const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
@@ -363,7 +375,6 @@
   }
   
   .temnee-bg {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -392,8 +403,6 @@
   }
   
   .product-img {
-    width: 350px;
-    height: 465px;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(119, 190, 29, 0.2);
@@ -405,8 +414,7 @@
   }
   
   .product-img img {
-    width: 100%;
-    height: 100%;
+    width: 600px;
     object-fit: cover;
   }
   

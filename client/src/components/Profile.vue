@@ -64,7 +64,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
           avatarIcon.value = e.target.result;
-      };
+        };
         reader.readAsDataURL(file);
       }
   };

@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     goToProductPage() {
-      localStorage.setItem('currentProductInGames', this.game.name);
+      localStorage.setItem('currentProductInGames', this.game.id);
       this.$router.push('/product');
     },
     addToCart() {
