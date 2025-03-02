@@ -1,7 +1,7 @@
 <template>
     <div class="product-page">
       <Header />
-      <main v-if="currentProduct.name">
+      <main v-if="currentProduct">
         <div class="product-information">
           <div class="product-container">
             <div class="product-img">
@@ -200,7 +200,7 @@
     },
     computed: {
       galleryImages() {
-        if (!this.currentProduct.name) return [];
+        if (!this.currentProduct) return [];
         return [
           this.currentProduct.screenshots[0].path_thumbnail,
           this.currentProduct.screenshots[1].path_thumbnail,
@@ -236,6 +236,8 @@
           const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
           const gameData = response.data[gameId];
           if (gameData) {
+              console.log(response.data);
+              
               console.log("Данные игры:", gameData.data);
               this.currentProduct = gameData.data;
           } else {
@@ -258,7 +260,7 @@
         const product = {
           id: this.currentProduct.id,
           title: this.currentProduct.name,
-          price: `${this.currentProduct.final_price} ${this.currentProduct.currency}`,
+          price: `${this.currentProduct.price_overview.final_formatted}`,
           skidka: this.currentProduct.discounted ? `-${this.currentProduct.discount_percent}%` : null,
           oldPrice: this.currentProduct.discounted ? `${this.currentProduct.original_price} ${this.currentProduct.currency}` : null,
           count: 1,

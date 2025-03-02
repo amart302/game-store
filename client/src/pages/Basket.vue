@@ -13,7 +13,7 @@
                 <div class="cart-item-details">
                   <span class="cart-item-title">{{ item.title }}</span>
                   <div class="cart-item-prices">
-                    <span class="cart-item-price">{{ calculatePrice(item) }} EUR</span>
+                    <span class="cart-item-price">{{ calculatePrice(item) }} руб.</span>
                     <span class="cart-item-old-price" v-if="item.skidka">{{ item.oldPrice }}</span>
                     <span class="cart-item-discount" v-if="item.skidka">{{ item.skidka }}</span>
                   </div>
@@ -38,7 +38,7 @@
             </div>
             <div class="cart-total">
               <span>Итого:</span>
-              <span class="total-amount">{{ totalPrice }} EUR</span>
+              <span class="total-amount">{{ totalPrice }} руб.</span>
             </div>
             <button class="checkout-btn" @click="checkout">Оформить заказ</button>
           </div>

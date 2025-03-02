@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     catalogGames() {
-      return this.gameCatalog.slice(0, 12);
+      return this.gameCatalog;
     },
   },
   mounted() {
