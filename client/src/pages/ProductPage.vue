@@ -46,7 +46,7 @@
                 <table>
                   <thead>
                     <tr class="product-tr1">
-                      <td>Платформы</td>
+                      <td>Платформы:</td>
                       <td>Регион активации</td>
                       <td>Тип товара</td>
                     </tr>
@@ -54,9 +54,9 @@
                   <tbody>
                     <tr class="product-tr2">
                       <td>
-                        <span v-if="currentProduct.windows_available">Windows</span>
-                        <span v-if="currentProduct.mac_available">, Mac</span>
-                        <span v-if="currentProduct.linux_available">, Linux</span>
+                        <span v-if="currentProduct.platforms.windows">Windows</span>
+                        <span v-if="currentProduct.platforms.mac">, Mac</span>
+                        <span v-if="currentProduct.platforms.linux">, Linux</span>
                       </td>
                       <td>Страны СНГ</td>
                       <td>Ключ</td>
@@ -86,7 +86,12 @@
                   </svg>
                 </div>
               </div>
-              <img :src="img" alt="Gallery Image" />
+              <img :src="img" alt="Gallery Image" v-if="index < 4" @click="plusSlides(index)" />
+              <img :src="img.poster" alt="Gallery Image" v-else @click="plusSlides(index)" />
+              <!-- <video ref="videoPlayer" :controls="showControls" width="600" @click="handlePlay" :src="img" :poster="currentProduct.screenshots[4].path_thumbnail" v-else>
+                <source :src="img" type="video/mp4">
+                <source :src="img" type="video/webm">
+              </video> -->
             </div>
           </div>
         </div>
@@ -106,7 +111,7 @@
           <div class="product-ostas-container">
             <div v-if="activeTab === 'description'" class="product-opisanie">
               <div class="product-opisanie-title">Полное погружение в {{ currentProduct.name }}</div>
-              <div class="product-opisanie-txt">{{ currentProduct.name }} - это захватывающая игра с поддержкой {{ currentProduct.controller_support ? 'контроллера' : 'клавиатуры и мыши' }}.</div>
+              <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
             </div>
             <div v-if="activeTab === 'requirements'" class="product-sisTreb">
               <div class="product-sisTreb-title">Рекомендованные системные требования</div>
@@ -149,14 +154,14 @@
         </div>
       </main>
   
-      <div class="modal" :style="{ display: modalOpen ? 'block' : 'none' }">
+      <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
         <div class="modal-cont">
           <span class="close cursor" @click="closeModal">×</span>
           <div class="modal-content">
             <div class="mySlides" v-for="(slide, index) in slides" :key="index" :style="{ display: slideIndex === index + 1 ? 'flex' : 'none' }">
               <img v-if="index < 4" :src="slide" class="product-gallery-img" />
-              <video v-else controls preload="metadata" ref="videoPlayer">
-                <source :src="currentProduct.img_video" />
+              <video v-else controls preload="metadata" ref="videoPlayer" class="123">
+                <source :src="slide.video" />
                 Ваш браузер не поддерживает видео.
               </video>
             </div>
@@ -197,12 +202,16 @@
       galleryImages() {
         if (!this.currentProduct.name) return [];
         return [
-          this.currentProduct.large_capsule_image,
-          this.currentProduct.small_capsule_image,
-          this.currentProduct.header_image,
-          this.currentProduct.large_capsule_image,
-          this.currentProduct.small_capsule_image,
-        ];
+          this.currentProduct.screenshots[0].path_thumbnail,
+          this.currentProduct.screenshots[1].path_thumbnail,
+          this.currentProduct.screenshots[2].path_thumbnail,
+          this.currentProduct.screenshots[3].path_thumbnail,
+          {
+            poster: this.currentProduct.screenshots[4].path_thumbnail,
+            video: this.currentProduct.movies[0].mp4.max
+          },
+          
+        ];        
       },
       slides() {
         return this.galleryImages.length ? [...this.galleryImages] : [];
@@ -214,13 +223,14 @@
     },
     mounted() {
       document.title = `Playnchill | ${localStorage.getItem('currentProductInGames') || 'Product'}`;
-      this.fetchProducts();
-      this.fetchProducts2();
       this.updateBasketCount();
       this.addEventListeners();
     },
+    created(){
+      this.fetchProducts();
+    },
     methods: {
-      async fetchProducts2() {
+      async fetchProducts() {
         try {
           const gameId = localStorage.getItem('currentProductInGames');
           const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
@@ -234,23 +244,6 @@
           
         } catch (error) {
           console.error("Ошибка при попытке получить данные продукта:", error);
-        }
-      },
-      async fetchProducts() {
-        try {
-          const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-          const data = response.data[0];
-          this.products = [
-            ...data.hit_games,
-            ...data.new_games,
-            ...data.top_games,
-            ...data.game_catalog,
-          ];
-          this.currentProduct = this.products.find(p => p.name === localStorage.getItem('currentProductInGames')) || {};
-          this.ads = this.products.filter(p => p.name !== this.currentProduct.name);
-          this.ads = this.shuffleArray(this.ads);
-        } catch (error) {
-          console.error('Ошибка загрузки продуктов:', error);
         }
       },
       shuffleArray(array) {
@@ -320,19 +313,18 @@
         const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
         this.basketCount = basket.length;
       },
-      openModal() {
-        this.modalOpen = true;
-        document.body.style.overflow = 'hidden';
-      },
       closeModal() {
         this.modalOpen = false;
         document.body.style.overflow = 'auto';
         if (this.$refs.videoPlayer) this.$refs.videoPlayer[0].pause();
       },
       plusSlides(n) {
+        if (this.$refs.videoPlayer && n == 4) this.$refs.videoPlayer[0].play();
+        this.modalOpen = true;
         this.showSlides(this.slideIndex + n);
       },
       currentSlide(n) {
+        this.modalOpen = true;
         this.showSlides(n);
       },
       showSlides(n) {
@@ -359,7 +351,7 @@
       goToProduct(game) {
         localStorage.setItem('currentProductInGames', game.name);
         this.$router.push('/product');
-        this.fetchProducts(); // Обновляем данные после перехода
+        this.fetchProducts();
       },
     },
   };
@@ -392,7 +384,9 @@
   }
   
   .product-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
     gap: 40px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
@@ -401,23 +395,16 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     margin-bottom: 40px;
   }
-  
-  .product-img {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(119, 190, 29, 0.2);
-    transition: transform 0.3s ease;
-  }
-  
-  .product-img:hover {
-    transform: scale(1.02);
-  }
-  
+
   .product-img img {
-    width: 600px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(119, 190, 29, 0.2);
+
   }
-  
+
   .product-other {
     flex: 1;
   }
@@ -668,7 +655,7 @@
   }
   
   .product-photo-video:hover {
-    transform: scale(1.05);
+    transform: scale(0.);
   }
   
   .product-photo-video img {
@@ -711,7 +698,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     display: flex;
@@ -747,8 +734,7 @@
   }
   
   .mySlides img, .mySlides video {
-    max-width: 100%;
-    max-height: 100%;
+    width: 800px;
     border-radius: 12px;
   }
   
