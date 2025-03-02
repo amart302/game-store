@@ -99,13 +99,9 @@ export default {
       try {
         const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
         const data = response.data[0];
-        this.hitGames = data.hit_games.map(game => ({ ...game, isHit: true }));
-        this.newGames = data.new_games.map(game => ({ ...game, isNew: true }));
-        this.topGames = data.top_games.slice(0, 4);
+        this.topGames = data.top_games;
         this.gameCatalog = data.game_catalog.map(game => ({
           ...game,
-          isHit: data.hit_games.some(hit => hit.id === game.id),
-          isNew: data.new_games.some(newGame => newGame.id === game.id),
         }));
       } catch (error) {
         console.error('Ошибка загрузки игр:', error);

@@ -78,7 +78,7 @@
         <div class="product-photo-videos" ref="photoVideos">
           <div class="product-photo-video" v-for="(img, index) in galleryImages" :key="index"
             @click="currentSlide(index + 1)">
-            <div class="product-photo-video-play" v-if="index === 4">
+            <div class="product-photo-video-play" v-if="index === 4 && currentProduct.movies">
               <div class="product-photo-video-playy">
                 <svg width="25" height="29" viewBox="0 0 25 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -89,10 +89,6 @@
             </div>
             <img :src="img" alt="Gallery Image" v-if="index < 4" @click="plusSlides(index)" />
             <img :src="img.poster" alt="Gallery Image" v-else @click="plusSlides(index)" />
-            <!-- <video ref="videoPlayer" :controls="showControls" width="600" @click="handlePlay" :src="img" :poster="currentProduct.screenshots[4].path_thumbnail" v-else>
-                <source :src="img" type="video/mp4">
-                <source :src="img" type="video/webm">
-              </video> -->
           </div>
         </div>
       </div>
@@ -158,7 +154,8 @@
           <div class="mySlides" v-for="(slide, index) in slides" :key="index"
             :style="{ display: slideIndex === index + 1 ? 'flex' : 'none' }">
             <img v-if="index < 4" :src="slide" class="product-gallery-img" />
-            <video v-else controls preload="metadata" ref="videoPlayer" class="123">
+            <img v-if="index == 4 && !slide.video" :src="slide.poster" class="product-gallery-img" />
+            <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="123">
               <source :src="slide.video" />
               Ваш браузер не поддерживает видео.
             </video>
@@ -205,7 +202,7 @@ export default {
         this.currentProduct.screenshots[3].path_thumbnail,
         {
           poster: this.currentProduct.screenshots[4].path_thumbnail,
-          video: this.currentProduct.movies[0].mp4.max
+          video: (this.currentProduct.movies) ? this.currentProduct.movies[0].mp4.max : null
         },
 
       ];
@@ -219,7 +216,6 @@ export default {
     },
   },
   mounted() {
-    document.title = `Playnchill | ${localStorage.getItem('currentProductInGames') || 'Product'}`;
     this.updateBasketCount();
     this.addEventListeners();
   },
@@ -232,8 +228,9 @@ export default {
         const gameId = localStorage.getItem('currentProductInGames');
         const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
         const gameData = response.data[gameId];
+        document.title = `Playnchill | ${gameData.data.name || 'Product'}`;
         if (gameData) {
-          console.log("Данные игры:", gameData.data);
+          console.log("Данные игры:", gameData.data, gameData.data.screenshots);
           this.currentProduct = gameData.data;
         } else {
           console.log("Steam API вернул неуспешный ответ", gameData);
