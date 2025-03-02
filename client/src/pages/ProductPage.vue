@@ -228,9 +228,9 @@ export default {
         const gameId = localStorage.getItem('currentProductInGames');
         const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
         const gameData = response.data[gameId];
-        document.title = `Playnchill | ${gameData.data.name || 'Product'}`;
+        document.title = `Playnchill | ${'Product'}`;
         if (gameData) {
-          console.log("Данные игры:", gameData.data, gameData.data.screenshots);
+          console.log("Данные игры:", gameData.data);
           this.currentProduct = gameData.data;
         } else {
           console.log("Steam API вернул неуспешный ответ", gameData);
