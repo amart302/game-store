@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="productCard">
-    <Skeleton width="328px" height="220px" border-radius="12px" />
+    <Skeleton width="100%" height="220px" border-radius="12px" />
     <Skeleton width="240px" height="24px" border-radius="8px" />
     <Skeleton width="180px" height="24px" border-radius="8px" />
   </div>
@@ -21,7 +21,7 @@
       </svg>
     </button>
     <div class="productCard_podBlock1">
-      <span class="product_priceWithDiscount">{{ game.final_price }} {{ game.currency }}</span>
+      <span class="product_priceWithDiscount">{{ game.final_price }} Руб.</span>
       <span class="product_discount" v-if="game.discounted">-{{ game.discount_percent }}%</span>
       <span class="product_priceWithoutDiscount" v-if="game.discounted">{{ game.original_price }} {{ game.currency }}</span>
     </div>
@@ -46,13 +46,6 @@ export default {
     return {
       loading: true,
     };
-  },
-  watch: {
-    game(newGame) {
-      if (newGame) {
-        this.startLoading();
-      }
-    },
   },
   mounted() {
     if (this.game) {
@@ -245,10 +238,6 @@ export default {
 
 .product_discount { color: #77be1d; }
 .product_priceWithoutDiscount { color: #3d394a; text-decoration: line-through; }
-
-.productCard_podBlock2 {
-  padding: 0 15px;
-}
 
 .productName {
   font-size: 16px;
