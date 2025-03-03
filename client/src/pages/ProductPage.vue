@@ -1,7 +1,7 @@
 <template>
   <div class="product-page">
     <Header />
-    <main v-if="currentProduct.name">
+    <main v-if="currentProduct">
       <div class="product-information">
         <div class="product-container">
           <div class="product-img">
@@ -106,9 +106,9 @@
                 <tr>
                   <td>Платформы</td>
                   <td>
-                    <span v-if="currentProduct.windows_available">Windows</span>
-                    <span v-if="currentProduct.mac_available">, Mac</span>
-                    <span v-if="currentProduct.linux_available">, Linux</span>
+                    <span v-if="currentProduct.platforms.windows">Windows</span>
+                    <span v-if="currentProduct.platforms.mac">, Mac</span>
+                    <span v-if="currentProduct.platforms.linux">, Linux</span>
                   </td>
                 </tr>
               </tbody>
