@@ -73,7 +73,7 @@ export default {
       newGames: [],
       topGames: [],
       gameCatalog: [],
-      feedbacks: [
+      feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || [
         {
           rating: 5,
           date: '20.04.2024',
@@ -122,8 +122,11 @@ export default {
         rating: feedback.rating,
         date: new Date().toLocaleDateString('ru-RU'),
         text: feedback.text,
-        userName: feedback.userName || 'Аноним',
+        userName: feedback.userName,
       });
+      
+      
+      localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
     },
   },
 };

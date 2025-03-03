@@ -10,7 +10,7 @@
         </div>
       </div>
       <textarea v-model="text" placeholder="Ваш отзыв" rows="4"></textarea>
-      <input v-model="userName" type="text" placeholder="Ваше имя (необязательно)" />
+      <p>{{ userName }}</p>
       <div class="form-buttons">
         <button @click="submitFeedback" class="submitBtn">Отправить</button>
         <button @click="showForm = false" class="cancelBtn">Отмена</button>
@@ -27,7 +27,7 @@ export default {
       showForm: false,
       rating: 0,
       text: '',
-      userName: '',
+      userName: JSON.parse(localStorage.getItem("userData")).username || "",
     };
   },
   methods: {
@@ -39,7 +39,7 @@ export default {
       this.$emit('add-feedback', {
         rating: this.rating,
         text: this.text.trim(),
-        userName: this.userName.trim() || 'Аноним',
+        userName: this.userName.trim(),
       });
       this.rating = 0;
       this.text = '';
@@ -130,6 +130,13 @@ textarea {
   resize: vertical;
 }
 
+p{
+  width: 80%;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
 input {
   width: 80%;
   padding: 10px;
@@ -142,6 +149,7 @@ input {
 }
 
 .form-buttons {
+  margin-top: 40px;
   display: flex;
   gap: 10px;
 }
