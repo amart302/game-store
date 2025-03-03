@@ -6,6 +6,7 @@ import Login from '@/Pages/Login.vue';
 import ProductPage from '@/Pages/ProductPage.vue';
 import Favourites from '@/Pages/Favourites.vue';
 import Basket from '@/Pages/Basket.vue';
+import Checkout from '@/pages/Checkout.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,6 +22,10 @@ const router = createRouter({
     {
       path: "/register",
       component: Register
+    },
+    {
+      path: '/checkout',
+      component: Checkout,
     },
     {
       path: "/login",

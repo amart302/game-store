@@ -20,7 +20,9 @@
             </div>
           </div>
         </div>
-        <div class="bl-cash">Накопительный счет</div>
+        <div class="bl-cash" @click="toggleCashModal">
+          Баланс: {{ accountBalance }} {{ selectedVal }}
+        </div>
         <div class="bl-state">
           <a v-for="link in links" :key="link.text" :href="link.href">{{ link.text }}</a>
         </div>
@@ -41,13 +43,27 @@
         </div>
         <p style="color: #77BE1D;">Бесплатно</p>
         <div class="bl-icon">
-          <img src="../assets/images/like.png" alt="Избранное" @click="goToFavorites" />
+          <button alt="Избранное" @click="goToFavorites"  class="favourite-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+                  </svg>
+          </button>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
           <div class="uveda" v-if="basketCount > 0">{{ basketCount }}</div>
         </div>
       </div>
     </div>
     <Profile v-if="showProfile" :showAndHideProfile="showAndHideProfile" />
+
+    <!-- Модальное окно для пополнения счёта -->
+    <div class="cash-modal" v-if="showCashModal">
+      <div class="cash-modal-content">
+        <span class="close-modal" @click="toggleCashModal">×</span>
+        <h3>Пополнить накопительный счёт</h3>
+        <input type="number" v-model="depositAmount" placeholder="Введите сумму" min="1" step="1" />
+        <button @click="depositCash" class="deposit-btn">Пополнить</button>
+      </div>
+    </div>
   </header>
 </template>
 
@@ -67,6 +83,9 @@ export default {
       showProfile: false,
       searchQuery: '',
       basketCount: 0,
+      showCashModal: false,
+      depositAmount: '',
+      accountBalance: 10000, // Изначальный баланс 10,000 рублей
       links: [
         { text: 'Отзывы', href: '#' },
         { text: 'Гарантии', href: '#' },
@@ -85,6 +104,7 @@ export default {
   mounted() {
     document.addEventListener('click', this.closeDropdown);
     this.updateBasketCount();
+    this.loadAccountBalance();
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);
@@ -100,6 +120,7 @@ export default {
     selectVal(val) {
       this.selectedVal = val;
       this.isDropdownVisible = false;
+      localStorage.setItem('selectedVal', val); // Сохраняем выбранную валюту
     },
     closeDropdown(event) {
       if (!event.target.closest('.lang-val-cn')) {
@@ -116,7 +137,7 @@ export default {
       this.$router.push('/favourites');
     },
     goToCart() {
-      this.$router.push('/basket'); // Предполагается, что страница корзины будет позже
+      this.$router.push('/basket');
     },
     goToMain() {
       this.$router.push('/');
@@ -125,11 +146,37 @@ export default {
       const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       this.basketCount = basket.length;
     },
+    toggleCashModal() {
+      this.showCashModal = !this.showCashModal;
+      if (!this.showCashModal) this.depositAmount = '';
+    },
+    depositCash() {
+      const amount = parseInt(this.depositAmount);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Пожалуйста, введите корректную сумму');
+        return;
+      }
+      this.accountBalance += amount;
+      this.saveAccountBalance();
+      this.toggleCashModal();
+    },
+    loadAccountBalance() {
+      const savedBalance = localStorage.getItem('accountBalance');
+      if (savedBalance !== null) {
+        this.accountBalance = parseInt(savedBalance);
+      } else {
+        this.accountBalance = 10000;
+        this.saveAccountBalance();
+      }
+    },
+    saveAccountBalance() {
+      localStorage.setItem('accountBalance', this.accountBalance);
+    },
   },
 };
 </script>
 
-<style >
+<style scoped>
 .container-header {
   max-width: 1440px;
   margin-inline: auto;
@@ -249,6 +296,7 @@ export default {
 }
 
 .bl-icon img {
+  padding: 10px;
   cursor: pointer;
   transition: opacity 0.3s ease;
 }
@@ -261,11 +309,12 @@ export default {
   position: absolute;
   top: -10px;
   right: -10px;
-  width: 20px;
+  width: 18px;
   height: 20px;
-  background-color: #77BE1D;
+  background-color: #78be1dc7;
+  opacity: 2;
   color: white;
-  border-radius: 50%;
+  border-radius: 6px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -280,7 +329,40 @@ export default {
   font-weight: bold;
   cursor: pointer;
 }
+.favourite-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.favourite-btn:hover {
+  background: rgba(255, 48, 48, 0.2);
+}
+
+.favourite-btn.active {
+  background: rgba(75, 28, 28, 0.3);
+  animation: pulse 0.5s ease;
+}
+
+.favourite-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.favourite-btn.active svg {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
 .bl-in {
   background: #C4C4C40D;
   display: flex;
@@ -288,8 +370,8 @@ export default {
   border-radius: 15px;
 }
 
-.input-search{
-  padding: 0px 20px;
+.input-search {
+  padding: 0 20px;
   width: 648px;
   height: 66px;
   border: none;
@@ -321,9 +403,286 @@ input[type='text']:focus {
 .bl-cash {
   color: #fff;
   transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 .bl-cash:hover {
   color: #77BE1D;
+}
+
+.cash-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.cash-modal-content {
+  background: #1C1435;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+  color: #77BE1D;
+}
+
+.cash-modal-content h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.cash-modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 16px;
+}
+
+.deposit-btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #77BE1D, #97E238);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.deposit-btn:hover {
+  background: linear-gradient(90deg, #649E18, #7BC22F);
+  transform: translateY(-3px);
+}
+
+/* Медиазапросы для адаптации */
+@media (max-width: 1024px) {
+  .container-header {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .header-block-w,
+  .header-block-c {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .lang-val-cn button {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  .dropdown button {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .bl-state {
+    gap: 20px;
+  }
+
+  .bl-pr {
+    width: auto;
+    gap: 15px;
+  }
+
+  .bl-pr .pr-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo {
+    font-size: 20px;
+    gap: 8px;
+  }
+
+  .input-search {
+    width: 400px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .bl-icon {
+    gap: 20px;
+  }
+
+  .bl-icon img {
+    width: 24px;
+  }
+
+  .uveda {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    top: -8px;
+    right: -8px;
+  }
+
+  .cash-modal-content {
+    max-width: 350px;
+  }
+
+  .cash-modal-content h3 {
+    font-size: 20px;
+  }
+
+  .cash-modal-content input {
+    font-size: 14px;
+  }
+
+  .deposit-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-header {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .header-block-w {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-block-c {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .lang-val-cn button {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .dropdown {
+    width: 150px;
+  }
+
+  .dropdown button {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .val-options {
+    flex-direction: column;
+  }
+
+  .bl-state {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .bl-pr {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .bl-pr .pr-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo {
+    font-size: 18px;
+    gap: 6px;
+  }
+
+  .bl-in {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .input-search {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+    padding: 0 15px;
+  }
+
+  .bl-in img {
+    padding-right: 15px;
+    width: 20px;
+  }
+
+  .bl-icon {
+    gap: 15px;
+  }
+
+  .bl-icon img {
+    width: 20px;
+  }
+
+  .uveda {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -6px;
+    right: -6px;
+  }
+
+  p[style*="color: #77BE1D"] {
+    font-size: 14px;
+  }
+
+  .cash-modal-content {
+    max-width: 300px;
+    padding: 15px;
+  }
+
+  .cash-modal-content h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .cash-modal-content input {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .deposit-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .close-modal {
+    font-size: 24px;
+    top: 5px;
+    right: 10px;
+  }
 }
 </style>

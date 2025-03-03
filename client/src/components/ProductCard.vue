@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="productCard">
-    <Skeleton width="328px" height="220px"border-radius="12px" />
+    <Skeleton width="328px" height="220px" border-radius="12px" />
     <Skeleton width="240px" height="24px" border-radius="8px" />
     <Skeleton width="180px" height="24px" border-radius="8px" />
   </div>
@@ -42,20 +42,20 @@ import Skeleton from 'primevue/skeleton';
 export default {
   components: { Skeleton },
   name: 'ProductCard',
-  data(){
-    return{
-      loading: true
-    }
+  data() {
+    return {
+      loading: true,
+    };
   },
   watch: {
-    game(newGame){
-      if(newGame){
-        this.startLoading();        
+    game(newGame) {
+      if (newGame) {
+        this.startLoading();
       }
-    }
+    },
   },
-  mounted(){
-    if(this.game){
+  mounted() {
+    if (this.game) {
       setTimeout(() => {
         this.loading = false;
       }, 600);
@@ -246,6 +246,16 @@ export default {
 .product_discount { color: #77be1d; }
 .product_priceWithoutDiscount { color: #3d394a; text-decoration: line-through; }
 
+.productCard_podBlock2 {
+  padding: 0 15px;
+}
+
+.productName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
 .productCard_podBlock3 {
   width: 100%;
   position: absolute;
@@ -267,19 +277,103 @@ export default {
   background-color: #3d394a;
   border-radius: 50%;
 }
+
 .p-skeleton {
   background-color: #e0e0e0;
   animation: skeleton-animation 1.6s ease-in-out infinite;
 }
+
 @keyframes skeleton-animation {
-  0% {
-      background-color: rgba(224, 224, 224, 0.6);
+  0% { background-color: rgba(224, 224, 224, 0.6); }
+  50% { background-color: rgba(224, 224, 224, 0.8); }
+  100% { background-color: rgba(224, 224, 224, 0.6); }
+}
+
+/* Медиазапросы для адаптации */
+@media (max-width: 1024px) {
+  .productCard {
+    height: 300px;
   }
-  50% {
-      background-color: rgba(224, 224, 224, 0.8);
+
+  .productImg {
+    height: 180px;
   }
-  100% {
-      background-color: rgba(224, 224, 224, 0.6);
+
+  .addCardBtn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .productName {
+    font-size: 14px;
+  }
+
+  .productCard_podBlock1 {
+    gap: 4px;
+  }
+
+  .product_priceWithDiscount,
+  .product_discount,
+  .product_priceWithoutDiscount {
+    font-size: 12px;
+  }
+
+  .productCard_podBlock3 {
+    gap: 20px;
+  }
+
+  .category {
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .bullet {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .productCard {
+    height: 260px;
+  }
+
+  .productImg {
+    height: 160px;
+  }
+
+  .addCardBtn {
+    font-size: 12px;
+    padding: 6px 10px;
+    width: 90%;
+  }
+
+  .productName {
+    font-size: 12px;
+  }
+
+  .productCard_podBlock1 {
+    gap: 2px;
+  }
+
+  .product_priceWithDiscount,
+  .product_discount,
+  .product_priceWithoutDiscount {
+    font-size: 10px;
+  }
+
+  .productCard_podBlock3 {
+    gap: 10px;
+  }
+
+  .category {
+    gap: 6px;
+    font-size: 10px;
+  }
+
+  .bullet {
+    width: 10px;
+    height: 10px;
   }
 }
 </style>
