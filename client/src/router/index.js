@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Main from '@/Pages/Main.vue';
-import NotFound from '@/Pages/NotFound.vue';
-import Register from '@/Pages/Register.vue';
-import Login from '@/Pages/Login.vue';
-import ProductPage from '@/Pages/ProductPage.vue';
-import Favourites from '@/Pages/Favourites.vue';
-import Basket from '@/Pages/Basket.vue';
+import Main from '@/pages/Main.vue';
+import NotFound from '@/pages/NotFound.vue';
+import Register from '@/pages/Register.vue';
+import Login from '@/pages/Login.vue';
+import ProductPage from '@/pages/ProductPage.vue';
+import Favourites from '@/pages/Favourites.vue';
+import Basket from '@/pages/Basket.vue';
 import Checkout from '@/pages/Checkout.vue';
-
+import PurchaseHistory from '@/pages/PurchaseHistory.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -22,6 +22,10 @@ const router = createRouter({
     {
       path: "/register",
       component: Register
+    },
+    {
+      path: '/history',
+      component: PurchaseHistory,
     },
     {
       path: '/checkout',

@@ -1,29 +1,38 @@
 <template>
   <div class="product-page">
-    <Header />
+    <Header @currency-changed="updateCurrency" />
+
+    <!-- Основной контент страницы продукта -->
     <main v-if="currentProduct.name">
       <div class="product-information">
+        <!-- Контейнер с изображением и информацией о продукте -->
         <div class="product-container">
           <div class="product-img">
             <img :src="currentProduct.header_image" alt="Product Image" />
           </div>
+
           <div class="product-other">
             <div class="product-title">{{ currentProduct.name }}</div>
             <div class="product-v-nalichii">
               <div class="product-v-nalichii-tochka"></div>
-              В наличии
+              {{ translations[language].inStock }}
             </div>
+
+            <!-- Цена и скидка -->
             <div class="product-prices">
-              <div class="product-now-price">{{ currentProduct.final_price }} {{ currentProduct.currency }}</div>
-              <div class="product-skidka" v-if="currentProduct.discounted">-{{ currentProduct.discount_percent }}%</div>
-              <div class="product-old-price" v-if="currentProduct.discounted">{{ currentProduct.original_price }} {{ currentProduct.currency }}</div>
+              <div class="product-now-price">{{ convertedFinalPrice }} {{ selectedCurrency }}</div>
+              <div v-if="currentProduct.discounted" class="product-skidka">-{{ currentProduct.discount_percent }}%</div>
+              <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} {{ selectedCurrency }}</div>
             </div>
+
+            <!-- Кнопки покупки и лайк -->
             <div class="product-deystvia">
-              <div class="product-buy" @click="buyNow">Купить</div>
-              <div class="product-to-back" @click="addToCart">В корзину</div>
+              <div v-if="!isPurchased" class="product-buy" @click="buyNow">{{ translations[language].buy }}</div>
+              <div v-else class="product-buy purchased">{{ translations[language].purchased }}</div>
+
               <div class="product-like">
-                <button @click="toggleFavourite" class="favourite-btn" :class="{ 'active': favouriteState }">
-                  <svg v-if="favouriteState" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <button @click="toggleFavourite" class="favourite-btn" :class="{ 'active': isFavourite }">
+                  <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
                   </svg>
                   <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,13 +41,15 @@
                 </button>
               </div>
             </div>
+
+            <!-- Информация о платформах -->
             <div class="product-info">
               <table>
                 <thead>
                   <tr class="product-tr1">
-                    <td>Платформы:</td>
-                    <td>Регион активации</td>
-                    <td>Тип товара</td>
+                    <td>{{ translations[language].platforms }}</td>
+                    <td>{{ translations[language].activationRegion }}</td>
+                    <td>{{ translations[language].itemType }}</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,77 +59,88 @@
                       <span v-if="currentProduct.platforms.mac">, Mac</span>
                       <span v-if="currentProduct.platforms.linux">, Linux</span>
                     </td>
-                    <td>Страны СНГ</td>
-                    <td>Ключ</td>
+                    <td>{{ translations[language].cisCountries }}</td>
+                    <td>{{ translations[language].key }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
+            <!-- Дополнительные метки -->
             <div class="product-deystvia-2">
-              <div class="product-moment-dost-but">Моментальная доставка</div>
+              <div class="product-moment-dost-but">{{ translations[language].instantDelivery }}</div>
               <div class="product-garantia">
                 <div class="product-garantia-galochka">
                   <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5837 4.96466L8.49779 0L10 1.51767L3.5837 8L0 4.37942L1.50221 2.86175L3.5837 4.96466Z" fill="#77BE1D" />
                   </svg>
                 </div>
-                Гарантия качества
+                {{ translations[language].qualityGuarantee }}
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Галерея скриншотов и видео -->
         <div class="product-photo-videos" ref="photoVideos">
           <div class="product-photo-video" v-for="(img, index) in galleryImages" :key="index" @click="currentSlide(index + 1)">
-            <div class="product-photo-video-play" v-if="index === 4 && this.currentProduct.movies">
+            <div v-if="index === 4 && currentProduct.movies" class="product-photo-video-play">
               <div class="product-photo-video-playy">
                 <svg width="25" height="29" viewBox="0 0 25 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M23.2435 16.3123L23.2402 16.3143L3.90243 28.0215C2.63108 28.7903 0.957282 27.8734 0.957282 26.2636V2.84903C0.957282 1.24173 2.62841 0.322778 3.90216 1.09415L3.90222 1.09419L23.2402 12.8015L23.2435 12.8034C23.535 12.977 23.78 13.2297 23.9516 13.538C24.1232 13.8464 24.2144 14.1983 24.2144 14.5579C24.2144 14.9174 24.1232 15.2694 23.9516 15.5778C23.78 15.8861 23.535 16.1387 23.2435 16.3123Z" fill="white" stroke="#77BE1D" stroke-width="1.05714" />
                 </svg>
               </div>
             </div>
-            <img :src="img" alt="Gallery Image" v-if="index < 4" @click="plusSlides(index)" />
-            <img :src="img.poster" alt="Gallery Image" v-else @click="plusSlides(index)" />
+            <img v-if="index < 4" :src="img" alt="Gallery Image" @click="plusSlides(index)" />
+            <img v-else :src="img.poster" alt="Gallery Image" @click="plusSlides(index)" />
           </div>
         </div>
       </div>
 
+      <!-- Вкладки с описанием, требованиями и активацией -->
       <div class="product-ostas">
         <div class="product-ostas-title">
           <div class="product-osta" @click="activeTab = 'description'">
-            <div :class="{ 'product-osta-left': true, active: activeTab === 'description' }">Описание товара</div>
+            <div :class="{ 'product-osta-left': true, active: activeTab === 'description' }">
+              {{ translations[language].productDescription }}
+            </div>
           </div>
           <div class="product-osta" @click="activeTab = 'requirements'">
-            <div :class="{ 'product-osta-center': true, active: activeTab === 'requirements' }">Системные требования</div>
+            <div :class="{ 'product-osta-center': true, active: activeTab === 'requirements' }">
+              {{ translations[language].systemRequirements }}
+            </div>
           </div>
           <div class="product-osta" @click="activeTab = 'activation'">
-            <div :class="{ 'product-osta-right': true, active: activeTab === 'activation' }">Активация</div>
+            <div :class="{ 'product-osta-right': true, active: activeTab === 'activation' }">
+              {{ translations[language].activation }}
+            </div>
           </div>
         </div>
         <div class="product-ostas-container">
           <div v-if="activeTab === 'description'" class="product-opisanie">
-            <div class="product-opisanie-title">Полное погружение в {{ currentProduct.name }}</div>
+            <div class="product-opisanie-title">{{ translations[language].fullImmersion }} {{ currentProduct.name }}</div>
             <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
           </div>
           <div v-if="activeTab === 'requirements'" class="product-sisTreb">
-            <div class="product-sisTreb-title">Рекомендованные системные требования</div>
+            <div class="product-sisTreb-title">{{ translations[language].recommendedRequirements }}</div>
             <table class="product-sisTreb-table">
               <tbody>
                 <tr>
-                  <td>Платформы</td>
+                  <td>{{ translations[language].platforms }}</td>
                   <td>
-                    <span v-if="currentProduct.platforms.windows">Windows</span>
-                    <span v-if="currentProduct.platforms.mac">, Mac</span>
-                    <span v-if="currentProduct.platforms.linux">, Linux</span>
+                    <span v-if="currentProduct.windows_available">Windows</span>
+                    <span v-if="currentProduct.mac_available">, Mac</span>
+                    <span v-if="currentProduct.linux_available">, Linux</span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div v-if="activeTab === 'activation'" class="product-activate">
-            <div class="product-activate-title">Введите цифровой ключ продукта</div>
+            <div class="product-activate-title">{{ translations[language].enterProductKey }}</div>
             <div class="product-activate-input">
               <label>
-                Ключ продукта<br />
+                {{ translations[language].productKey }}<br />
                 <input type="text" v-model="activationKey" placeholder="XXXX-XXXX-XXXX" />
               </label>
             </div>
@@ -126,14 +148,16 @@
         </div>
       </div>
 
+      <!-- Рекомендации -->
       <div class="vam-budet-interesno">
-        <div class="vam-budet-interesno-title">Вам будет интересно</div>
+        <div class="vam-budet-interesno-title">{{ translations[language].youMightLike }}</div>
         <div class="vam-budet-interesno-cont">
-          <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @favourites-updated="$forceUpdate()" @click="goToProduct(ad)" />
+          <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @favourites-updated="loadFavourites" @click="navigateToProduct(ad)" />
         </div>
       </div>
     </main>
 
+    <!-- Модальное окно для галереи -->
     <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
       <div class="modal-cont">
         <span class="close cursor" @click="closeModal">×</span>
@@ -141,9 +165,9 @@
           <div class="mySlides" v-for="(slide, index) in slides" :key="index" :style="{ display: slideIndex === index + 1 ? 'flex' : 'none' }">
             <img v-if="index < 4" :src="slide" class="product-gallery-img" />
             <img v-if="index == 4 && !slide.video" :src="slide.poster" class="product-gallery-img" />
-            <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="123">
+            <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="video-player">
               <source :src="slide.video" />
-              Ваш браузер не поддерживает видео.
+              {{ translations[language].videoNotSupported }}
             </video>
           </div>
           <a class="prev" @click="plusSlides(-1)">❮</a>
@@ -166,21 +190,78 @@ import ProductCard from '@/components/ProductCard.vue';
 export default {
   name: 'ProductPage',
   components: { Header, Footer, ProductCard },
+
   data() {
     return {
-      currentProduct: {},
-      products: [],
-      ads: [],
-      activeTab: 'description',
-      activationKey: '',
-      modalOpen: false,
-      slideIndex: 1,
-      basketCount: 0,
-      showHeartAnimation: false,
-      favouriteState: false, // Локальное реактивное состояние для избранного
+      currentProduct: {}, // Текущий продукт
+      products: [], // Список всех продуктов (для рекомендаций)
+      ads: [], // Рекомендуемые продукты
+      activeTab: 'description', // Активная вкладка (описание, требования, активация)
+      activationKey: '', // Ключ активации
+      modalOpen: false, // Состояние модального окна
+      slideIndex: 1, // Индекс текущего слайда в галерее
+      basketCount: 0, // Количество товаров в корзине
+      showHeartAnimation: false, // Анимация лайка
+      favourites: [], // Локальная копия избранного
+      gameId: null, // ID игры из localStorage
+      language: 'RU', // Язык интерфейса
+      selectedCurrency: '₽', // Выбранная валюта
+      // Курсы валют (примерные, можно обновить реальными)
+      exchangeRates: {
+        '₽': { '$': 1 / 92, '€': 1 / 100, '₽': 1 }, // 1 RUB = 0.0109 USD, 0.01 EUR
+        '$': { '₽': 92, '€': 92 / 100, '$': 1 }, // 1 USD = 92 RUB, 0.92 EUR
+        '€': { '₽': 100, '$': 100 / 92, '€': 1 }, // 1 EUR = 100 RUB, 1.087 USD
+      },
+      // Переводы для интерфейса
+      translations: {
+        RU: {
+          inStock: 'В наличии',
+          buy: 'Купить',
+          purchased: 'Куплено',
+          platforms: 'Платформы',
+          activationRegion: 'Регион активации',
+          itemType: 'Тип товара',
+          cisCountries: 'Страны СНГ',
+          key: 'Ключ',
+          instantDelivery: 'Моментальная доставка',
+          qualityGuarantee: 'Гарантия качества',
+          productDescription: 'Описание товара',
+          systemRequirements: 'Системные требования',
+          activation: 'Активация',
+          fullImmersion: 'Полное погружение в',
+          recommendedRequirements: 'Рекомендованные системные требования',
+          enterProductKey: 'Введите цифровой ключ продукта',
+          productKey: 'Ключ продукта',
+          youMightLike: 'Вам будет интересно',
+          videoNotSupported: 'Ваш браузер не поддерживает видео.',
+        },
+        EN: {
+          inStock: 'In Stock',
+          buy: 'Buy',
+          purchased: 'Purchased',
+          platforms: 'Platforms',
+          activationRegion: 'Activation Region',
+          itemType: 'Item Type',
+          cisCountries: 'CIS Countries',
+          key: 'Key',
+          instantDelivery: 'Instant Delivery',
+          qualityGuarantee: 'Quality Guarantee',
+          productDescription: 'Product Description',
+          systemRequirements: 'System Requirements',
+          activation: 'Activation',
+          fullImmersion: 'Full Immersion in',
+          recommendedRequirements: 'Recommended System Requirements',
+          enterProductKey: 'Enter Product Key',
+          productKey: 'Product Key',
+          youMightLike: 'You Might Like',
+          videoNotSupported: 'Your browser does not support video.',
+        },
+      },
     };
   },
+
   computed: {
+    // Галерея изображений и видео
     galleryImages() {
       if (!this.currentProduct.name) return [];
       return [
@@ -194,130 +275,164 @@ export default {
         },
       ];
     },
+
+    // Слайды для модального окна
     slides() {
       return this.galleryImages.length ? [...this.galleryImages] : [];
     },
+
+    // Проверка, куплена ли игра
+    isPurchased() {
+      const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
+      return purchaseHistory.some(purchase => purchase.items.some(item => String(item.id) === String(this.gameId)));
+    },
+
+    // Проверка, добавлена ли игра в избранное
+    isFavourite() {
+      return this.favourites.some(fav => String(fav.id) === String(this.gameId));
+    },
+
+    // Пересчитанная цена с учётом выбранной валюты
+    convertedFinalPrice() {
+      let priceInRub;
+      if(this.currentProduct.price_overview){
+        priceInRub = parseFloat(this.currentProduct.price_overview.final_formatted);
+      }else{
+        priceInRub = 0;
+      }
+      const rate = this.exchangeRates['₽'][this.selectedCurrency];
+      console.log(this.currentProduct.price_overview);
+      
+      return (priceInRub * rate).toFixed(2);
+    },
+    convertedOriginalPrice() {
+      if (!this.currentProduct.discounted) return '';
+      const priceInRub = parseFloat(this.currentProduct.original_price); // Цена в RUB
+      const rate = this.exchangeRates['₽'][this.selectedCurrency];
+      return (priceInRub * rate).toFixed(2);
+    },
   },
+
   mounted() {
+    // Установка заголовка страницы
     document.title = `Playnchill | ${localStorage.getItem('currentProductInGames') || 'Product'}`;
     this.updateBasketCount();
-    this.addEventListeners();
-  },
-  created() {
+    this.gameId = localStorage.getItem('currentProductInGames');
     this.fetchProducts();
+    this.addEventListeners();
+    this.loadFavourites();
+    this.loadCurrencyAndLanguage();
   },
+
   methods: {
+    // Загрузка данных о продукте
     async fetchProducts() {
       try {
         const gameId = localStorage.getItem('currentProductInGames');
+        console.log('Fetching product with ID:', gameId);
         const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
         const gameData = response.data[gameId];
-        if (gameData) {
-          console.log("Данные игры:", gameData.data);
+        if (gameData.success) {
           this.currentProduct = gameData.data;
-          this.updateFavouriteState();
+          console.log('Loaded currentProduct:', this.currentProduct);
+          // Если id отсутствует, используем gameId из localStorage
+          this.currentProduct.id = this.currentProduct.steam_appid || gameId;
+          console.log('Current product ID:', this.currentProduct.id);
+          this.loadFavourites(); // Обновляем избранное после загрузки продукта
         } else {
-          console.log("Steam API вернул неуспешный ответ", gameData);
+          console.log('Steam API вернул неуспешный ответ:', gameData);
         }
       } catch (error) {
-        console.error("Ошибка при попытке получить данные продукта:", error);
+        console.error('Ошибка при загрузке данных продукта:', error);
       }
     },
-    updateFavouriteState() {
-      const favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      this.favouriteState = favourites.some(fav => fav.id === this.currentProduct.id);
-    },
-    shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    },
-    addToCart() {
-      let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
-      const product = {
-        id: this.currentProduct.id,
-        title: this.currentProduct.name,
-        price: `${this.currentProduct.final_price} ${this.currentProduct.currency}`,
-        skidka: this.currentProduct.discounted ? `-${this.currentProduct.discount_percent}%` : null,
-        oldPrice: this.currentProduct.discounted ? `${this.currentProduct.original_price} ${this.currentProduct.currency}` : null,
-        count: 1,
-      };
-      const existing = basket.find(item => item.id === product.id);
-      if (existing) existing.count += 1;
-      else basket.push(product);
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
-      this.animateToBasket();
-      setTimeout(() => {
-        this.basketCount = basket.length;
-        this.$emit('update-basket', this.basketCount);
-      }, 2000);
-    },
-    animateToBasket() {
-      const productImg = this.$el.querySelector('.product-img img');
-      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
-      if (!productImg || !cartIcon) return;
 
-      const cloned = productImg.cloneNode(true);
-      cloned.style.position = 'absolute';
-      cloned.style.width = '30px';
-      cloned.style.height = '50px';
-      cloned.style.zIndex = '20';
-      cloned.style.left = `${productImg.getBoundingClientRect().left + window.scrollX}px`;
-      cloned.style.top = `${productImg.getBoundingClientRect().top + window.scrollY}px`;
-      const targetX = cartIcon.getBoundingClientRect().left + window.scrollX - cloned.getBoundingClientRect().left;
-      const targetY = cartIcon.getBoundingClientRect().top + window.scrollY - cloned.getBoundingClientRect().top;
-
-      this.$el.appendChild(cloned);
-      requestAnimationFrame(() => {
-        cloned.style.transition = 'all 2s';
-        cloned.style.transform = `translate(${targetX}px, ${targetY}px)`;
-        cloned.style.opacity = '1';
-        setTimeout(() => cloned.remove(), 2000);
-      });
+    // Загрузка избранного из localStorage
+    loadFavourites() {
+      this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
+      console.log('Loaded favourites in ProductPage:', this.favourites);
     },
+
+    // Переключение лайка
     toggleFavourite() {
-      let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      const isAlreadyFavourite = favourites.some(fav => fav.id === this.currentProduct.id);
+      let updatedFavourites = [...this.favourites];
+      const isAlreadyFavourite = this.isFavourite;
 
       if (isAlreadyFavourite) {
-        favourites = favourites.filter(fav => fav.id !== this.currentProduct.id);
-        this.favouriteState = false;
+        // Удаляем из избранного
+        updatedFavourites = updatedFavourites.filter(fav => String(fav.id) !== String(this.gameId));
       } else {
-        favourites.push(this.currentProduct);
-        this.favouriteState = true;
+        // Добавляем в избранное
+        updatedFavourites.push({
+          id: this.gameId,
+          title: this.currentProduct.name,
+          large_capsule_image: this.currentProduct.header_image,
+        });
       }
 
-      localStorage.setItem('favourites', JSON.stringify(favourites));
+      this.favourites = updatedFavourites;
+      localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      console.log('Updated favourites in ProductPage:', this.favourites);
       this.showHeartAnimation = true;
-      setTimeout(() => this.showHeartAnimation = false, 800);
+      setTimeout(() => (this.showHeartAnimation = false), 800);
       this.$emit('favourites-updated');
     },
+
+    // Обновление количества товаров в корзине
     updateBasketCount() {
       const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       this.basketCount = basket.length;
     },
+
+    // Прямая покупка
+    buyNow() {
+      if (this.isPurchased) {
+        alert(this.language === 'RU' ? 'Эта игра уже куплена!' : 'This game is already purchased!');
+        return;
+      }
+
+      localStorage.setItem('selectedGameForCheckout', JSON.stringify([{
+        id: this.currentProduct.id,
+        title: this.currentProduct.name,
+        price: this.convertedFinalPrice + ' ' + this.selectedCurrency, // Сохраняем цену в выбранной валюте
+        priceInRub: parseFloat(this.currentProduct.final_price), // Сохраняем цену в RUB для пересчёта
+        skidka: this.currentProduct.discounted ? `-${this.currentProduct.discount_percent}%` : null,
+        oldPrice: this.currentProduct.discounted ? this.convertedOriginalPrice + ' ' + this.selectedCurrency : null,
+        oldPriceInRub: this.currentProduct.discounted ? parseFloat(this.currentProduct.original_price) : null,
+        count: 1,
+      }]));
+      this.$router.push('/checkout');
+    },
+
+    // Закрытие модального окна
     closeModal() {
       this.modalOpen = false;
       document.body.style.overflow = 'auto';
       if (this.$refs.videoPlayer) this.$refs.videoPlayer[0].pause();
     },
+
+    // Переключение слайдов в галерее
     plusSlides(n) {
-      if (this.$refs.videoPlayer && n == 4) this.$refs.videoPlayer[0].play();
+      if (this.$refs.videoPlayer && n === 4) this.$refs.videoPlayer[0].play();
       this.modalOpen = true;
       this.showSlides(this.slideIndex + n);
     },
+
+    // Открытие текущего слайда
     currentSlide(n) {
       this.modalOpen = true;
       this.showSlides(n);
     },
+
+    // Отображение слайдов
     showSlides(n) {
       if (n > this.slides.length) this.slideIndex = 1;
       else if (n < 1) this.slideIndex = this.slides.length;
       else this.slideIndex = n;
       if (this.$refs.videoPlayer && this.slideIndex !== 5) this.$refs.videoPlayer[0].pause();
     },
+
+    // Добавление слушателей событий
     addEventListeners() {
       const scrollContainer = this.$refs.photoVideos;
       if (scrollContainer) {
@@ -333,27 +448,32 @@ export default {
         else if (e.key === 'ArrowRight') this.plusSlides(1);
       });
     },
-    goToProduct(game) {
+
+    // Переход на страницу другого продукта
+    navigateToProduct(game) {
       localStorage.setItem('currentProductInGames', game.name);
       this.$router.push('/product');
       this.fetchProducts();
     },
-    buyNow() {
-      localStorage.setItem('selectedGameForCheckout', JSON.stringify([{
-        id: this.currentProduct.id,
-        title: this.currentProduct.name,
-        price: `${this.currentProduct.final_price} ${this.currentProduct.currency}`,
-        skidka: this.currentProduct.discounted ? `-${this.currentProduct.discount_percent}%` : null,
-        oldPrice: this.currentProduct.discounted ? `${this.currentProduct.original_price} ${this.currentProduct.currency}` : null,
-        count: 1,
-      }]));
-      this.$router.push('/checkout');
+
+    // Загрузка валюты и языка из localStorage
+    loadCurrencyAndLanguage() {
+      const savedVal = localStorage.getItem('selectedVal');
+      const savedLang = localStorage.getItem('language');
+      this.selectedCurrency = savedVal || '₽';
+      this.language = savedLang || 'RU';
+    },
+
+    // Обновление валюты при смене в Header.vue
+    updateCurrency(newCurrency) {
+      this.selectedCurrency = newCurrency;
     },
   },
 };
 </script>
 
 <style scoped>
+/* Основной контейнер страницы */
 .product-page {
   position: relative;
   background-size: cover;
@@ -362,7 +482,9 @@ export default {
   color: #fff;
 }
 
+/* Затемняющий фон */
 .temnee-bg {
+  /* position: absolute; убрано по просьбе */
   top: 0;
   left: 0;
   width: 100%;
@@ -371,6 +493,7 @@ export default {
   z-index: 1;
 }
 
+/* Основной контент */
 main {
   position: relative;
   z-index: 2;
@@ -379,6 +502,7 @@ main {
   padding: 40px 20px;
 }
 
+/* Контейнер продукта */
 .product-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -392,6 +516,7 @@ main {
   margin-bottom: 40px;
 }
 
+/* Изображение продукта */
 .product-img img {
   width: 100%;
   height: 100%;
@@ -400,6 +525,7 @@ main {
   box-shadow: 0 4px 20px rgba(119, 190, 29, 0.2);
 }
 
+/* Информация о продукте */
 .product-other {
   flex: 1;
 }
@@ -431,6 +557,7 @@ main {
   box-shadow: 0 0 5px #77BE1D;
 }
 
+/* Цены и скидки */
 .product-prices {
   display: flex;
   align-items: center;
@@ -459,14 +586,14 @@ main {
   text-decoration: line-through;
 }
 
+/* Кнопки действий */
 .product-deystvia {
   display: flex;
   gap: 15px;
   align-items: center;
 }
 
-.product-buy,
-.product-to-back {
+.product-buy {
   padding: 15px 30px;
   background: linear-gradient(90deg, #77BE1D, #97E238);
   border: none;
@@ -478,21 +605,18 @@ main {
   transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.product-to-back {
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.product-buy:hover,
-.product-to-back:hover {
+.product-buy:hover {
   transform: translateY(-3px);
   background: linear-gradient(90deg, #649E18, #7BC22F);
 }
 
-.product-to-back:hover {
-  background: rgba(119, 190, 29, 0.2);
+.product-buy.purchased {
+  background: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+  transform: none;
 }
 
+/* Кнопка лайка */
 .product-like {
   position: relative;
 }
@@ -589,6 +713,7 @@ main {
   100% { transform: translate(20px, -20px) scale(0.5); opacity: 0; }
 }
 
+/* Информация о платформах */
 .product-info {
   margin: 20px 0;
   background: rgba(255, 255, 255, 0.05);
@@ -614,6 +739,7 @@ main {
   padding: 5px 15px;
 }
 
+/* Дополнительные метки */
 .product-deystvia-2 {
   display: flex;
   gap: 20px;
@@ -653,6 +779,7 @@ main {
   justify-content: center;
 }
 
+/* Галерея */
 .product-photo-videos {
   display: flex;
   gap: 20px;
@@ -719,6 +846,7 @@ main {
   justify-content: center;
 }
 
+/* Модальное окно */
 .modal {
   position: fixed;
   top: 0;
@@ -786,6 +914,7 @@ main {
   background: rgba(119, 190, 29, 0.2);
 }
 
+/* Вкладки */
 .product-ostas {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
@@ -868,6 +997,7 @@ main {
   outline: none;
 }
 
+/* Рекомендации */
 .vam-budet-interesno-title {
   font-size: 32px;
   font-weight: 700;
@@ -922,7 +1052,7 @@ main {
     gap: 10px;
   }
 
-  .product-buy, .product-to-back {
+  .product-buy {
     padding: 12px 20px;
     font-size: 14px;
   }
@@ -964,12 +1094,16 @@ main {
     gap: 10px;
   }
 
-  .product-osta-left, .product-osta-center, .product-osta-right {
+  .product-osta-left,
+  .product-osta-center,
+  .product-osta-right {
     font-size: 16px;
     padding: 0 10px;
   }
 
-  .product-opisanie-title, .product-sisTreb-title, .product-activate-title {
+  .product-opisanie-title,
+  .product-sisTreb-title,
+  .product-activate-title {
     font-size: 20px;
   }
 
@@ -990,7 +1124,8 @@ main {
     width: 95%;
   }
 
-  .mySlides img, .mySlides video {
+  .mySlides img,
+  .mySlides video {
     width: 600px;
   }
 }
@@ -1034,7 +1169,7 @@ main {
     gap: 8px;
   }
 
-  .product-buy, .product-to-back {
+  .product-buy {
     padding: 10px 16px;
     font-size: 12px;
     width: 100%;
@@ -1096,12 +1231,16 @@ main {
     gap: 8px;
   }
 
-  .product-osta-left, .product-osta-center, .product-osta-right {
+  .product-osta-left,
+  .product-osta-center,
+  .product-osta-right {
     font-size: 14px;
     padding: 0 8px;
   }
 
-  .product-opisanie-title, .product-sisTreb-title, .product-activate-title {
+  .product-opisanie-title,
+  .product-sisTreb-title,
+  .product-activate-title {
     font-size: 18px;
   }
 
@@ -1132,12 +1271,14 @@ main {
     font-size: 30px;
   }
 
-  .mySlides img, .mySlides video {
+  .mySlides img,
+  .mySlides video {
     width: 100%;
     max-width: 400px;
   }
 
-  .prev, .next {
+  .prev,
+  .next {
     font-size: 30px;
     padding: 8px;
   }

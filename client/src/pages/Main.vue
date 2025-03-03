@@ -1,30 +1,64 @@
 <template>
   <div id="main">
     <Header />
+
+    <!-- Слайдер -->
     <Slider />
+
+    <!-- Основной контент -->
     <main>
+      <!-- Блок "Top 4" -->
       <div class="mainBlock1">
-        <h1>Top <img src="../assets/images/lightning.svg" class="lightning-icon" /> 4</h1>
+        <h1>
+          Top <img src="../assets/images/lightning.svg" class="lightning-icon" alt="Lightning" /> 4
+        </h1>
         <div class="smallProductCardsConteiner1">
-          <ProductCard v-for="game in topGames" :key="game.id" :game="game" :isTopOnly="true" />
+          <ProductCard
+            v-for="game in topGames"
+            :key="game.id"
+            :game="game"
+            :isTopOnly="true"
+            @update-basket="updateBasketCount"
+            @favourites-updated="loadFavourites"
+          />
         </div>
       </div>
+
+      <!-- Блок с предложениями -->
       <OffersCards />
+
+      <!-- Блок каталога игр -->
       <div class="mainBlock2">
         <div class="productCatalog">
           <h2 class="catalog">Каталог игр</h2>
         </div>
         <div class="smallProductCardsConteiner2">
-          <ProductCard v-for="game in catalogGames" :key="game.id" :game="game" />
+          <ProductCard
+            v-for="game in catalogGames"
+            :key="game.id"
+            :game="game"
+            @update-basket="updateBasketCount"
+            @favourites-updated="loadFavourites"
+          />
         </div>
       </div>
+
+      <!-- Блок акций и скидок -->
       <div class="mainBlock3">
         <h2>Акции и скидки <span>%</span></h2>
         <div class="bigProductCardsConteiner">
-          <ProductCard v-for="game in discountedGames" :key="game.id" :game="game" />
+          <ProductCard
+            v-for="game in discountedGames"
+            :key="game.id"
+            :game="game"
+            @update-basket="updateBasketCount"
+            @favourites-updated="loadFavourites"
+          />
         </div>
       </div>
-      <div class="mainBlock5">
+
+      <!-- Блок отзывов -->
+      <div class="mainBlock5" id="FeedbackForm">
         <h2>Отзывы</h2>
         <FeedbackForm @add-feedback="addFeedback" />
         <div class="feedbackCardsConteiner">
@@ -41,6 +75,7 @@
         </div>
       </div>
     </main>
+
     <Footer />
   </div>
 </template>
@@ -64,16 +99,14 @@ export default {
     Footer,
     FeedbackForm,
   },
-  created() {
-    this.getUserData();
-  },
+
   data() {
     return {
-      hitGames: [],
-      newGames: [],
-      topGames: [],
-      gameCatalog: [],
-      feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || [
+      hitGames: [], // Игры-хиты (не используются, но оставлены для совместимости)
+      newGames: [], // Новые игры (не используются, но оставлены для совместимости)
+      topGames: [], // Топ-4 игры
+      gameCatalog: [], // Полный каталог игр
+      feedbacks: [
         {
           rating: 5,
           date: '20.04.2024',
@@ -83,67 +116,91 @@ export default {
       ],
     };
   },
+
   computed: {
+    // Ограниченный список игр для каталога
     catalogGames() {
       return this.gameCatalog.slice(0, 20);
     },
+
+    // Игры со скидками
     discountedGames() {
-      return this.gameCatalog.filter(game => game.discounted).slice(0, 9); // Исправлено для фильтрации скидок
+      return this.gameCatalog.filter(game => game.discounted).slice(0, 9);
     },
   },
+
+  created() {
+    this.checkUserSession();
+  },
+
   mounted() {
     this.fetchGames();
   },
+
   methods: {
-    async fetchGames() {
-      try {
-        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = response.data[0];
-        this.topGames = data.top_games;
-        this.gameCatalog = data.game_catalog.map(game => ({
-          ...game,
-        }));
-      } catch (error) {
-        console.error('Ошибка загрузки игр:', error);
-      }
-    },
-    getUserData() {
-      const userSession = localStorage.getItem("userSession");
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      let checkSession = users.find(item => item.email === userSession);
-      if (checkSession) {
-        localStorage.setItem("userData", JSON.stringify(checkSession));
+    // Проверка сессии пользователя
+    checkUserSession() {
+      const userSession = localStorage.getItem('userSession');
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(item => item.email === userSession);
+
+      if (user) {
+        localStorage.setItem('userData', JSON.stringify(user));
       } else {
         this.$router.push('/register');
       }
     },
+
+    // Загрузка игр с API
+    async fetchGames() {
+      try {
+        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
+        const data = response.data[0];
+        this.topGames = data.top_games || [];
+        this.gameCatalog = (data.game_catalog || []).map(game => ({ ...game }));
+      } catch (error) {
+        console.error('Ошибка загрузки игр:', error);
+      }
+    },
+
+    // Обновление количества товаров в корзине
+    updateBasketCount() {
+      // Этот метод теперь не используется, так как Header сам обновляет корзину
+    },
+
+    // Добавление отзыва
     addFeedback(feedback) {
       this.feedbacks.push({
         rating: feedback.rating,
         date: new Date().toLocaleDateString('ru-RU'),
         text: feedback.text,
-        userName: feedback.userName,
+        userName: feedback.userName || 'Аноним',
       });
-      
-      
-      localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
+    },
+
+    // Загрузка избранного (для синхронизации лайков)
+    loadFavourites() {
+      // Этот метод теперь не нужен здесь, так как ProductCard сам обрабатывает лайки
     },
   },
 };
 </script>
 
 <style scoped>
+/* Основной контейнер */
 #main {
   min-height: 100vh;
   color: #fff;
 }
 
+/* Основной контент */
 main {
   max-width: 1440px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
+/* Отступы для блоков */
 .mainBlock1,
 .mainBlock2,
 .mainBlock3,
@@ -152,6 +209,7 @@ main {
   margin-bottom: 60px;
 }
 
+/* Заголовки */
 h1,
 h2 {
   font-family: 'Manrope', sans-serif;
@@ -165,12 +223,14 @@ h2 {
   text-shadow: 0 2px 4px rgba(119, 190, 29, 0.3);
 }
 
+/* Иконка молнии */
 .lightning-icon {
   width: 24px;
   vertical-align: middle;
   filter: drop-shadow(0 0 4px #77BE1D);
 }
 
+/* Контейнеры для карточек */
 .smallProductCardsConteiner1,
 .smallProductCardsConteiner2 {
   display: grid;
@@ -184,10 +244,12 @@ h2 {
   gap: 30px;
 }
 
+/* Стили для акций */
 .mainBlock3 h2 span {
   color: #77BE1D;
 }
 
+/* Стили для отзывов */
 .feedbackCardsConteiner {
   display: flex;
   flex-direction: column;
@@ -272,7 +334,9 @@ h2 {
     height: 16px;
   }
 
-  .datePublication, .feedback, .feedbackUserName {
+  .datePublication,
+  .feedback,
+  .feedbackUserName {
     font-size: 14px;
   }
 }

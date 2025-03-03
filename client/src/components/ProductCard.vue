@@ -4,34 +4,61 @@
     <Skeleton width="240px" height="24px" border-radius="8px" />
     <Skeleton width="180px" height="24px" border-radius="8px" />
   </div>
-  <div v-else class="productCard" @click="goToProductPage">
-    <img :src="game.large_capsule_image" class="productImg" ref="productImage" />
+  <div v-else class="productCard" @click="navigateToProductPage">
+    <!-- Изображение карточки -->
+    <img :src="game.large_capsule_image" class="productImg" ref="productImage" alt="Game Image" />
+
+    <!-- Бейджи (хит, новинка, топ) -->
     <div class="cardCategoriesBlock">
-      <div class="hitBlock" v-if="!isTopOnly && isHit">Хит продаж</div>
-      <div class="newBlock" v-if="!isTopOnly && isNew">Новинка</div>
-      <div class="topBlock" v-if="game.top">Top <img src="../assets/images/lightning.svg" alt="Lightning" /> 4</div>
+      <div v-if="!isTopOnly && isHit" class="hitBlock">Хит продаж</div>
+      <div v-if="!isTopOnly && isNew" class="newBlock">Новинка</div>
+      <div v-if="game.top" class="topBlock">
+        Top <img src="../assets/images/lightning.svg" alt="Lightning" /> 4
+      </div>
     </div>
-    <button class="addCardBtn" @click.stop="addToCart">В корзину</button>
-    <button class="addFavouritesBtn" @click.stop="toggleFavourite">
-      <svg v-if="isFavourite" width="21" height="17" viewBox="0 0 21 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.79822 2C3.62151 2 2 3.60676 2 5.41942C2 6.29853 2.37841 7.16006 3.08284 7.80887L10.5 14.6405L17.9172 7.80887C18.6216 7.16006 19 6.29853 19 5.41942C19 3.60676 17.3785 2 15.2018 2C14.1691 2 13.1936 2.3786 12.4864 3.02996L11.1775 4.23555C10.7946 4.58815 10.2054 4.58815 9.82252 4.23555L8.51361 3.02996C7.80642 2.3786 6.8309 2 5.79822 2ZM0 5.41942C0 2.35052 2.67497 0 5.79822 0C7.31068 0 8.77606 0.552629 9.86856 1.55887L10.5 2.14046L11.1314 1.55887C12.2239 0.552628 13.6893 0 15.2018 0C18.325 0 21 2.35052 21 5.41942C21 6.88451 20.3674 8.27118 19.2721 9.27996L11.1775 16.7355C10.7946 17.0882 10.2054 17.0882 9.82252 16.7355L1.72789 9.27996C0.632635 8.27117 0 6.88451 0 5.41942Z" fill="#FF3030"/>
-      </svg>
-      <svg v-else width="21" height="17" viewBox="0 0 21 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.79822 2C3.62151 2 2 3.60676 2 5.41942C2 6.29853 2.37841 7.16006 3.08284 7.80887L10.5 14.6405L17.9172 7.80887C18.6216 7.16006 19 6.29853 19 5.41942C19 3.60676 17.3785 2 15.2018 2C14.1691 2 13.1936 2.3786 12.4864 3.02996L11.1775 4.23555C10.7946 4.58815 10.2054 4.58815 9.82252 4.23555L8.51361 3.02996C7.80642 2.3786 6.8309 2 5.79822 2ZM0 5.41942C0 2.35052 2.67497 0 5.79822 0C7.31068 0 8.77606 0.552629 9.86856 1.55887L10.5 2.14046L11.1314 1.55887C12.2239 0.552628 13.6893 0 15.2018 0C18.325 0 21 2.35052 21 5.41942C21 6.88451 20.3674 8.27118 19.2721 9.27996L11.1775 16.7355C10.7946 17.0882 10.2054 17.0882 9.82252 16.7355L1.72789 9.27996C0.632635 8.27117 0 6.88451 0 5.41942Z" fill="white"/>
-      </svg>
-    </button>
+
+    <!-- Кнопка "В корзину" или "Куплено" -->
+    <button v-if="!isPurchased" class="addCardBtn" @click.stop="addToCart">В корзину</button>
+    <span v-else class="purchased-label">Куплено</span>
+
+    <!-- Кнопка лайка -->
+    <div class="product-like">
+      <button @click.stop="toggleFavourite" class="favourite-btn" :class="{ 'active': isFavourite }">
+        <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
+        </svg>
+        <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Блок с ценой -->
     <div class="productCard_podBlock1">
-      <span class="product_priceWithDiscount">{{ game.final_price }} Руб.</span>
-      <span class="product_discount" v-if="game.discounted">-{{ game.discount_percent }}%</span>
-      <span class="product_priceWithoutDiscount" v-if="game.discounted">{{ game.original_price }} {{ game.currency }}</span>
+      <span class="product_priceWithDiscount">{{ game.final_price }} ₽</span>
+      <span v-if="game.discounted" class="product_discount">-{{ game.discount_percent }}%</span>
+      <span v-if="game.discounted" class="product_priceWithoutDiscount">{{ game.original_price }} ₽</span>
     </div>
+
+    <!-- Название игры -->
     <div class="productCard_podBlock2">
       <span class="productName">{{ game.name }}</span>
     </div>
+
+    <!-- Платформы -->
     <div class="productCard_podBlock3">
-      <div class="category" v-if="game.windows_available"><div class="bullet windows"></div><span>Windows</span></div>
-      <div class="category" v-if="game.mac_available"><div class="bullet mac"></div><span>Mac</span></div>
-      <div class="category" v-if="game.linux_available"><div class="bullet linux"></div><span>Linux</span></div>
+      <div v-if="game.windows_available" class="category">
+        <div class="bullet windows"></div>
+        <span>Windows</span>
+      </div>
+      <div v-if="game.mac_available" class="category">
+        <div class="bullet mac"></div>
+        <span>Mac</span>
+      </div>
+      <div v-if="game.linux_available" class="category">
+        <div class="bullet linux"></div>
+        <span>Linux</span>
+      </div>
     </div>
   </div>
 </template>
@@ -40,20 +67,8 @@
 import Skeleton from 'primevue/skeleton';
 
 export default {
-  components: { Skeleton },
   name: 'ProductCard',
-  data() {
-    return {
-      loading: true,
-    };
-  },
-  mounted() {
-    if (this.game) {
-      setTimeout(() => {
-        this.loading = false;
-      }, 600);
-    }
-  },
+  components: { Skeleton },
   props: {
     game: {
       type: Object,
@@ -64,40 +79,90 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      loading: true,
+      favourites: [], // Локальная копия избранного для реактивности
+    };
+  },
   computed: {
+    // Проверка, добавлена ли игра в избранное
     isFavourite() {
-      const favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      return favourites.some(fav => fav.id === this.game.id);
+      return this.favourites.some(fav => fav.id === this.game.id);
     },
+    // Проверка, является ли игра хитом продаж
     isHit() {
-      return this.$parent.hitGames && this.$parent.hitGames.some(hit => hit.id === this.game.id);
+      return this.$parent?.hitGames?.some(hit => hit.id === this.game.id) || false;
     },
+    // Проверка, является ли игра новинкой
     isNew() {
-      return this.$parent.newGames && this.$parent.newGames.some(newGame => newGame.id === this.game.id);
+      return this.$parent?.newGames?.some(newGame => newGame.id === this.game.id) || false;
+    },
+    // Проверка, куплена ли игра
+    isPurchased() {
+      const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
+      return purchaseHistory.some(purchase => purchase.items.some(item => item.id === this.game.id));
     },
   },
+  watch: {
+    game(newGame) {
+      if (newGame) {
+        this.startLoading();
+      }
+    },
+  },
+  mounted() {
+    this.startLoading();
+    this.loadFavourites();
+  },
   methods: {
-    goToProductPage() {
+    // Загрузка избранного из localStorage
+    loadFavourites() {
+      this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
+    },
+    // Начальная загрузка с задержкой
+    startLoading() {
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
+    },
+    // Переход на страницу продукта
+    navigateToProductPage() {
+      console.log('Navigating to product page with ID:', this.game.id);
       localStorage.setItem('currentProductInGames', this.game.id);
       this.$router.push('/product');
     },
+    // Добавление в корзину
     addToCart() {
+      if (this.isPurchased) {
+        alert('Эта игра уже куплена!');
+        return;
+      }
+
       let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       const product = {
         id: this.game.id,
-        title: this.game.name,
-        price: `${this.game.final_price} ${this.game.currency}`,
-        skidka: this.game.discounted ? `-${this.game.discount_percent}%` : null,
-        oldPrice: this.game.discounted ? `${this.game.original_price} ${this.game.currency}` : null,
+        name: this.game.name,
+        final_price: `${this.game.final_price} ₽`,
+        large_capsule_image: this.game.large_capsule_image,
+        windows_available: this.game.windows_available,
+        linux_available: this.game.linux_available,
+        mac_available: this.game.mac_available,
         count: 1,
       };
+
       const existing = basket.find(item => item.id === product.id);
-      if (existing) existing.count += 1;
-      else basket.push(product);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        basket.push(product);
+      }
+
       localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
       this.$emit('update-basket', basket.length);
       this.animateToCart();
     },
+    // Анимация добавления в корзину
     animateToCart() {
       const productImg = this.$refs.productImage;
       const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
@@ -124,22 +189,44 @@ export default {
         setTimeout(() => cloned.remove(), 1000);
       });
     },
+    // Переключение лайка
     toggleFavourite() {
       let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      const isAlreadyFavourite = favourites.some(fav => fav.id === this.game.id);
+      const isAlreadyFavourite = this.isFavourite;
+
+      console.log(isAlreadyFavourite);
+      
+
       if (isAlreadyFavourite) {
+        // Удаляем из избранного
         favourites = favourites.filter(fav => fav.id !== this.game.id);
       } else {
-        favourites.push(this.game);
+        // Добавляем в избранное, сохраняем минимум данных
+        favourites.push({
+          id: this.game.id,
+          name: this.game.name,
+          large_capsule_image: this.game.large_capsule_image,
+          final_price: this.game.final_price,
+          windows_available: this.game.windows_available,
+          mac_available: this.game.mac_available,
+          linux_available: this.game.linux_available
+        });
+        
       }
+      this.favourites = favourites
+
       localStorage.setItem('favourites', JSON.stringify(favourites));
+      console.log('Updated favourites in ProductCard:', favourites);
       this.$emit('favourites-updated');
+      console.log(this.favourites);
+      
     },
   },
 };
 </script>
 
 <style scoped>
+/* Основной контейнер карточки */
 .productCard {
   height: 340px;
   position: relative;
@@ -149,12 +236,14 @@ export default {
   cursor: pointer;
 }
 
+/* Изображение игры */
 .productImg {
   width: 100%;
   height: 220px;
   border-radius: 12px;
 }
 
+/* Бейджи */
 .cardCategoriesBlock {
   display: flex;
   gap: 4px;
@@ -170,8 +259,7 @@ export default {
   justify-content: center;
   align-items: center;
   gap: 4px;
-  padding-inline: 10px;
-  padding-block: 6px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-size: 14px;
 }
@@ -180,16 +268,17 @@ export default {
 .hitBlock { background-color: #FF3030; }
 .newBlock { background-color: #FF4C00; }
 
+/* Кнопка "В корзину" */
 .addCardBtn {
-  width: 86%;
   display: none;
-  justify-content: center;
-  align-items: center;
   opacity: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%);
+  width: 86%;
+  justify-content: center;
+  align-items: center;
   color: white;
   font-weight: 500;
   font-size: 16px;
@@ -201,7 +290,28 @@ export default {
   transition: all 0.2s;
 }
 
-.productCard:hover .addCardBtn {
+/* Метка "Куплено" */
+.purchased-label {
+  display: none;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+  width: 86%;
+  justify-content: center;
+  align-items: center;
+  color: #201b1b;
+  font-weight: 500;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.829);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+/* Показ кнопки или метки при наведении */
+.productCard:hover .addCardBtn,
+.productCard:hover .purchased-label {
   display: flex;
   opacity: 1;
 }
@@ -210,34 +320,73 @@ export default {
   background-color: #649e18;
 }
 
-.addFavouritesBtn {
-  height: auto;
-  display: none;
-  opacity: 0;
+/* Кнопка лайка */
+.product-like {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
-  padding: 8px;
-  border: none;
-  border-radius: 50%;
+  display: none;
+  opacity: 0;
   transition: all 0.2s;
-  cursor: pointer;
 }
 
-.productCard:hover .addFavouritesBtn {
+.productCard:hover .product-like {
   display: block;
   opacity: 1;
 }
 
+.favourite-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favourite-btn:hover {
+  background: rgba(255, 48, 48, 0.2);
+}
+
+.favourite-btn.active {
+  background: rgba(255, 48, 48, 0.3);
+  animation: pulse 0.5s ease;
+}
+
+.favourite-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.favourite-btn.active svg {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Блок с ценами */
 .productCard_podBlock1 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
 }
 
-.product_discount { color: #77be1d; }
-.product_priceWithoutDiscount { color: #3d394a; text-decoration: line-through; }
+.product_discount {
+  color: #77be1d;
+}
+
+.product_priceWithoutDiscount {
+  color: #3d394a;
+  text-decoration: line-through;
+}
 
 .productName {
   font-size: 16px;
@@ -245,10 +394,11 @@ export default {
   color: #fff;
 }
 
+/* Платформы */
 .productCard_podBlock3 {
-  width: 100%;
   position: absolute;
   bottom: 0;
+  width: 100%;
   display: flex;
   gap: 36px;
   align-items: center;
@@ -267,6 +417,7 @@ export default {
   border-radius: 50%;
 }
 
+/* Скелетон для загрузки */
 .p-skeleton {
   background-color: #e0e0e0;
   animation: skeleton-animation 1.6s ease-in-out infinite;
@@ -288,7 +439,8 @@ export default {
     height: 180px;
   }
 
-  .addCardBtn {
+  .addCardBtn,
+  .purchased-label {
     font-size: 14px;
     padding: 8px 12px;
   }
@@ -331,7 +483,8 @@ export default {
     height: 160px;
   }
 
-  .addCardBtn {
+  .addCardBtn,
+  .purchased-label {
     font-size: 12px;
     padding: 6px 10px;
     width: 90%;

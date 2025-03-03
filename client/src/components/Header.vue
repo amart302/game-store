@@ -24,7 +24,7 @@
           Баланс: {{ accountBalance }} {{ selectedVal }}
         </div>
         <div class="bl-state">
-          <a v-for="link in links" :key="link.text" :href="link.href">{{ link.text }}</a>
+          <a v-for="link in links" :key="link.text" :href="link.href" @click.prevent="handleLinkClick(link.href)">{{ link.text }}</a>
         </div>
         <div class="bl-pr" @click="() => showProfile = true">
           <p>{{ truncatedUsername }}</p>
@@ -43,10 +43,10 @@
         </div>
         <p style="color: #77BE1D;">Бесплатно</p>
         <div class="bl-icon">
-          <button alt="Избранное" @click="goToFavorites"  class="favourite-btn">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
-                  </svg>
+          <button alt="Избранное" @click="goToFavorites" class="favourite-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+            </svg>
           </button>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
           <div class="uveda" v-if="basketCount > 0">{{ basketCount }}</div>
@@ -85,13 +85,13 @@ export default {
       basketCount: 0,
       showCashModal: false,
       depositAmount: '',
-      accountBalance: 10000, // Изначальный баланс 10,000 рублей
+      accountBalance: 10000,
       links: [
-        { text: 'Отзывы', href: '#' },
+        { text: 'Отзывы', href: '#FeedbackForm' },
         { text: 'Гарантии', href: '#' },
         { text: 'Как купить', href: '#' },
         { text: 'Накопительная', href: '#' },
-        { text: 'Заработай', href: '#' },
+        { text: 'История', href: '/history' },
       ],
     };
   },
@@ -120,7 +120,7 @@ export default {
     selectVal(val) {
       this.selectedVal = val;
       this.isDropdownVisible = false;
-      localStorage.setItem('selectedVal', val); // Сохраняем выбранную валюту
+      localStorage.setItem('selectedVal', val);
     },
     closeDropdown(event) {
       if (!event.target.closest('.lang-val-cn')) {
@@ -171,6 +171,30 @@ export default {
     },
     saveAccountBalance() {
       localStorage.setItem('accountBalance', this.accountBalance);
+    },
+    handleLinkClick(href) {
+      if (href === '#FeedbackForm') {
+        // Прокрутка к блоку отзывов на главной странице
+        if (this.$route.path !== '/') {
+          this.$router.push('/').then(() => {
+            this.scrollToFeedback();
+          });
+        } else {
+          this.scrollToFeedback();
+        }
+      } else if (href === '/history') {
+        // Переход на страницу истории покупок
+        this.$router.push('/history');
+      } else {
+        // Для других ссылок просто переход по href (если нужно)
+        window.location.href = href;
+      }
+    },
+    scrollToFeedback() {
+      const feedbackSection = document.querySelector('#FeedbackForm');
+      if (feedbackSection) {
+        feedbackSection.scrollIntoView({ behavior: 'smooth' });
+      }
     },
   },
 };
@@ -307,8 +331,8 @@ export default {
 
 .uveda {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: 1px;
+  right: -1px;
   width: 18px;
   height: 20px;
   background-color: #78be1dc7;
@@ -329,6 +353,7 @@ export default {
   font-weight: bold;
   cursor: pointer;
 }
+
 .favourite-btn {
   background: rgba(255, 255, 255, 0.1);
   border: none;
@@ -363,6 +388,7 @@ export default {
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
+
 .bl-in {
   background: #C4C4C40D;
   display: flex;
