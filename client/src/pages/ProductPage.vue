@@ -1,7 +1,7 @@
 <template>
   <div class="product-page">
     <Header />
-    <main v-if="currentProduct">
+    <main v-if="currentProduct.name">
       <div class="product-information">
         <div class="product-container">
           <div class="product-img">
