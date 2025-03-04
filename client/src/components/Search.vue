@@ -27,7 +27,7 @@
   
   <script>
   export default {
-    name: 'Search',
+    name: 'search',
     props: { searchResults: Array },
     data() {
       return { searched: false };

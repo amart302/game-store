@@ -15,7 +15,7 @@
           </div>
           <div class="purchase-items">
             <!-- Используем ProductCard для отображения товаров -->
-            <ProductCard
+            <ProductCard class="ProductCard"
               v-for="item in purchase.items"
               :key="item.id"
               :game="item"
@@ -122,7 +122,6 @@ export default {
 /* Основной контейнер страницы */
 .history-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0A071A 0%, #1C1435 100%);
   color: #fff;
   font-family: 'Manrope', sans-serif;
 }
@@ -194,9 +193,11 @@ main {
 
 /* Список товаров */
 .purchase-items {
-  display: grid;
-  gap: 20px;
+  display: grid;  
+  grid-template-columns: repeat(4,  1fr);
+  gap: 30px;
 }
+
 
 /* Пустая история */
 .empty-history {
