@@ -6,8 +6,17 @@
                 <form @submit.prevent="updateUserData()"
                     style="padding-top: 30px; display: flex; flex-direction: row; gap: 20px; width: auto;">
                     <div class="form-avatar-container">
-                        <img :src="avatarIcon" class="avatar-icon" alt="User Avatar">
-                        <input type="file" @change="handleFileChange" accept="image/*">
+                        <div class="avatar-icon">
+                            <img :src="avatarIcon"  alt="User Avatar">
+
+                                <label class="upload" name="upload" >
+                                    <input type="file" style="display: none;" @change="handleFileChange" accept="image/*">
+                                    <img :src="upload" for="upload" name="upload" alt="">
+                                </label>
+                            
+                        </div>
+                     
+                        <!-- <input type="file" @change="handleFileChange" accept="image/*"> -->
                     </div>
                     <div class="form-child-container">
                         <div class="profile-group">
@@ -51,6 +60,8 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+
+import upload from "../assets/images/upload.svg"
 
 const props = defineProps({
     showAndHideProfile: Function
@@ -130,22 +141,51 @@ const updateUserData = () => {
 }
 
 .avatar-icon {
-    width: 200px;
-    height: 200px;
+    height: max-content;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+.avatar-icon img {
+    width: 600px;
+    height: 600px;
+    object-fit: cover;
     border-radius: 50%;
+    margin: auto;
 }
 
 .form-child-container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    width: 50%;
 }
 
 .form-avatar-container {
+    padding-top: 30px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    gap: 10px;
+    position: relative;
+    flex-direction: row;
+    gap: 20px;
+    width: 1000px;
+    height: 800px;
+}
+
+.form-avatar-container .upload {
+    position: absolute;
+    background: #77BE1D;
+    padding: 10px;
+    border-radius: 50%;
+    bottom: 10px;
+    right: 80px;
+}
+
+.form-avatar-container .upload img {
+    padding:30px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
 }
 </style> 

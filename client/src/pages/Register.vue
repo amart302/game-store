@@ -141,6 +141,7 @@
         background-color: #13101B;
         color: white;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        font-size: 20px;
     }
     form h2{
         text-align: center;
@@ -152,6 +153,8 @@
         border: none;
         border-radius: 6px;
         color: white;
+        height: 40px;
+        font-size: 20px;
     }
     form button{
         height: 30px;
