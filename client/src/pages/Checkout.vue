@@ -249,7 +249,6 @@ export default {
 /* Основной контейнер */
 .checkout-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0A071A 0%, #1C1435 100%);
   color: #fff;
 }
 

@@ -26,7 +26,7 @@
         <div class="bl-state">
           <a v-for="link in links" :key="link.text" :href="link.href" @click.prevent="handleLinkClick(link.href)">{{ link.text }}</a>
         </div>
-        <div class="bl-pr" @click="() => showProfile = true">
+        <div class="bl-pr" @click="() => goToProfile()">
           <p>{{ truncatedUsername }}</p>
           <img :src="userData.avatarIcon || 'src/assets/images/avatarIcon.png'" class="pr-img" />
         </div>
@@ -80,7 +80,6 @@ export default {
       selectedLang: 'RU',
       selectedVal: '₽',
       isDropdownVisible: false,
-      showProfile: false,
       searchQuery: '',
       basketCount: 0,
       showCashModal: false,
@@ -110,6 +109,9 @@ export default {
     document.removeEventListener('click', this.closeDropdown);
   },
   methods: {
+    goToProfile(){
+      this.$router.push('/profile');
+    },
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },

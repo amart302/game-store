@@ -8,6 +8,7 @@ import Favourites from '@/pages/Favourites.vue';
 import Basket from '@/pages/Basket.vue';
 import Checkout from '@/pages/Checkout.vue';
 import PurchaseHistory from '@/pages/PurchaseHistory.vue';
+import ProfileUser from '@/components/ProfileUser.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -46,6 +47,10 @@ const router = createRouter({
     {
       path: "/basket",
       component: Basket
+    },
+    {
+      path: "/profile",
+      component: ProfileUser
     },
   ],
 })
