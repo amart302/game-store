@@ -62,6 +62,16 @@
         <h2>Отзывы</h2>
         <FeedbackForm @add-feedback="addFeedback" />
         <div class="feedbackCardsConteiner">
+          <div class="feedbackCard">
+            <div class="estimationBlock">
+              <div class="starBlock" v-for="n in 5" :key="n">
+                <img src="../assets/images/star.svg" alt="Star" />
+              </div>
+            </div>
+            <span class="datePublication">20.04.2024</span>
+            <p class="feedback">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur repellat illum necessitatibus, deleniti quibusdam quo!</p>
+            <p class="feedbackUserName">Amart</p>
+          </div>
           <div class="feedbackCard" v-for="(feedback, index) in feedbacks" :key="index">
             <div class="estimationBlock">
               <div class="starBlock" v-for="n in feedback.rating" :key="n">
@@ -75,7 +85,6 @@
         </div>
       </div>
     </main>
-
     <Footer />
   </div>
 </template>
@@ -106,14 +115,7 @@ export default {
       newGames: [], // Новые игры (не используются, но оставлены для совместимости)
       topGames: [], // Топ-4 игры
       gameCatalog: [], // Полный каталог игр
-      feedbacks: [
-        {
-          rating: 5,
-          date: '20.04.2024',
-          text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur repellat illum necessitatibus, deleniti quibusdam quo!',
-          userName: 'Amart',
-        },
-      ],
+      feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
 
@@ -176,6 +178,7 @@ export default {
         text: feedback.text,
         userName: feedback.userName || 'Аноним',
       });
+      localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
     },
 
     // Загрузка избранного (для синхронизации лайков)
