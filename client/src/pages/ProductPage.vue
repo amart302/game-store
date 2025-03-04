@@ -295,13 +295,12 @@ export default {
     // Пересчитанная цена с учётом выбранной валюты
     convertedFinalPrice() {
       let priceInRub;
-      if(this.currentProduct.price_overview){
-        priceInRub = parseFloat(this.currentProduct.price_overview.final_formatted);
+      if(this.currentProduct.final_price){
+        priceInRub = parseFloat(this.currentProduct.final_price);
       }else{
         priceInRub = 0;
       }
       const rate = this.exchangeRates['₽'][this.selectedCurrency];
-      console.log(this.currentProduct.price_overview);
       
       return (priceInRub * rate).toFixed(2);
     },
@@ -315,9 +314,9 @@ export default {
 
   mounted() {
     // Установка заголовка страницы
-    document.title = `Playnchill | ${localStorage.getItem('currentProductInGames') || 'Product'}`;
+    document.title = `Playnchill`;
     this.updateBasketCount();
-    this.gameId = localStorage.getItem('currentProductInGames');
+    this.gameId = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
     this.fetchProducts();
     this.addEventListeners();
     this.loadFavourites();
@@ -328,16 +327,14 @@ export default {
     // Загрузка данных о продукте
     async fetchProducts() {
       try {
-        const gameId = localStorage.getItem('currentProductInGames');
-        console.log('Fetching product with ID:', gameId);
-        const response = await axios.get(`http://localhost:3000/api/steam/${gameId}`);
-        const gameData = response.data[gameId];
+        const gameId = JSON.parse(sessionStorage.getItem('currentProductInGames'));
+        const response = await axios.get(`http://localhost:3000/api/steam/${gameId.id}`);
+        const gameData = response.data[gameId.id];
         if (gameData.success) {
+          gameData.data.final_price = gameId.price;
           this.currentProduct = gameData.data;
-          console.log('Loaded currentProduct:', this.currentProduct);
           // Если id отсутствует, используем gameId из localStorage
           this.currentProduct.id = this.currentProduct.steam_appid || gameId;
-          console.log('Current product ID:', this.currentProduct.id);
           this.loadFavourites(); // Обновляем избранное после загрузки продукта
         } else {
           console.log('Steam API вернул неуспешный ответ:', gameData);
@@ -350,7 +347,6 @@ export default {
     // Загрузка избранного из localStorage
     loadFavourites() {
       this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      console.log('Loaded favourites in ProductPage:', this.favourites);
     },
 
     // Переключение лайка

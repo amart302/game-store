@@ -128,8 +128,10 @@ export default {
     },
     // Переход на страницу продукта
     navigateToProductPage() {
-      console.log('Navigating to product page with ID:', this.game.id);
-      localStorage.setItem('currentProductInGames', this.game.id);
+      sessionStorage.setItem('currentProductInGames', JSON.stringify({
+        id: this.game.id,
+        price: this.game.final_price
+      }));
       this.$router.push('/product');
     },
     // Добавление в корзину
