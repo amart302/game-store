@@ -27,7 +27,7 @@ export default {
       showForm: false,
       rating: 0,
       text: '',
-      userName: JSON.parse(localStorage.getItem("userData")).username || "",
+      userName: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")).username : "",
     };
   },
   methods: {

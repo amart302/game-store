@@ -19,7 +19,6 @@
             :game="game"
             :isTopOnly="true"
             @update-basket="updateBasketCount"
-            @favourites-updated="loadFavourites"
           />
         </div>
       </div>
@@ -38,7 +37,6 @@
             :key="game.id"
             :game="game"
             @update-basket="updateBasketCount"
-            @favourites-updated="loadFavourites"
           />
         </div>
       </div>
@@ -52,7 +50,6 @@
             :key="game.id"
             :game="game"
             @update-basket="updateBasketCount"
-            @favourites-updated="loadFavourites"
           />
         </div>
       </div>
@@ -108,52 +105,44 @@ export default {
     Footer,
     FeedbackForm,
   },
-
   data() {
     return {
-      hitGames: [], // Игры-хиты (не используются, но оставлены для совместимости)
-      newGames: [], // Новые игры (не используются, но оставлены для совместимости)
-      topGames: [], // Топ-4 игры
-      gameCatalog: [], // Полный каталог игр
+      hitGames: [],
+      newGames: [],
+      topGames: [],
+      gameCatalog: [],
       feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
 
   computed: {
-    // Ограниченный список игр для каталога
     catalogGames() {
       return this.gameCatalog.slice(0, 20);
     },
-
-    // Игры со скидками
     discountedGames() {
       return this.gameCatalog.filter(game => game.discounted).slice(0, 9);
     },
   },
-
-  created() {
+  created(){
     this.checkUserSession();
   },
-
   mounted() {
     this.fetchGames();
   },
 
   methods: {
-    // Проверка сессии пользователя
     checkUserSession() {
-      const userSession = localStorage.getItem('userSession');
+      const userSession = sessionStorage.getItem('userSession');
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const user = users.find(item => item.email === userSession);
 
       if (user) {
-        localStorage.setItem('userData', JSON.stringify(user));
+        sessionStorage.setItem('userData', JSON.stringify(user));
       } else {
         this.$router.push('/register');
       }
     },
 
-    // Загрузка игр с API
     async fetchGames() {
       try {
         const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
@@ -164,13 +153,8 @@ export default {
         console.error('Ошибка загрузки игр:', error);
       }
     },
-
-    // Обновление количества товаров в корзине
     updateBasketCount() {
-      // Этот метод теперь не используется, так как Header сам обновляет корзину
     },
-
-    // Добавление отзыва
     addFeedback(feedback) {
       this.feedbacks.push({
         rating: feedback.rating,
@@ -180,30 +164,20 @@ export default {
       });
       localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
     },
-
-    // Загрузка избранного (для синхронизации лайков)
-    loadFavourites() {
-      // Этот метод теперь не нужен здесь, так как ProductCard сам обрабатывает лайки
-    },
   },
 };
 </script>
 
 <style scoped>
-/* Основной контейнер */
 #main {
   min-height: 100vh;
   color: #fff;
 }
-
-/* Основной контент */
 main {
   max-width: 1440px;
   margin: 0 auto;
   padding: 40px 20px;
 }
-
-/* Отступы для блоков */
 .mainBlock1,
 .mainBlock2,
 .mainBlock3,
@@ -211,8 +185,6 @@ main {
 .offersCardsConteiner {
   margin-bottom: 60px;
 }
-
-/* Заголовки */
 h1,
 h2 {
   font-family: 'Manrope', sans-serif;
@@ -225,15 +197,11 @@ h2 {
   color: transparent;
   text-shadow: 0 2px 4px rgba(119, 190, 29, 0.3);
 }
-
-/* Иконка молнии */
 .lightning-icon {
   width: 24px;
   vertical-align: middle;
   filter: drop-shadow(0 0 4px #77BE1D);
 }
-
-/* Контейнеры для карточек */
 .smallProductCardsConteiner1,
 .smallProductCardsConteiner2 {
   display: grid;
@@ -246,13 +214,9 @@ h2 {
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
-
-/* Стили для акций */
 .mainBlock3 h2 span {
   color: #77BE1D;
 }
-
-/* Стили для отзывов */
 .feedbackCardsConteiner {
   display: flex;
   flex-direction: column;
@@ -297,8 +261,6 @@ h2 {
   font-weight: 600;
   color: #97E238;
 }
-
-/* Медиазапросы для адаптации */
 @media (max-width: 1024px) {
   main {
     padding: 20px 15px;

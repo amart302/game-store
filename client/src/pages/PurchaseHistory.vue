@@ -14,14 +14,11 @@
             </div>
           </div>
           <div class="purchase-items">
-            <!-- Используем ProductCard для отображения товаров -->
             <ProductCard class="ProductCard"
               v-for="item in purchase.items"
               :key="item.id"
               :game="item"
               :isTopOnly="false"
-              @update-basket="updateBasketCount"
-              @favourites-updated="loadFavourites"
             />
           </div>
         </div>
@@ -47,10 +44,10 @@ export default {
 
   data() {
     return {
-      purchaseHistory: [], // История покупок
-      currencySymbol: '₽', // Символ валюты
-      products: [], // Для хранения данных о товарах с API
-      loading: true, // Состояние загрузки
+      purchaseHistory: [],
+      currencySymbol: '₽',
+      products: [],
+      loading: true,
     };
   },
 
@@ -61,20 +58,16 @@ export default {
   },
 
   methods: {
-    // Загрузка истории покупок
     loadPurchaseHistory() {
       const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
       this.purchaseHistory = history;
-      console.log('Loaded purchase history:', history);
     },
 
-    // Загрузка символа валюты
     loadCurrencySymbol() {
       const savedVal = localStorage.getItem('selectedVal');
       this.currencySymbol = savedVal || '₽';
     },
 
-    // Загрузка данных о товарах для получения изображений
     async fetchProducts() {
       try {
         this.loading = true;
@@ -93,7 +86,6 @@ export default {
       }
     },
 
-    // Отображение способа оплаты
     paymentMethodDisplay(method) {
       switch (method) {
         case 'account': return 'Накопительный счёт';
@@ -104,29 +96,17 @@ export default {
         default: return 'Неизвестно';
       }
     },
-
-    // Загрузка избранного (для синхронизации лайков)
-    loadFavourites() {
-      // Не нужно здесь, так как ProductCard сам обрабатывает лайки
-    },
-
-    // Обновление количества товаров в корзине
-    updateBasketCount() {
-      // Не нужно здесь, так как Header сам обновляет корзину
-    },
   },
 };
 </script>
 
 <style scoped>
-/* Основной контейнер страницы */
 .history-page {
   min-height: 100vh;
   color: #fff;
   font-family: 'Manrope', sans-serif;
 }
 
-/* Основной контент */
 main {
   max-width: 1440px;
   margin: 0 auto;
@@ -134,7 +114,6 @@ main {
   min-height: calc(100vh - 766px);
 }
 
-/* Заголовок */
 .history-title {
   font-size: 36px;
   font-weight: 800;
@@ -146,7 +125,6 @@ main {
   margin-bottom: 30px;
 }
 
-/* Контейнер истории покупок */
 .history-container {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
@@ -155,7 +133,6 @@ main {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Элемент истории */
 .history-item {
   margin-bottom: 40px;
   padding-bottom: 30px;
@@ -167,7 +144,6 @@ main {
   margin-bottom: 0;
 }
 
-/* Заголовок покупки */
 .purchase-header {
   display: flex;
   justify-content: space-between;
@@ -191,7 +167,6 @@ main {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Список товаров */
 .purchase-items {
   display: grid;  
   grid-template-columns: repeat(4,  1fr);
@@ -199,7 +174,6 @@ main {
 }
 
 
-/* Пустая история */
 .empty-history {
   text-align: center;
   padding: 60px;
@@ -229,7 +203,6 @@ main {
   color: white;
 }
 
-/* Медиазапросы для адаптации */
 @media (max-width: 1024px) {
   main {
     padding: 20px 15px;

@@ -52,9 +52,9 @@ export default {
   name: 'Slider',
   data() {
     return {
-      index: 2, // Начальный слайд (второй по умолчанию)
-      indent: 0, // Смещение в rem
-      slideWidth: 160.6, // Ширина слайда из исходного JS
+      index: 2,
+      indent: 0,
+      slideWidth: 160.6,
     };
   },
   methods: {

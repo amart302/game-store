@@ -38,9 +38,9 @@ export default {
   components: { Header, Footer, ProductCard },
   data() {
     return {
-      favourites: JSON.parse(localStorage.getItem('favourites')) || [],
+      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
       currentPage: 1,
-      itemsPerPage: 8, // Ограничение на страницу
+      itemsPerPage: 8,
     };
   },
   computed: {
@@ -56,10 +56,9 @@ export default {
   methods: {
     updateFavourites() {
       this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      this.currentPage = 1; // Сбрасываем страницу при обновлении
+      this.currentPage = 1;
     },
     updateBasketCount(count) {
-      // Обновление счёта корзины из ProductCard
       this.$emit('update-basket', count);
     },
   },
@@ -73,7 +72,7 @@ export default {
 }
 
 main {
-  min-height: calc(100vh - (100px + 300px)); /* Адаптивная высота: шапка ~100px, футер ~300px */
+  min-height: calc(100vh - 600px);
   max-width: 1440px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -138,7 +137,6 @@ main {
   color: white;
 }
 
-/* Пагинация */
 .pagination {
   display: flex;
   justify-content: center;

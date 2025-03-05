@@ -53,7 +53,6 @@
         </div>
       </div>
     </div>
-    <Profile v-if="showProfile" :showAndHideProfile="showAndHideProfile" />
 
     <!-- Модальное окно для пополнения счёта -->
     <div class="cash-modal" v-if="showCashModal">
@@ -76,7 +75,7 @@ export default {
   },
   data() {
     return {
-      userData: JSON.parse(localStorage.getItem("userData")) || { username: "Гость" },
+      userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },
       selectedLang: 'RU',
       selectedVal: '₽',
       isDropdownVisible: false,
@@ -129,9 +128,6 @@ export default {
         this.isDropdownVisible = false;
       }
     },
-    showAndHideProfile() {
-      this.showProfile = !this.showProfile;
-    },
     handleSearch() {
       this.$emit('search', this.searchQuery);
     },
@@ -176,7 +172,6 @@ export default {
     },
     handleLinkClick(href) {
       if (href === '#FeedbackForm') {
-        // Прокрутка к блоку отзывов на главной странице
         if (this.$route.path !== '/') {
           this.$router.push('/').then(() => {
             this.scrollToFeedback();
@@ -185,10 +180,8 @@ export default {
           this.scrollToFeedback();
         }
       } else if (href === '/history') {
-        // Переход на страницу истории покупок
         this.$router.push('/history');
       } else {
-        // Для других ссылок просто переход по href (если нужно)
         window.location.href = href;
       }
     },
@@ -312,6 +305,7 @@ export default {
   border-radius: 50%;
   border: 3px solid #77BE1D;
   background-color: #fff;
+  object-fit: cover;
 }
 
 .bl-icon {
@@ -357,7 +351,7 @@ export default {
 }
 
 .favourite-btn {
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border: none;
   padding: 10px;
   border-radius: 50%;
@@ -369,20 +363,7 @@ export default {
 }
 
 .favourite-btn:hover {
-  background: rgba(255, 48, 48, 0.2);
-}
-
-.favourite-btn.active {
-  background: rgba(75, 28, 28, 0.3);
-  animation: pulse 0.5s ease;
-}
-
-.favourite-btn svg {
-  transition: transform 0.3s ease;
-}
-
-.favourite-btn.active svg {
-  transform: scale(1.1);
+  opacity: 0.7;
 }
 
 @keyframes pulse {

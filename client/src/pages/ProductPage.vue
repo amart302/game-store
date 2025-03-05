@@ -2,10 +2,8 @@
   <div class="product-page">
     <Header @currency-changed="updateCurrency" />
 
-    <!-- Основной контент страницы продукта -->
     <main v-if="currentProduct.name">
       <div class="product-information">
-        <!-- Контейнер с изображением и информацией о продукте -->
         <div class="product-container">
           <div class="product-img">
             <img :src="currentProduct.header_image" alt="Product Image" />
@@ -18,16 +16,14 @@
               {{ translations[language].inStock }}
             </div>
 
-            <!-- Цена и скидка -->
             <div class="product-prices">
               <div class="product-now-price">{{ convertedFinalPrice }} {{ selectedCurrency }}</div>
               <div v-if="currentProduct.discounted" class="product-skidka">-{{ currentProduct.discount_percent }}%</div>
               <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} {{ selectedCurrency }}</div>
             </div>
 
-            <!-- Кнопки покупки и лайк -->
             <div class="product-deystvia">
-              <div v-if="!isPurchased" class="product-buy" @click="buyNow">{{ translations[language].buy }}</div>
+              <div v-if="!isPurchased" class="product-buy" @click="addToCart">{{ translations[language].buy }}</div>
               <div v-else class="product-buy purchased">{{ translations[language].purchased }}</div>
 
               <div class="product-like">
@@ -42,7 +38,6 @@
               </div>
             </div>
 
-            <!-- Информация о платформах -->
             <div class="product-info">
               <table>
                 <thead>
@@ -66,7 +61,6 @@
               </table>
             </div>
 
-            <!-- Дополнительные метки -->
             <div class="product-deystvia-2">
               <div class="product-moment-dost-but">{{ translations[language].instantDelivery }}</div>
               <div class="product-garantia">
@@ -81,7 +75,6 @@
           </div>
         </div>
 
-        <!-- Галерея скриншотов и видео -->
         <div class="product-photo-videos" ref="photoVideos">
           <div class="product-photo-video" v-for="(img, index) in galleryImages" :key="index" @click="currentSlide(index + 1)">
             <div v-if="index === 4 && currentProduct.movies" class="product-photo-video-play">
@@ -97,7 +90,6 @@
         </div>
       </div>
 
-      <!-- Вкладки с описанием, требованиями и активацией -->
       <div class="product-ostas">
         <div class="product-ostas-title">
           <div class="product-osta" @click="activeTab = 'description'">
@@ -148,16 +140,14 @@
         </div>
       </div>
 
-      <!-- Рекомендации -->
       <div class="vam-budet-interesno">
         <div class="vam-budet-interesno-title">{{ translations[language].youMightLike }}</div>
         <div class="vam-budet-interesno-cont">
-          <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @favourites-updated="loadFavourites" @click="navigateToProduct(ad)" />
+          <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
         </div>
       </div>
     </main>
 
-    <!-- Модальное окно для галереи -->
     <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
       <div class="modal-cont">
         <span class="close cursor" @click="closeModal">×</span>
@@ -193,30 +183,30 @@ export default {
 
   data() {
     return {
-      currentProduct: {}, // Текущий продукт
-      products: [], // Список всех продуктов (для рекомендаций)
-      ads: [], // Рекомендуемые продукты
-      activeTab: 'description', // Активная вкладка (описание, требования, активация)
-      activationKey: '', // Ключ активации
-      modalOpen: false, // Состояние модального окна
-      slideIndex: 1, // Индекс текущего слайда в галерее
-      basketCount: 0, // Количество товаров в корзине
-      showHeartAnimation: false, // Анимация лайка
-      favourites: [], // Локальная копия избранного
-      gameId: null, // ID игры из localStorage
-      language: 'RU', // Язык интерфейса
-      selectedCurrency: '₽', // Выбранная валюта
-      // Курсы валют (примерные, можно обновить реальными)
+      currentProduct: {},
+      products: [],
+      ads: [],
+      activeTab: 'description',
+      activationKey: '',
+      modalOpen: false,
+      slideIndex: 1,
+      basketCount: 0,
+      showHeartAnimation: false,
+      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
+      productData: null,
+      language: 'RU',
+      selectedCurrency: '₽',
+      
       exchangeRates: {
-        '₽': { '$': 1 / 92, '€': 1 / 100, '₽': 1 }, // 1 RUB = 0.0109 USD, 0.01 EUR
-        '$': { '₽': 92, '€': 92 / 100, '$': 1 }, // 1 USD = 92 RUB, 0.92 EUR
-        '€': { '₽': 100, '$': 100 / 92, '€': 1 }, // 1 EUR = 100 RUB, 1.087 USD
+        '₽': { '$': 1 / 92, '€': 1 / 100, '₽': 1 },
+        '$': { '₽': 92, '€': 92 / 100, '$': 1 },
+        '€': { '₽': 100, '$': 100 / 92, '€': 1 },
       },
-      // Переводы для интерфейса
+      
       translations: {
         RU: {
           inStock: 'В наличии',
-          buy: 'Купить',
+          buy: 'Добавить в корзину',
           purchased: 'Куплено',
           platforms: 'Платформы',
           activationRegion: 'Регион активации',
@@ -261,7 +251,6 @@ export default {
   },
 
   computed: {
-    // Галерея изображений и видео
     galleryImages() {
       if (!this.currentProduct.name) return [];
       return [
@@ -276,23 +265,19 @@ export default {
       ];
     },
 
-    // Слайды для модального окна
     slides() {
       return this.galleryImages.length ? [...this.galleryImages] : [];
     },
 
-    // Проверка, куплена ли игра
     isPurchased() {
       const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      return purchaseHistory.some(purchase => purchase.items.some(item => String(item.id) === String(this.gameId)));
+      return purchaseHistory.some(purchase => purchase.items.some(item => String(item.id) === String(this.productData)));
     },
 
-    // Проверка, добавлена ли игра в избранное
     isFavourite() {
-      return this.favourites.some(fav => String(fav.id) === String(this.gameId));
+      return this.favourites.some(fav => String(fav.id) === String(this.productData));
     },
 
-    // Пересчитанная цена с учётом выбранной валюты
     convertedFinalPrice() {
       let priceInRub;
       if(this.currentProduct.final_price){
@@ -313,122 +298,131 @@ export default {
   },
 
   mounted() {
-    // Установка заголовка страницы
     document.title = `Playnchill`;
     this.updateBasketCount();
-    this.gameId = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
+    this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
     this.fetchProducts();
     this.addEventListeners();
-    this.loadFavourites();
-    this.loadCurrencyAndLanguage();
+    this.loadCurrencyAndLanguage();    
   },
 
   methods: {
-    // Загрузка данных о продукте
     async fetchProducts() {
       try {
-        const gameId = JSON.parse(sessionStorage.getItem('currentProductInGames'));
-        const response = await axios.get(`http://localhost:3000/api/steam/${gameId.id}`);
-        const gameData = response.data[gameId.id];
+        const productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
+        const response = await axios.get(`http://localhost:3000/api/steam/${productData.id}`);
+        const gameData = response.data[productData.id];
         if (gameData.success) {
-          gameData.data.final_price = gameId.price;
+          gameData.data.final_price = productData.price;
+          gameData.data.windows_available = productData.windows_available;
+          gameData.data.mac_available = productData.mac_available;
+          gameData.data.linux_available = productData.linux_available;
           this.currentProduct = gameData.data;
-          // Если id отсутствует, используем gameId из localStorage
-          this.currentProduct.id = this.currentProduct.steam_appid || gameId;
-          this.loadFavourites(); // Обновляем избранное после загрузки продукта
+          this.currentProduct.id = this.currentProduct.steam_appid || productData;
         } else {
-          console.log('Steam API вернул неуспешный ответ:', gameData);
+          console.error('Ошибка при загрузке данных продукта');
         }
       } catch (error) {
         console.error('Ошибка при загрузке данных продукта:', error);
       }
     },
 
-    // Загрузка избранного из localStorage
-    loadFavourites() {
-      this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-    },
-
-    // Переключение лайка
     toggleFavourite() {
-      let updatedFavourites = [...this.favourites];
+      let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
       const isAlreadyFavourite = this.isFavourite;
-
       if (isAlreadyFavourite) {
-        // Удаляем из избранного
-        updatedFavourites = updatedFavourites.filter(fav => String(fav.id) !== String(this.gameId));
+        favourites = favourites.filter(fav => fav.id !== this.productData);
       } else {
-        // Добавляем в избранное
-        updatedFavourites.push({
-          id: this.gameId,
-          title: this.currentProduct.name,
+        favourites.push({
+          id: this.productData,
+          name: this.currentProduct.name,
           large_capsule_image: this.currentProduct.header_image,
+          final_price: this.currentProduct.final_price,
+          windows_available: this.currentProduct.windows_available,
+          mac_available: this.currentProduct.mac_available,
+          linux_available: this.currentProduct.linux_available
         });
       }
-
-      this.favourites = updatedFavourites;
-      localStorage.setItem('favourites', JSON.stringify(this.favourites));
-      console.log('Updated favourites in ProductPage:', this.favourites);
-      this.showHeartAnimation = true;
-      setTimeout(() => (this.showHeartAnimation = false), 800);
+      this.favourites = favourites
+      localStorage.setItem('favourites', JSON.stringify(favourites));
       this.$emit('favourites-updated');
     },
 
-    // Обновление количества товаров в корзине
     updateBasketCount() {
       const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       this.basketCount = basket.length;
     },
 
-    // Прямая покупка
-    buyNow() {
-      if (this.isPurchased) {
-        alert(this.language === 'RU' ? 'Эта игра уже куплена!' : 'This game is already purchased!');
-        return;
+    addToCart() {      
+      let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
+      const product = {
+        id: this.productData,
+        name: this.currentProduct.name,
+        final_price: `${this.currentProduct.final_price} ₽`,
+        large_capsule_image: this.currentProduct.large_capsule_image,
+        windows_available: this.currentProduct.windows_available,
+        linux_available: this.currentProduct.linux_available,
+        mac_available: this.currentProduct.mac_available,
+        count: 1,
+      };
+
+      const existing = basket.find(item => item.id === product.id);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        basket.push(product);
       }
 
-      localStorage.setItem('selectedGameForCheckout', JSON.stringify([{
-        id: this.currentProduct.id,
-        title: this.currentProduct.name,
-        price: this.convertedFinalPrice + ' ' + this.selectedCurrency, // Сохраняем цену в выбранной валюте
-        priceInRub: parseFloat(this.currentProduct.final_price), // Сохраняем цену в RUB для пересчёта
-        skidka: this.currentProduct.discounted ? `-${this.currentProduct.discount_percent}%` : null,
-        oldPrice: this.currentProduct.discounted ? this.convertedOriginalPrice + ' ' + this.selectedCurrency : null,
-        oldPriceInRub: this.currentProduct.discounted ? parseFloat(this.currentProduct.original_price) : null,
-        count: 1,
-      }]));
-      this.$router.push('/checkout');
+      localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
+      this.$emit('update-basket', basket.length);
+      this.animateToCart();
     },
+    animateToCart() {
+      const productImg = this.$refs.productImage;
+      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
+      if (!productImg || !cartIcon) return;
 
-    // Закрытие модального окна
+      const cloned = productImg.cloneNode(true);
+      cloned.classList.add('cart-animation');
+      cloned.style.position = 'absolute';
+      cloned.style.width = '50px';
+      cloned.style.height = '30px';
+      cloned.style.zIndex = '1000';
+      cloned.style.left = `${productImg.getBoundingClientRect().left + window.scrollX}px`;
+      cloned.style.top = `${productImg.getBoundingClientRect().top + window.scrollY}px`;
+
+      document.body.appendChild(cloned);
+
+      const targetX = cartIcon.getBoundingClientRect().left + window.scrollX - cloned.getBoundingClientRect().left;
+      const targetY = cartIcon.getBoundingClientRect().top + window.scrollY - cloned.getBoundingClientRect().top;
+
+      requestAnimationFrame(() => {
+        cloned.style.transition = 'all 1s ease-out';
+        cloned.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.5)`;
+        cloned.style.opacity = '0.5';
+        setTimeout(() => cloned.remove(), 1000);
+      });
+    },
     closeModal() {
       this.modalOpen = false;
       document.body.style.overflow = 'auto';
       if (this.$refs.videoPlayer) this.$refs.videoPlayer[0].pause();
     },
-
-    // Переключение слайдов в галерее
     plusSlides(n) {
       if (this.$refs.videoPlayer && n === 4) this.$refs.videoPlayer[0].play();
       this.modalOpen = true;
       this.showSlides(this.slideIndex + n);
     },
-
-    // Открытие текущего слайда
     currentSlide(n) {
       this.modalOpen = true;
       this.showSlides(n);
     },
-
-    // Отображение слайдов
     showSlides(n) {
       if (n > this.slides.length) this.slideIndex = 1;
       else if (n < 1) this.slideIndex = this.slides.length;
       else this.slideIndex = n;
       if (this.$refs.videoPlayer && this.slideIndex !== 5) this.$refs.videoPlayer[0].pause();
     },
-
-    // Добавление слушателей событий
     addEventListeners() {
       const scrollContainer = this.$refs.photoVideos;
       if (scrollContainer) {
@@ -444,23 +438,17 @@ export default {
         else if (e.key === 'ArrowRight') this.plusSlides(1);
       });
     },
-
-    // Переход на страницу другого продукта
     navigateToProduct(game) {
       localStorage.setItem('currentProductInGames', game.name);
       this.$router.push('/product');
       this.fetchProducts();
     },
-
-    // Загрузка валюты и языка из localStorage
     loadCurrencyAndLanguage() {
       const savedVal = localStorage.getItem('selectedVal');
       const savedLang = localStorage.getItem('language');
       this.selectedCurrency = savedVal || '₽';
       this.language = savedLang || 'RU';
     },
-
-    // Обновление валюты при смене в Header.vue
     updateCurrency(newCurrency) {
       this.selectedCurrency = newCurrency;
     },
@@ -469,7 +457,6 @@ export default {
 </script>
 
 <style scoped>
-/* Основной контейнер страницы */
 .product-page {
   position: relative;
   background-size: cover;
@@ -478,9 +465,7 @@ export default {
   color: #fff;
 }
 
-/* Затемняющий фон */
 .temnee-bg {
-  /* position: absolute; убрано по просьбе */
   top: 0;
   left: 0;
   width: 100%;
@@ -489,7 +474,6 @@ export default {
   z-index: 1;
 }
 
-/* Основной контент */
 main {
   position: relative;
   z-index: 2;
@@ -498,7 +482,6 @@ main {
   padding: 40px 20px;
 }
 
-/* Контейнер продукта */
 .product-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -512,7 +495,6 @@ main {
   margin-bottom: 40px;
 }
 
-/* Изображение продукта */
 .product-img img {
   width: 100%;
   height: 100%;
@@ -521,7 +503,6 @@ main {
   box-shadow: 0 4px 20px rgba(119, 190, 29, 0.2);
 }
 
-/* Информация о продукте */
 .product-other {
   flex: 1;
 }
@@ -553,7 +534,6 @@ main {
   box-shadow: 0 0 5px #77BE1D;
 }
 
-/* Цены и скидки */
 .product-prices {
   display: flex;
   align-items: center;
@@ -582,7 +562,6 @@ main {
   text-decoration: line-through;
 }
 
-/* Кнопки действий */
 .product-deystvia {
   display: flex;
   gap: 15px;
@@ -612,7 +591,6 @@ main {
   transform: none;
 }
 
-/* Кнопка лайка */
 .product-like {
   position: relative;
 }
@@ -709,7 +687,6 @@ main {
   100% { transform: translate(20px, -20px) scale(0.5); opacity: 0; }
 }
 
-/* Информация о платформах */
 .product-info {
   margin: 20px 0;
   background: rgba(255, 255, 255, 0.05);
@@ -735,7 +712,6 @@ main {
   padding: 5px 15px;
 }
 
-/* Дополнительные метки */
 .product-deystvia-2 {
   display: flex;
   gap: 20px;
@@ -775,7 +751,6 @@ main {
   justify-content: center;
 }
 
-/* Галерея */
 .product-photo-videos {
   display: flex;
   gap: 20px;
@@ -842,7 +817,6 @@ main {
   justify-content: center;
 }
 
-/* Модальное окно */
 .modal {
   position: fixed;
   top: 0;
@@ -910,7 +884,6 @@ main {
   background: rgba(119, 190, 29, 0.2);
 }
 
-/* Вкладки */
 .product-ostas {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
@@ -993,7 +966,6 @@ main {
   outline: none;
 }
 
-/* Рекомендации */
 .vam-budet-interesno-title {
   font-size: 32px;
   font-weight: 700;
@@ -1010,7 +982,6 @@ main {
   gap: 30px;
 }
 
-/* Медиазапросы для адаптации */
 @media (max-width: 1024px) {
   main {
     padding: 20px 15px;

@@ -30,7 +30,7 @@
 <script setup>
     import { ref, reactive } from "vue";
     import { useRouter } from "vue-router";
-    localStorage.removeItem("userData");
+    sessionStorage.removeItem("userData");
 
     const router = useRouter();
 
@@ -85,7 +85,7 @@
             errors.generalError = "Пароли не совпадают";
             return 1;
         }
-        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const users = JSON.parse(sessionStorage.getItem("users")) || [];
 
         
         users.map(item => {
@@ -102,16 +102,16 @@
 
         const newUser = {
             id: users.length + 1,
-            avatarIcon: null,
             username: username.value,
             email: email.value,
             password: password.value,
-            basket: [],
-            favourites: []
+            avatarIcon: null,
+            fullName: null,
+            dateOfBirth: null,
         };
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("userSession", newUser.email);
+        sessionStorage.setItem("userSession", newUser.email);
         setTimeout(() => router.push("/"), 1000);
     };
 
@@ -121,7 +121,7 @@
 <style>
     .form-container{
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
@@ -132,12 +132,12 @@
     }
     form{
         position: relative;
-        width: 320px;
+        width: 420px;
         display: flex;
         flex-direction: column;
         gap: 14px;
-        padding: 20px;
-        border-radius: 10px;
+        padding: 30px;
+        border-radius: 20px;
         background-color: #13101B;
         color: white;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -157,13 +157,14 @@
         font-size: 20px;
     }
     form button{
-        height: 30px;
+        height: 40px;
         cursor: pointer;
         background-color: #77BE1D;
         border: none;
         border-radius: 6px;
         color: white;
         transition: all 0.2s;
+        font-size: 18px;
     }
     form button:hover{
         opacity: 0.7;
@@ -174,7 +175,7 @@
     }
     form p{
         text-align: center;
-        font-size: 14px;
+        font-size: 16px;
     }
     form a{
         color: #77BE1D;

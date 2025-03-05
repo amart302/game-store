@@ -21,7 +21,7 @@
 <script setup>
     import { ref, reactive } from "vue";
     import { useRouter } from "vue-router";
-    localStorage.removeItem("userData");
+    sessionStorage.removeItem("userData");
 
     const router = useRouter();
 
@@ -64,7 +64,7 @@
         users.map(item => {
             if(item.email == email.value && item.password == password.value){
                 check = true;
-                localStorage.setItem("userSession", item.email);
+                sessionStorage.setItem("userSession", item.email);
                 setTimeout(() => router.push("/"), 1000);
             }
         });

@@ -229,7 +229,6 @@ export default {
 
 <style scoped>
 .cart-page {
-  min-height: 100vh;
   color: #fff;
   font-family: 'Manrope', sans-serif;
   overflow: hidden;
@@ -237,6 +236,7 @@ export default {
 
 main {
   max-width: 1440px;
+  min-height: calc(100vh - 600px);
   margin: 0 auto;
   padding: 60px 20px;
 }

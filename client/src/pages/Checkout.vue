@@ -1,18 +1,12 @@
 <template>
   <div class="checkout-page">
     <Header />
-
-    <!-- Основной контент -->
     <main>
       <h1 class="checkout-title">Оформление заказа</h1>
-
-      <!-- Контейнер с товарами и оплатой -->
       <div v-if="selectedGames.length" class="checkout-container">
-        <!-- Список товаров -->
         <div v-for="game in selectedGames" :key="game.id" class="game-info">
           <div class="game-info-header">
             <h2>{{ game.title }}</h2>
-            <!-- Кнопка лайка -->
             <div class="product-like">
               <button @click="toggleFavourite(game)" class="favourite-btn" :class="{ 'active': isGameFavourite(game.id) }">
                 <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,7 +24,6 @@
           <p>Количество: {{ game.count }}</p>
         </div>
 
-        <!-- Информация об оплате -->
         <div class="payment-options">
           <h3>Способ оплаты: {{ paymentMethodDisplay }}</h3>
           <p>Общая сумма: {{ totalPrice }} {{ currencySymbol }}</p>
@@ -39,8 +32,6 @@
             <p v-if="accountBalance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
           </div>
         </div>
-
-        <!-- Кнопка завершения покупки -->
         <button
           @click="completePurchase"
           class="complete-btn"
@@ -49,8 +40,6 @@
           Завершить покупку
         </button>
       </div>
-
-      <!-- Пустая корзина -->
       <div v-else class="empty-checkout">
         <p>Выберите товар для покупки</p>
         <router-link to="/" class="back-to-main">Вернуться на главную</router-link>
@@ -71,16 +60,15 @@ export default {
 
   data() {
     return {
-      selectedGames: [], // Выбранные игры для покупки
-      selectedPaymentMethod: null, // Выбранный способ оплаты
-      accountBalance: 0, // Баланс накопительного счёта
-      currencySymbol: '₽', // Символ валюты
-      favourites: [], // Локальная копия избранного
+      selectedGames: [],
+      selectedPaymentMethod: null,
+      accountBalance: 0,
+      currencySymbol: '₽',
+      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
     };
   },
 
   computed: {
-    // Сумма без форматирования
     totalPriceRaw() {
       return this.selectedGames.reduce((sum, game) => {
         const price = parseFloat(game.final_price.split(' ')[0]);
@@ -88,12 +76,10 @@ export default {
       }, 0);
     },
 
-    // Форматированная сумма
     totalPrice() {
       return this.totalPriceRaw.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     },
 
-    // Отображение способа оплаты
     paymentMethodDisplay() {
       switch (this.selectedPaymentMethod) {
         case 'account': return 'Накопительный счёт';
@@ -105,7 +91,6 @@ export default {
       }
     },
 
-    // Проверка, отключена ли кнопка оплаты
     isPaymentDisabled() {
       if (this.selectedPaymentMethod === 'account') {
         return this.accountBalance < this.totalPriceRaw;
@@ -119,49 +104,36 @@ export default {
     this.loadPaymentMethod();
     this.loadAccountBalance();
     this.loadCurrencySymbol();
-    this.loadFavourites();
   },
 
   methods: {
-    // Загрузка выбранных игр
     loadSelectedGames() {
       const games = JSON.parse(localStorage.getItem('selectedGameForCheckout')) || [];
       this.selectedGames = games;
     },
 
-    // Загрузка способа оплаты
     loadPaymentMethod() {
       this.selectedPaymentMethod = localStorage.getItem('selectedPaymentMethod') || null;
     },
 
-    // Загрузка баланса
     loadAccountBalance() {
       const savedBalance = localStorage.getItem('accountBalance');
       this.accountBalance = savedBalance !== null ? parseInt(savedBalance) : 10000;
     },
 
-    // Сохранение баланса
     saveAccountBalance() {
       localStorage.setItem('accountBalance', this.accountBalance);
     },
 
-    // Загрузка символа валюты
     loadCurrencySymbol() {
       const savedVal = localStorage.getItem('selectedVal');
       this.currencySymbol = savedVal || '₽';
     },
 
-    // Загрузка избранного
-    loadFavourites() {
-      this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-    },
-
-    // Проверка, добавлена ли игра в избранное
     isGameFavourite(gameId) {
       return this.favourites.some(fav => fav.id === gameId);
     },
 
-    // Переключение лайка
     toggleFavourite(game) {
       let updatedFavourites = [...this.favourites];
       const isAlreadyFavourite = this.isGameFavourite(game.id);
@@ -169,12 +141,10 @@ export default {
       if (isAlreadyFavourite) {
         updatedFavourites = updatedFavourites.filter(fav => fav.id !== game.id);
       } else {
-        console.log(item);
-        
         updatedFavourites.push({
           id: game.id,
           title: game.title,
-          large_capsule_image: game.large_capsule_image || '', // Убедимся, что есть изображение
+          large_capsule_image: game.large_capsule_image || '',
           windows_available: game.windows_available,
           linux_available: game.linux_available,
           mac_available: game.mac_available
@@ -185,7 +155,6 @@ export default {
       localStorage.setItem('favourites', JSON.stringify(this.favourites));
     },
 
-    // Сохранение истории покупок
     savePurchaseHistory() {
       const purchase = {
         items: this.selectedGames.map(item => ({
@@ -206,10 +175,8 @@ export default {
       const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
       history.push(purchase);
       localStorage.setItem('purchaseHistory', JSON.stringify(history));
-      console.log('Сохранена история покупок:', history);
     },
 
-    // Завершение покупки
     completePurchase() {
       if (!this.selectedPaymentMethod) {
         alert('Способ оплаты не выбран!');
@@ -235,7 +202,6 @@ export default {
       }
     },
 
-    // Очистка данных после покупки
     clearCheckout() {
       localStorage.removeItem('selectedGameForCheckout');
       localStorage.removeItem('productsInBasketInGames');
@@ -246,13 +212,11 @@ export default {
 </script>
 
 <style scoped>
-/* Основной контейнер */
 .checkout-page {
   min-height: 100vh;
   color: #fff;
 }
 
-/* Основной контент */
 main {
   max-width: 1440px;
   margin: 0 auto;
@@ -260,7 +224,6 @@ main {
   min-height: calc(100vh - 766px);
 }
 
-/* Заголовок */
 .checkout-title {
   font-size: 36px;
   font-weight: 800;
@@ -272,7 +235,6 @@ main {
   margin-bottom: 30px;
 }
 
-/* Контейнер оформления заказа */
 .checkout-container {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
@@ -281,10 +243,9 @@ main {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Информация о товаре */
 .game-info {
   margin-bottom: 20px;
-  position: relative; /* Для позиционирования кнопки лайка */
+  position: relative;
 }
 
 .game-info-header {
@@ -303,7 +264,6 @@ main {
   color: #97E238;
 }
 
-/* Кнопка лайка */
 .product-like {
   position: relative;
 }
@@ -343,7 +303,6 @@ main {
   100% { transform: scale(1); }
 }
 
-/* Опции оплаты */
 .payment-options {
   margin-top: 20px;
 }
@@ -368,7 +327,6 @@ main {
   color: #FF3030;
 }
 
-/* Кнопка завершения покупки */
 .complete-btn {
   padding: 15px 30px;
   background: linear-gradient(90deg, #77BE1D, #97E238);
@@ -393,7 +351,6 @@ main {
   transform: none;
 }
 
-/* Пустая корзина */
 .empty-checkout {
   text-align: center;
   padding: 60px;
@@ -423,7 +380,6 @@ main {
   color: white;
 }
 
-/* Медиазапросы для адаптации */
 @media (max-width: 1024px) {
   main {
     padding: 20px 15px;
