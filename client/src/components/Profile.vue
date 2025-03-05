@@ -1,91 +1,106 @@
 <template>
-    <div class="container-profile">
-        <div class="block-profile">
-            <div class="form-container">
-                <h1>Profile</h1>
-                <form @submit.prevent="updateUserData()"
-                    style="padding-top: 30px; display: flex; flex-direction: row; gap: 20px; width: auto;">
-                    <div class="form-avatar-container">
-                        <img :src="avatarIcon" class="avatar-icon" alt="User Avatar">
-                        <input type="file" @change="handleFileChange" accept="image/*">
+    <Header />
+    <main>
+        <section class="profile-wrapper">
+            <div class="profile-card">
+                <h1>Профиль пользователя</h1>
+                <form @submit.prevent="updateUserData()" class="profile-form">
+                    <div class="avatar-section">
+                        <div class="avatar-wrapper">
+                            <img :src="avatarIcon" alt="User Avatar" class="avatar-img">
+                            <label class="upload-btn">
+                                <input type="file" hidden @change="handleFileChange" accept="image/*">
+                                <img :src="upload" alt="Upload" class="upload-icon">
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-child-container">
-                        <div class="profile-group">
-                            <label>Игровой ник:</label>
+                    <div class="form-fields">
+                        <div class="field-group">
+                            <label>Игровой ник</label>
                             <input type="text" v-model="updateUsername" placeholder="Введите ваш ник">
-                            <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
+                            <span v-if="errors.username" class="error">{{ errors.username }}</span>
                         </div>
-                        <div class="profile-group">
-                            <label>Полное имя:</label>
+                        <div class="field-group">
+                            <label>Полное имя</label>
                             <input type="text" v-model="updateFullName" placeholder="Введите ваше имя">
-                            <p v-if="errors.fullName" class="error-message">{{ errors.fullName }}</p>
+                            <span v-if="errors.fullName" class="error">{{ errors.fullName }}</span>
                         </div>
-                        <div class="profile-group">
-                            <label>Электронная почта:</label>
+                        <div class="field-group">
+                            <label>Электронная почта</label>
                             <input type="email" v-model="updateEmail" placeholder="example@mail.com">
-                            <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+                            <span v-if="errors.email" class="error">{{ errors.email }}</span>
                         </div>
-                        <div class="profile-group">
-                            <label>Новый пароль:</label>
+                        <div class="field-group">
+                            <label>Новый пароль</label>
                             <input type="password" v-model="updatePassword" placeholder="Введите новый пароль">
-                            <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
+                            <span v-if="errors.password" class="error">{{ errors.password }}</span>
                         </div>
-                        <div class="profile-group">
-                            <label>Подтверждение пароля:</label>
+                        <div class="field-group">
+                            <label>Подтверждение пароля</label>
                             <input type="password" v-model="confirmPassword" placeholder="Подтвердите пароль">
-                            <p v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</p>
+                            <span v-if="errors.confirmPassword" class="error">{{ errors.confirmPassword }}</span>
                         </div>
-                        <div class="profile-group">
-                            <label>Дата рождения:</label>
+                        <div class="field-group">
+                            <label>Дата рождения</label>
                             <input type="date" v-model="updateBirthDate">
-                            <p v-if="errors.birthDate" class="error-message">{{ errors.birthDate }}</p>
+                            <span v-if="errors.birthDate" class="error">{{ errors.birthDate }}</span>
                         </div>
-                        <button type="submit">Обновить данные</button>
+                        <button type="submit" class="submit-btn">Сохранить изменения</button>
                     </div>
                 </form>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
+    <Footer />
 </template>
-
-
 <script setup>
 import { reactive, ref } from 'vue';
+import Header from './Header.vue';
+import Footer from './Footer.vue';
+import upload from "../assets/images/upload.svg";
+import crossIcon from "../assets/images/cross.svg";
+import defaultAvatar from "../assets/images/avatarIcon.png";
 
-const props = defineProps({
-    showAndHideProfile: Function
-});
 
-const userData = JSON.parse(localStorage.getItem("userData"));
+const userData = JSON.parse(localStorage.getItem("userData")) || {};
+const users = JSON.parse(localStorage.getItem("users")) || [];
 
-const updateUsername = ref(userData.username);
-const updateEmail = ref(userData.email);
+const updateUsername = ref(userData.username || '');
+const updateEmail = ref(userData.email || '');
+const updateFullName = ref(userData.fullName || '');
+const updatePassword = ref('');
+const confirmPassword = ref('');
+const updateBirthDate = ref(userData.birthDate || '');
+const avatarIcon = ref(userData.avatarIcon || defaultAvatar);
 
 const errors = reactive({
     username: "",
     email: "",
+    fullName: "",
+    password: "",
+    confirmPassword: "",
+    birthDate: ""
 });
 
 const validateData = () => {
-    errors.username = "";
-    errors.email = "";
-    if (!updateUsername.value.trim()) {
-        errors.username = "Это поле обязательно для заполнения";
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    Object.keys(errors).forEach(key => errors[key] = "");
+    if (!updateUsername.value.trim()) errors.username = "Это поле обязательно";
     if (!updateEmail.value.trim()) {
-        errors.email = "Это поле обязательно для заполнения";
-    } else if (!emailPattern.test(updateEmail.value)) {
-        errors.email = "Некорректная формат почты";
+        errors.email = "Это поле обязательно";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updateEmail.value)) {
+        errors.email = "Некорректный формат почты";
+    }
+    if (!updateFullName.value.trim()) errors.fullName = "Это поле обязательно";
+    if (updatePassword.value && updatePassword.value !== confirmPassword.value) {
+        errors.confirmPassword = "Пароли не совпадают";
+    }
+    if (updateBirthDate.value && new Date(updateBirthDate.value) > new Date()) {
+        errors.birthDate = "Дата не может быть в будущем";
     }
 };
 
-let avatarIcon = ref(userData.avatarIcon || 'src/assets/images/avatarIcon.png');
-
 const handleFileChange = (event) => {
     const file = event.target.files[0];
-
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -97,55 +112,187 @@ const handleFileChange = (event) => {
 
 const updateUserData = () => {
     validateData();
+    if (Object.values(errors).some(error => error)) return;
 
-    if (errors.email || errors.username) return;
-    const users = JSON.parse(localStorage.getItem("users"));
-    users.map(item => {
-        if (item.id == userData.id) {
-            item.username = updateUsername.value;
-            item.email = updateEmail.value;
-            item.avatarIcon = avatarIcon.value;
-        }
-    });
-    localStorage.setItem("users", JSON.stringify(users));
+    const updatedUser = {
+        ...userData,
+        username: updateUsername.value,
+        email: updateEmail.value,
+        fullName: updateFullName.value,
+        birthDate: updateBirthDate.value,
+        avatarIcon: avatarIcon.value,
+        ...(updatePassword.value && { password: updatePassword.value })
+    };
+
+    const updatedUsers = users.map(item => 
+        item.id === userData.id ? { ...item, ...updatedUser } : item
+    );
+
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    localStorage.setItem("userData", JSON.stringify(updatedUser));
 };
 </script>
-
 <style scoped>
-.block-profile{
-    background-color: rgba(0, 0, 0, 0.4)
+main {
+    min-height: 100vh;
+    padding: 20px;
 }
-.form-container {
+
+.profile-wrapper {
     display: flex;
-    flex-direction: column;
-}
-
-.cross {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.avatar-icon {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-}
-
-.form-child-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.form-avatar-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    width: 100%;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
 }
-</style> 
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+.profile-form {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+}
+
+.avatar-section {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background: #333;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #77BE1D;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.upload-btn:hover {
+    transform: scale(1.1);
+}
+
+.upload-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%; /* Даём полям полную доступную ширину */
+    max-width: 400px; 
+    flex-grow: 1; 
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-group label {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.field-group input {
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+}
+
+.field-group input:focus {
+    outline: none;
+    border-color: #77BE1D;
+}
+
+.error {
+    color: #ff5555;
+    font-size: 12px;
+}
+
+.submit-btn {
+    padding: 12px;
+    background: #77BE1D;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: #5a9c14;
+}
+
+@media (max-width: 768px) {
+    .profile-form {
+        flex-direction: column; /* Переключаем на вертикальное расположение */
+        align-items: center;
+    }
+
+    .avatar-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+
+    .profile-card {
+        padding: 15px;
+    }
+
+    .form-fields {
+        max-width: 100%; /* Убираем ограничение ширины на малых экранах */
+    }
+}
+
+@media (max-width: 480px) {
+    .avatar-wrapper {
+        width: 150px;
+        height: 150px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
+</style>
