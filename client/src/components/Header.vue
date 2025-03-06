@@ -67,11 +67,11 @@
 </template>
 
 <script>
-import Profile from './Profile.vue';
+import ProfileUser from './ProfileUser.vue';
 
 export default {
   components: {
-    Profile,
+    ProfileUser,
   },
   data() {
     return {

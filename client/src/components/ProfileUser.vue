@@ -3,16 +3,18 @@
     <div class="container-profile">
         <div class="block-profile">
             <div class="form-container">
-                <h1>Profile</h1>
+                <h1>Профиль пользователя</h1>
+                <br>
                 <form @submit.prevent="updateUserData()"
-                    style="padding-top: 30px; display: flex; flex-direction: row; gap: 20px; width: auto;">
+                    style=" display: flex; flex-direction: row; gap: 20px; width: auto;">
                     <div class="form-avatar-container">
                         <div class="avatar-icon">
                             <img :src="avatarIcon"  alt="User Avatar">
 
                                 <label class="upload" name="upload" >
                                     <input type="file" style="display: none;" @change="handleFileChange" accept="image/*">
-                                    <img :src="upload" for="upload" name="upload" alt="">
+                                    <!-- <img :src="upload" for="upload" name="upload" alt=""> -->
+                                     <img src="../assets/images/upload.svg" alt="">
                                 </label>
                             
                         </div>
@@ -175,7 +177,6 @@ const updateUserData = () => {
     align-items: center;
     justify-content: center;
     z-index: 6;
-    margin-block: 60px;
 }
 form{
     position: relative;
@@ -235,16 +236,15 @@ form{
 .form-avatar-container .upload {
     position: absolute;
     background: #77BE1D;
-    padding: 10px;
     border-radius: 50%;
     bottom: 10px;
     right: 80px;
 }
 
 .form-avatar-container .upload img {
-    padding:30px;
-    width: 50px;
-    height: 50px;
+    padding:25px;
+    width: 35px;
+    height: 35px;
     cursor: pointer;
 }
 </style> 
