@@ -54,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Модальное окно для пополнения счёта -->
     <div class="cash-modal" v-if="showCashModal">
       <div class="cash-modal-content">
         <span class="close-modal" @click="toggleCashModal">×</span>
@@ -63,16 +62,20 @@
         <button @click="depositCash" class="deposit-btn">Пополнить</button>
       </div>
     </div>
+    <Search :searchQuery="searchQuery" :searchGames="searchGames"/>
   </header>
 </template>
 
 <script>
-import ProfileUser from './ProfileUser.vue';
+import ProfileUser from '../pages/ProfileUser.vue';
+import Search from './Search.vue';
 
 export default {
   components: {
     ProfileUser,
+    Search
   },
+  props: { searchGames: Function },
   data() {
     return {
       userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },

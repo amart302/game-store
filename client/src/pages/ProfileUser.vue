@@ -61,14 +61,12 @@
 
 
 <script setup>
+import Footer from '@/components/Footer.vue';
+import Header from '@/components/Header.vue';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
-import upload from "../assets/images/upload.svg"
-import Header from './Header.vue';
-import Footer from './Footer.vue';
 
 const props = defineProps({
     showAndHideProfile: Function

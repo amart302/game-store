@@ -1,40 +1,47 @@
 <template>
-    <div class="searchBlock">
-      <div class="searchProductCard" v-for="game in searchResults" :key="game.id" @click="goToProductPage(game)">
-        <img class="searchCardImg" :src="game.poster" />
-        <div class="searchCardAddBtns">
-          <button class="addBasketSearchBtn" @click.stop="addToCart(game)"><img src="../assets/images/searchBasketImg.svg" /></button>
-          <button class="addFavouritesSearchBtn" @click.stop="addToFavourites(game)"><img src="../assets/images/searchFavoritesImg.svg" /></button>
-        </div>
+    <div class="searchBlock" v-if="searchQuery.length">
+      <div class="searchProductCard" v-for="game in searchResults" :key="game.id" @click="navigateToProductPage(game)">
+        <img class="searchCardImg" :src="game.header_image" />
         <div class="seardchCardInfo">
-          <p class="searchCardName">{{ game.title }}</p>
+          <p class="searchCardName">{{ game.name }}</p>
           <div class="searchCardPrice">
-            <span class="product_priceWithDiscount">{{ game.price.amount }} {{ game.price.currency }}</span>
-            <span class="product_discount">-15%</span>
-            <span class="product_priceWithoutDiscount">{{ Math.round(game.price.amount * 1.15) }} {{ game.price.currency }}</span>
+            <span class="product_priceWithDiscount">{{ game.final_price }} {{ selectedCurrency }}</span>
           </div>
           <div class="searchCardCategories">
-            <div class="category" v-for="(cat, i) in game.categories.slice(0, 2)" :key="i">
-              <div class="bullet"></div>
-              <span>{{ cat }}</span>
+            <div v-if="game.mac_available" class="category">
+              <div class="bullet mac"></div>
+              <span>Mac</span>
+            </div>
+            <div v-if="game.linux_available" class="category">
+              <div class="bullet linux"></div>
+              <span>Linux</span>
+            </div>
+            <div v-if="game.windows_available" class="category">
+              <div class="bullet windows"></div>
+              <span>Windows</span>
             </div>
           </div>
         </div>
       </div>
-      <h2 v-if="searchResults.length === 0 && searched">По вашему запросу ничего не найдено</h2>
+      <h2 v-if="!searchResults.length">По вашему запросу ничего не найдено</h2>
     </div>
   </template>
   
   <script>
   export default {
     name: 'search',
-    props: { searchResults: Array },
+    props: { searchQuery: String, searchGames: Function },
     data() {
-      return { searched: false };
+      return { 
+        searchResults: [],
+        selectedCurrency: '₽',
+       };
     },
     watch: {
-      searchResults() {
-        this.searched = true;
+      searchQuery() {
+        this.searchResults = this.searchGames(this.searchQuery);
+        console.log(this.searchResults);
+        
       },
     },
     methods: {
@@ -42,6 +49,16 @@
         localStorage.setItem('currentProductInGames', game.title);
         window.location.href = '../страница товара/index.html';
       },
+      navigateToProductPage(game) {
+      sessionStorage.setItem('currentProductInGames', JSON.stringify({
+        id: game.id,
+        price: game.final_price,
+        windows_available: game.windows_available,
+        mac_available: game.mac_available,
+        linux_available: game.linux_available
+      }));
+      this.$router.push('/product');
+    },
       addToCart(game) {
         let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
         const product = {
@@ -65,14 +82,36 @@
   </script>
   <style scoped>
   .searchBlock {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
     text-align: left;
-    width: 100%;
-    height: 100%;
+    width: 1000px;
+    max-height: 600px;
+    overflow-y: auto;
     border-radius: 12px;
     background-color: #0c061f;
     z-index: 2;
   }
   
+  ::-webkit-scrollbar {
+  width: 16px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #d1d1d1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b8b8b;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #696969
+}
   .searchProductCard {
     padding: 16px;
     position: relative;
@@ -84,18 +123,21 @@
   }
   
   .searchProductCard:hover {
-    background-color: #06030f;
+    background-color: rgb(19, 9, 46);
   }
   
   .searchCardImg {
-    width: 10%;
-    height: 200px;
+    width: 280px;
+    border-radius: 12px;
   }
   
   .seardchCardInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 26px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 0.5fr;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
   }
   
   .searchCardName {
@@ -105,19 +147,12 @@
   
   .searchCardCategories {
     width: 80%;
-    position: absolute;
     bottom: 12px;
     display: flex;
+    flex-direction: column;
     gap: 36px;
     align-items: center;
   }
-  
-  .searchCardPrice {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  
   .searchCardAddBtns {
     display: flex;
     flex-direction: column;
@@ -144,9 +179,8 @@
     width: 100%;
   }
   
-  .addBasketSearchBtn:hover,
-  .addFavouritesSearchBtn:hover {
-    background-color: white;
+  button:hover {
+    background-color: rgb(151, 149, 149);
   }
   
   .category {
@@ -160,5 +194,28 @@
     height: 14px;
     background-color: #3d394a;
     border-radius: 50%;
+  }
+  .favourite-btn {
+    background: transparent;
+    border: solid 1px white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bl-icon {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+  }
+
+  .bl-icon img {
+    padding: 10px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
   }
   </style>

@@ -1,13 +1,8 @@
 <template>
   <div id="main">
-    <Header />
-
-    <!-- Слайдер -->
+    <Header :searchGames="searchGames" />
     <Slider />
-
-    <!-- Основной контент -->
     <main>
-      <!-- Блок "Top 4" -->
       <div class="mainBlock1">
         <h1>
           Top <img src="../assets/images/lightning.svg" class="lightning-icon" alt="Lightning" /> 4
@@ -23,10 +18,8 @@
         </div>
       </div>
 
-      <!-- Блок с предложениями -->
       <OffersCards />
 
-      <!-- Блок каталога игр -->
       <div class="mainBlock2">
         <div class="productCatalog">
           <h2 class="catalog">Каталог игр</h2>
@@ -41,7 +34,6 @@
         </div>
       </div>
 
-      <!-- Блок акций и скидок -->
       <div class="mainBlock3">
         <h2>Акции и скидки <span>%</span></h2>
         <div class="bigProductCardsConteiner">
@@ -53,8 +45,6 @@
           />
         </div>
       </div>
-
-      <!-- Блок отзывов -->
       <div class="mainBlock5" id="FeedbackForm">
         <h2>Отзывы</h2>
         <FeedbackForm @add-feedback="addFeedback" />
@@ -164,6 +154,25 @@ export default {
       });
       localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
     },
+    searchGames(name){
+      const foundGames = [];
+      const regex = new RegExp(name, "i");
+      // const topMatches = this.topGames.filter(item => item.name === name);
+      this.topGames.map(item => {
+        if(regex.test(item.name)){
+          foundGames.push(item);
+        }
+      });
+      // const catalogMatches = this.catalogGames.filter(item => item.name === name);
+      this.catalogGames.map(item => {
+        if(regex.test(item.name)){
+          foundGames.push(item);
+        }
+      })
+      // foundGames.push(...topMatches);
+      // foundGames.push(...catalogMatches);
+      return foundGames;
+    }
   },
 };
 </script>
