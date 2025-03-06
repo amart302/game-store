@@ -296,12 +296,13 @@ export default {
       return (priceInRub * rate).toFixed(2);
     },
   },
-
+  created(){
+    this.fetchProducts();
+  },
   mounted() {
     document.title = `Playnchill`;
     this.updateBasketCount();
     this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
-    this.fetchProducts();
     this.addEventListeners();
     this.loadCurrencyAndLanguage();    
   },
@@ -312,6 +313,9 @@ export default {
         const productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
         const response = await axios.get(`http://localhost:3000/api/steam/${productData.id}`);
         const gameData = response.data[productData.id];
+        const responseGameCatalog = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
+        const data = responseGameCatalog.data[0];
+        this.ads = (data.game_catalog).map(game => ({ ...game }));
         if (gameData.success) {
           gameData.data.final_price = productData.price;
           gameData.data.windows_available = productData.windows_available;
