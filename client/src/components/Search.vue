@@ -40,7 +40,7 @@
     watch: {
       searchQuery() {
         this.searchResults = this.searchGames(this.searchQuery);
-        console.log(this.searchResults);
+        console.log(this.searchGames);
         
       },
     },

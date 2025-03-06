@@ -6,7 +6,7 @@
       <div class="product-information">
         <div class="product-container">
           <div class="product-img">
-            <img :src="currentProduct.header_image" alt="Product Image" />
+            <img :src="currentProduct.header_image" ref="productImage" alt="Product Image" />
           </div>
 
           <div class="product-other">
@@ -140,12 +140,12 @@
         </div>
       </div>
 
-      <div class="vam-budet-interesno">
+      <!-- <div class="vam-budet-interesno">
         <div class="vam-budet-interesno-title">{{ translations[language].youMightLike }}</div>
         <div class="vam-budet-interesno-cont">
           <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
         </div>
-      </div>
+      </div> -->
     </main>
 
     <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
@@ -379,7 +379,7 @@ export default {
     },
     animateToCart() {
       const productImg = this.$refs.productImage;
-      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
+      const cartIcon = document.querySelector('.product-img img[alt="Product Image"]');
       if (!productImg || !cartIcon) return;
 
       const cloned = productImg.cloneNode(true);
@@ -832,15 +832,15 @@ main {
 
 .modal-cont {
   position: relative;
-  width: 90%;
-  max-width: 1300px;
+  width: 100%;
+  max-width: 1800px;
 }
 
 .close {
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 40px;
+  font-size: 70px;
   color: #fff;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -851,7 +851,7 @@ main {
 }
 
 .modal-content {
-  height: 80vh;
+  height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -859,7 +859,7 @@ main {
 
 .mySlides img,
 .mySlides video {
-  width: 800px;
+  width: 1600px;
   border-radius: 12px;
 }
 
@@ -868,7 +868,7 @@ main {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 40px;
+  font-size: 60px;
   color: #fff;
   padding: 10px;
   cursor: pointer;
