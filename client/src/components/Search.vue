@@ -41,7 +41,6 @@
       searchQuery() {
         this.searchResults = this.searchGames(this.searchQuery);
         console.log(this.searchGames);
-        
       },
     },
     methods: {

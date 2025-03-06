@@ -140,12 +140,12 @@
         </div>
       </div>
 
-      <!-- <div class="vam-budet-interesno">
+      <div class="vam-budet-interesno">
         <div class="vam-budet-interesno-title">{{ translations[language].youMightLike }}</div>
         <div class="vam-budet-interesno-cont">
           <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
         </div>
-      </div> -->
+      </div>
     </main>
 
     <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
@@ -379,7 +379,7 @@ export default {
     },
     animateToCart() {
       const productImg = this.$refs.productImage;
-      const cartIcon = document.querySelector('.product-img img[alt="Product Image"]');
+      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
       if (!productImg || !cartIcon) return;
 
       const cloned = productImg.cloneNode(true);
