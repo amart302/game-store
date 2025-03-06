@@ -234,17 +234,17 @@ form{
 }
 
 .form-avatar-container .upload {
+    padding: 25px;
     position: absolute;
     background: #77BE1D;
     border-radius: 50%;
     bottom: 10px;
     right: 80px;
+    cursor: pointer;
 }
 
 .form-avatar-container .upload img {
-    padding:25px;
     width: 35px;
     height: 35px;
-    cursor: pointer;
 }
 </style> 
