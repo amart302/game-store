@@ -89,12 +89,13 @@
     max-height: 600px;
     overflow-y: auto;
     border-radius: 12px;
+    padding: 20px;
     background-color: #0c061f;
     z-index: 2;
   }
   
   ::-webkit-scrollbar {
-  width: 16px;
+  width: 12px;
   height: 12px;
 }
 
