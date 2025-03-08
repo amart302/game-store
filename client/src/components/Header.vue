@@ -92,7 +92,7 @@ export default {
         { text: 'Гарантии', href: '#' },
         { text: 'Как купить', href: '#' },
         { text: 'Накопительная', href: '#' },
-        { text: 'История', href: '/history' },
+        { text: 'История покупок', href: '/history' },
       ],
     };
   },
