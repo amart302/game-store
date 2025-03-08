@@ -28,9 +28,11 @@
   </template>
   
   <script>
+import { useMainStore } from '@/store/store';
+
   export default {
     name: 'search',
-    props: { searchQuery: String, searchGames: Function },
+    props: { searchQuery: String },
     data() {
       return { 
         searchResults: [],
@@ -39,8 +41,16 @@
     },
     watch: {
       searchQuery() {
-        this.searchResults = this.searchGames(this.searchQuery);
-        console.log(this.searchGames);
+        const mainStore = useMainStore();
+        const regex = new RegExp(this.searchQuery, "i");
+        this.searchResults = [];
+        
+        const allGames = [...mainStore.topGames, ...mainStore.gameCatalog];
+        allGames.map(item => {
+          if(regex.test(item.name)){
+            this.searchResults.push(item);
+          }
+        });
       },
     },
     methods: {

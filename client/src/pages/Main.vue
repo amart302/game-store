@@ -1,6 +1,6 @@
 <template>
   <div id="main">
-    <Header :searchGames="searchGames" />
+    <Header />
     <Slider />
     <main>
       <div class="mainBlock1">
@@ -84,6 +84,7 @@ import OffersCards from '@/components/OffersCards.vue';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import FeedbackForm from '@/components/FeedbackForm.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'Main',
@@ -97,14 +98,12 @@ export default {
   },
   data() {
     return {
-      hitGames: [],
       newGames: [],
       topGames: [],
       gameCatalog: [],
       feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
-
   computed: {
     catalogGames() {
       return this.gameCatalog.slice(0, 20);
@@ -132,16 +131,12 @@ export default {
         this.$router.push('/register');
       }
     },
-
-    async fetchGames() {
-      try {
-        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = response.data[0];
-        this.topGames = data.top_games || [];
-        this.gameCatalog = (data.game_catalog || []).map(game => ({ ...game }));
-      } catch (error) {
-        console.error('Ошибка загрузки игр:', error);
-      }
+    fetchGames() {
+      const mainStore = useMainStore();
+      mainStore.fetchGames().then(() => {
+        this.topGames = mainStore.topGames;
+        this.gameCatalog = mainStore.gameCatalog;
+      });
     },
     updateBasketCount() {
     },
@@ -153,26 +148,7 @@ export default {
         userName: feedback.userName || 'Аноним',
       });
       localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
-    },
-    searchGames(name){
-      const foundGames = [];
-      const regex = new RegExp(name, "i");
-      // const topMatches = this.topGames.filter(item => item.name === name);
-      this.topGames.map(item => {
-        if(regex.test(item.name)){
-          foundGames.push(item);
-        }
-      });
-      // const catalogMatches = this.catalogGames.filter(item => item.name === name);
-      this.catalogGames.map(item => {
-        if(regex.test(item.name)){
-          foundGames.push(item);
-        }
-      })
-      // foundGames.push(...topMatches);
-      // foundGames.push(...catalogMatches);
-      return foundGames;
-    }
+    },    
   },
 };
 </script>
