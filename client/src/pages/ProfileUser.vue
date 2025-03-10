@@ -62,6 +62,7 @@
 <script setup>
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
+import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 
@@ -146,6 +147,7 @@ const handleFileChange = (event) => {
 };
 
 const updateUserData = () => {
+    const response = axios.post("http://localhost:3000/upload", { file: avatarIcon.value });
     validateData();
     if (errors.generalError || errors.email || errors.username || 
         errors.updatePassword || errors.confirmPassword) return;
@@ -153,7 +155,6 @@ const updateUserData = () => {
         if (item.id == userData.id) {
             item.username = updateUsername.value;
             item.email = updateEmail.value;
-            item.avatarIcon = avatarIcon.value;
             item.password = updatePassword.value;
             item.dateOfBirth = updateBirthDate.value;
             item.fullName = updateFullName.value;
