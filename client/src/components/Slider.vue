@@ -83,7 +83,7 @@ export default {
 <style scoped>
 .slider {
   max-width: 1600px;
-  max-height: 700px;
+  height: 750px;
   margin-inline: auto;
   margin-block: 60px;
   overflow: hidden;
