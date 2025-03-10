@@ -2,7 +2,7 @@
     <Header />
     <div class="container-profile">
         <div class="block-profile">
-            <div class="form-container">
+            <div class="form-profile-container">
                 <h1>Профиль пользователя</h1>
                 <br>
                 <form @submit.prevent="updateUserData()"
@@ -166,13 +166,15 @@ const updateUserData = () => {
 </script>
 
 <style scoped>
-.form-container {
+.form-profile-container {
+    min-height: calc(100vh - 600px);
     width: 100%;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-block: 20px;
     z-index: 6;
 }
 form{
