@@ -1,7 +1,7 @@
 <template>
     <div class="form-container">
         <form @submit.prevent="handleSubmitRegister()">
-            <img src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
+            <img class="cross-icon" src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
             <h2>Регистрация</h2>
             <div class="form-group">
                 <input type="text" v-model="username" placeholder="Ник пользователя">
@@ -149,7 +149,7 @@
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         font-size: 20px;
     }
-    form img{
+    .cross-icon{
         position: absolute;
         top: 20px;
         right: 20px;

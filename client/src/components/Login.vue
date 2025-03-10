@@ -1,7 +1,7 @@
 <template>
     <div class="form-container">
         <form @submit.prevent="handleSubmitLogin()">
-            <img src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
+            <img class="cross-icon" src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
             <h2>Авторизация</h2>
             <div class="form-group">
                 <input type="text" v-model="email" placeholder="Электронная почта">

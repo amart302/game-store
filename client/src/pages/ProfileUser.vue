@@ -10,7 +10,6 @@
                     <div class="form-avatar-container">
                         <div class="avatar-icon">
                             <img :src="avatarIcon"  alt="User Avatar">
-
                                 <label class="upload" name="upload" >
                                     <input type="file" style="display: none;" @change="handleFileChange" accept="image/*">
                                     <!-- <img :src="upload" for="upload" name="upload" alt=""> -->
