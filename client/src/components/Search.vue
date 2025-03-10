@@ -101,7 +101,7 @@ import { useMainStore } from '@/store/store';
     border-radius: 12px;
     padding: 20px;
     background-color: #0c061f;
-    z-index: 2;
+    z-index: 6;
   }
   
   ::-webkit-scrollbar {

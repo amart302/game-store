@@ -13,7 +13,6 @@
             :key="game.id"
             :game="game"
             :isTopOnly="true"
-            @update-basket="updateBasketCount"
           />
         </div>
       </div>
@@ -29,7 +28,6 @@
             v-for="game in catalogGames"
             :key="game.id"
             :game="game"
-            @update-basket="updateBasketCount"
           />
         </div>
       </div>
@@ -41,7 +39,6 @@
             v-for="game in discountedGames"
             :key="game.id"
             :game="game"
-            @update-basket="updateBasketCount"
           />
         </div>
       </div>
@@ -77,7 +74,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Slider from '@/components/Slider.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import OffersCards from '@/components/OffersCards.vue';
@@ -85,6 +81,7 @@ import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import FeedbackForm from '@/components/FeedbackForm.vue';
 import { useMainStore } from '@/store/store';
+import { computed } from 'vue';
 
 export default {
   name: 'Main',
@@ -99,8 +96,6 @@ export default {
   data() {
     return {
       newGames: [],
-      topGames: [],
-      gameCatalog: [],
       feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
@@ -112,34 +107,23 @@ export default {
       return this.gameCatalog.filter(game => game.discounted).slice(0, 9);
     },
   },
-  created(){
-    this.checkUserSession();
-  },
   mounted() {
-    this.fetchGames();
+    // this.fetchGames();
   },
-
+  setup(){
+    const mainStore = useMainStore();
+    return {
+      topGames: computed(() => mainStore.topGames),
+      gameCatalog: computed(() => mainStore.gameCatalog),
+    };
+  },
   methods: {
-    checkUserSession() {
-      const userSession = sessionStorage.getItem('userSession');
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(item => item.email === userSession);
-
-      if (user) {
-        sessionStorage.setItem('userData', JSON.stringify(user));
-      } else {
-        this.$router.push('/register');
-      }
-    },
-    fetchGames() {
-      const mainStore = useMainStore();
-      mainStore.fetchGames().then(() => {
-        this.topGames = mainStore.topGames;
-        this.gameCatalog = mainStore.gameCatalog;
-      });
-    },
-    updateBasketCount() {
-    },
+    // fetchGames() {
+    //   this.topGames = this.mainStore.topGames;
+    //   this.gameCatalog = this.mainStore.gameCatalog;
+    //   console.log(this.mainStore.topGames);
+      
+    // },
     addFeedback(feedback) {
       this.feedbacks.push({
         rating: feedback.rating,

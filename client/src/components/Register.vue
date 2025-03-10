@@ -1,6 +1,7 @@
 <template>
     <div class="form-container">
         <form @submit.prevent="handleSubmitRegister()">
+            <img src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
             <h2>Регистрация</h2>
             <div class="form-group">
                 <input type="text" v-model="username" placeholder="Ник пользователя">
@@ -20,7 +21,7 @@
             </div>
             <p v-if="errors.generalError" class="error-message">{{ errors.generalError }}</p>
             <button type="submit">Зарегистрироваться</button>
-            <p>У вас уже есть аккаунт ? <router-link to="/login">Войти</router-link></p>
+            <p>У вас уже есть аккаунт ? <span @click="() => mainStore.openLoginForm()">Войти</span></p>
         </form>
 
         
@@ -28,9 +29,12 @@
 </template>
 
 <script setup>
+    import { useMainStore } from "@/store/store";
     import { ref, reactive } from "vue";
     import { useRouter } from "vue-router";
     sessionStorage.removeItem("userData");
+
+    const mainStore = useMainStore();
 
     const router = useRouter();
 
@@ -108,11 +112,12 @@
             avatarIcon: null,
             fullName: null,
             dateOfBirth: null,
+            balance: 10000
         };
         users.push(newUser);
+        sessionStorage.setItem('userData', JSON.stringify(newUser));
         localStorage.setItem("users", JSON.stringify(users));
-        sessionStorage.setItem("userSession", newUser.email);
-        setTimeout(() => router.push("/"), 1000);
+        setTimeout(() => window.location.reload(), 1000);
     };
 
     
@@ -129,6 +134,7 @@
         align-items: center;
         justify-content: center;
         z-index: 6;
+        background-color: rgba(0, 0, 0, 0.5);
     }
     form{
         position: relative;
@@ -142,6 +148,14 @@
         color: white;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         font-size: 20px;
+    }
+    form img{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
     form h2{
         text-align: center;
@@ -177,8 +191,9 @@
         text-align: center;
         font-size: 16px;
     }
-    form a{
+    form span{
         color: #77BE1D;
+        text-decoration: underline;
         cursor: pointer;
     }
 </style>

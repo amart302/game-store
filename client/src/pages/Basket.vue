@@ -1,6 +1,6 @@
 <template>
   <div class="cart-page">
-    <Header @update-basket="updateBasketCount" />
+    <Header />
     <main>
       <h1 class="cart-title">Корзина <span v-if="!cartItems.length">пуста</span></h1>
       <div class="cart-container" v-if="cartItems.length">
@@ -123,6 +123,7 @@
 import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'Cart',
@@ -154,6 +155,10 @@ export default {
   async mounted() {
     await this.fetchProducts();
     this.loadAccountBalance();
+  },
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
   },
   methods: {
     async fetchProducts() {
@@ -189,7 +194,6 @@ export default {
         return item;
       });
       localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-      this.$emit('update-basket', this.cartItems.length);
     },
     decreaseQuantity(id) {
       this.cartItems = this.cartItems.map(item => {
@@ -197,18 +201,21 @@ export default {
         return item;
       });
       localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-      this.$emit('update-basket', this.cartItems.length);
     },
     removeFromCart(id) {
       this.cartItems = this.cartItems.filter(item => item.id !== id);
       localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-      this.$emit('update-basket', this.cartItems.length);
     },
     selectPaymentMethod(method) {
       this.selectedPayment = method;
     },
     checkout() {
-      if (!this.selectedPayment) {
+      const user = sessionStorage.getItem("userData");
+      if(!user){
+        this.mainStore.openRegisterForm();
+        return;
+      }
+      else if (!this.selectedPayment) {
         alert('Пожалуйста, выберите способ оплаты!');
         return;
       }
@@ -216,12 +223,11 @@ export default {
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
       this.$router.push('/checkout');
     },
-    updateBasketCount(count) {
-      // Логика обновления корзины, если требуется
-    },
     loadAccountBalance() {
-      const savedBalance = localStorage.getItem('accountBalance');
-      this.accountBalance = savedBalance !== null ? parseInt(savedBalance) : 10000;
+      const userData = (sessionStorage.getItem('userData')) ? JSON.parse(sessionStorage.getItem('userData')) : null;
+      if(userData){
+        this.accountBalance = userData.balance !== null ? parseInt(userData.balance) : 10000;
+      }
     },
   },
 };
@@ -415,6 +421,12 @@ main {
 .remove-btn:hover {
   background: rgba(255, 48, 48, 0.9);
   transform: rotate(90deg);
+}
+.remove-btn path{
+  transition: all 0.3s;
+}
+.remove-btn:hover path{
+  fill-opacity: 1;
 }
 
 .cart-summary {

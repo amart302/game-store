@@ -64,18 +64,25 @@
     </div>
     <Search :searchQuery="searchQuery" :searchGames="searchGames"/>
   </header>
+  <Register v-if="mainStore.showForm == 'Register'"/>
+  <Login v-if="mainStore.showForm == 'Login'"/>
 </template>
 
 <script>
+import Register from '@/components/Register.vue';
 import ProfileUser from '../pages/ProfileUser.vue';
 import Search from './Search.vue';
+import Login from '@/components/Login.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   components: {
     ProfileUser,
-    Search
+    Search,
+    Register,
+    Login
   },
-  props: { searchGames: Function },
+  props: { searchGames: Function, showForm: Boolean },
   data() {
     return {
       userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },
@@ -86,7 +93,7 @@ export default {
       basketCount: 0,
       showCashModal: false,
       depositAmount: '',
-      accountBalance: 10000,
+      accountBalance: (this.userData) ? this.userData.balance : 0,
       links: [
         { text: 'Отзывы', href: '#FeedbackForm' },
         { text: 'Гарантии', href: '#' },
@@ -96,15 +103,22 @@ export default {
       ],
     };
   },
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
+  },
   computed: {
     truncatedUsername() {
       const username = this.userData.username;
       return username.length > 11 ? username.slice(0, 8) + "..." : username;
     },
   },
+  created(){
+    this.mainStore.checkUserSession();
+  },
   mounted() {
+    this.mainStore.fetchGames();
     document.addEventListener('click', this.closeDropdown);
-    this.updateBasketCount();
     this.loadAccountBalance();
   },
   beforeDestroy() {
@@ -112,6 +126,11 @@ export default {
   },
   methods: {
     goToProfile(){
+      const user = sessionStorage.getItem("userData");
+      if(!user){
+        this.mainStore.openRegisterForm();
+        return;
+      }
       this.$router.push('/profile');
     },
     toggleDropdown() {
@@ -143,10 +162,6 @@ export default {
     goToMain() {
       this.$router.push('/');
     },
-    updateBasketCount() {
-      const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
-      this.basketCount = basket.length;
-    },
     toggleCashModal() {
       this.showCashModal = !this.showCashModal;
       if (!this.showCashModal) this.depositAmount = '';
@@ -162,16 +177,17 @@ export default {
       this.toggleCashModal();
     },
     loadAccountBalance() {
-      const savedBalance = localStorage.getItem('accountBalance');
-      if (savedBalance !== null) {
+      const savedBalance = this.userData.balance;
+      if (savedBalance) {
         this.accountBalance = parseInt(savedBalance);
       } else {
-        this.accountBalance = 10000;
         this.saveAccountBalance();
       }
     },
     saveAccountBalance() {
-      localStorage.setItem('accountBalance', this.accountBalance);
+      const users = JSON.parse(localStorage.getItem("users"));
+      users.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
+      localStorage.setItem("users", JSON.stringify(users));
     },
     handleLinkClick(href) {
       if (href === '#FeedbackForm') {

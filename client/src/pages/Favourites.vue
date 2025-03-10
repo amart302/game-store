@@ -1,12 +1,12 @@
 <template>
   <div class="favorites-page">
-    <Header @update-basket="updateBasketCount" />
+    <Header />
     <main>
       <h1 class="favorites-title">Избранное</h1>
       <div class="favorites-container" v-if="favourites.length">
         <transition-group name="fade" tag="div" class="favorites-grid">
           <div v-for="game in paginatedFavourites" :key="game.id" class="favorite-item">
-            <ProductCard :game="game" @favourites-updated="updateFavourites" @update-basket="updateBasketCount" />
+            <ProductCard :game="game" @favourites-updated="updateFavourites" />
           </div>
         </transition-group>
         <!-- Пагинация -->
@@ -57,9 +57,6 @@ export default {
     updateFavourites() {
       this.favourites = JSON.parse(localStorage.getItem('favourites')) || [];
       this.currentPage = 1;
-    },
-    updateBasketCount(count) {
-      this.$emit('update-basket', count);
     },
   },
 };

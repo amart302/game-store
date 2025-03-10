@@ -1,6 +1,7 @@
 <template>
     <div class="form-container">
         <form @submit.prevent="handleSubmitLogin()">
+            <img src="../assets/images/cross.png" @click="() => mainStore.closeForm()">
             <h2>Авторизация</h2>
             <div class="form-group">
                 <input type="text" v-model="email" placeholder="Электронная почта">
@@ -12,18 +13,18 @@
             </div>
             <p v-if="errors.generalError" class="error-message">{{ errors.generalError }}</p>
             <button type="submit">Войти</button>
-            <p>У вас еще нет аккаунта ? <router-link to="/register">Зарегистрироваться</router-link></p>
+            <p>У вас еще нет аккаунта ? <span @click="() => mainStore.openRegisterForm()">Зарегистрироваться</span></p>
         </form>
     </div>
     
 </template>
 
 <script setup>
+    import { useMainStore } from "@/store/store";
     import { ref, reactive } from "vue";
-    import { useRouter } from "vue-router";
     sessionStorage.removeItem("userData");
 
-    const router = useRouter();
+    const mainStore = useMainStore();
 
     const email = ref("");
     const password = ref("");
@@ -64,8 +65,8 @@
         users.map(item => {
             if(item.email == email.value && item.password == password.value){
                 check = true;
-                sessionStorage.setItem("userSession", item.email);
-                setTimeout(() => router.push("/"), 1000);
+                sessionStorage.setItem("userData", JSON.stringify(item));
+                setTimeout(() => window.location.reload(), 1000);
             }
         });
         if(!check) errors.generalError = "Неверный логин или пароль";

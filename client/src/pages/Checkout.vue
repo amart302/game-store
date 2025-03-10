@@ -60,6 +60,7 @@ export default {
 
   data() {
     return {
+      userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },
       selectedGames: [],
       selectedPaymentMethod: null,
       accountBalance: 0,
@@ -117,12 +118,16 @@ export default {
     },
 
     loadAccountBalance() {
-      const savedBalance = localStorage.getItem('accountBalance');
-      this.accountBalance = savedBalance !== null ? parseInt(savedBalance) : 10000;
+      const userData = (sessionStorage.getItem('userData')) ? JSON.parse(sessionStorage.getItem('userData')) : null;
+      if(userData){
+        this.accountBalance = userData.balance !== null ? parseInt(userData.balance) : 10000;
+      }
     },
 
     saveAccountBalance() {
-      localStorage.setItem('accountBalance', this.accountBalance);
+      const users = JSON.parse(localStorage.getItem("users"));
+      users.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
+      localStorage.setItem("users", JSON.stringify(users));
     },
 
     loadCurrencySymbol() {

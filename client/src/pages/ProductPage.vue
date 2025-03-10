@@ -301,7 +301,6 @@ export default {
   },
   mounted() {
     document.title = `Playnchill`;
-    this.updateBasketCount();
     this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
     this.addEventListeners();
     this.loadCurrencyAndLanguage();    
@@ -351,12 +350,6 @@ export default {
       localStorage.setItem('favourites', JSON.stringify(favourites));
       this.$emit('favourites-updated');
     },
-
-    updateBasketCount() {
-      const basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
-      this.basketCount = basket.length;
-    },
-
     addToCart() {      
       let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       const product = {
@@ -378,7 +371,6 @@ export default {
       }
 
       localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
-      this.$emit('update-basket', basket.length);
       this.animateToCart();
     },
     animateToCart() {
