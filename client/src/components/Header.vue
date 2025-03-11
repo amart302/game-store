@@ -113,11 +113,7 @@ export default {
       return username.length > 11 ? username.slice(0, 8) + "..." : username;
     },
   },
-  created(){
-    this.mainStore.checkUserSession();
-  },
   mounted() {
-    this.mainStore.fetchGames();
     document.addEventListener('click', this.closeDropdown);
     this.loadAccountBalance();
   },
@@ -185,9 +181,10 @@ export default {
       }
     },
     saveAccountBalance() {
-      const users = JSON.parse(localStorage.getItem("users"));
-      users.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
-      localStorage.setItem("users", JSON.stringify(users));
+      return 12;
+    //   const usersArr = JSON.parse(users);
+    //   usersArr.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
+    //   localStorage.setItem("users", JSON.stringify(usersArr));
     },
     handleLinkClick(href) {
       if (href === '#FeedbackForm') {

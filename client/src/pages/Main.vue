@@ -9,7 +9,7 @@
         </h1>
         <div class="smallProductCardsConteiner1">
           <ProductCard
-            v-for="game in topGames"
+            v-for="game in mainStore.topGames"
             :key="game.id"
             :game="game"
             :isTopOnly="true"
@@ -81,7 +81,6 @@ import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import FeedbackForm from '@/components/FeedbackForm.vue';
 import { useMainStore } from '@/store/store';
-import { computed } from 'vue';
 
 export default {
   name: 'Main',
@@ -101,29 +100,23 @@ export default {
   },
   computed: {
     catalogGames() {
-      return this.gameCatalog.slice(0, 20);
+      return this.mainStore.gameCatalog.slice(0, 20);
     },
     discountedGames() {
-      return this.gameCatalog.filter(game => game.discounted).slice(0, 9);
+      return this.mainStore.gameCatalog.filter(game => game.discounted).slice(0, 9);
     },
-  },
-  mounted() {
-    // this.fetchGames();
   },
   setup(){
     const mainStore = useMainStore();
     return {
-      topGames: computed(() => mainStore.topGames),
-      gameCatalog: computed(() => mainStore.gameCatalog),
+      mainStore
     };
   },
+  mounted(){
+    console.log(this.mainStore.userData);
+    
+  },
   methods: {
-    // fetchGames() {
-    //   this.topGames = this.mainStore.topGames;
-    //   this.gameCatalog = this.mainStore.gameCatalog;
-    //   console.log(this.mainStore.topGames);
-      
-    // },
     addFeedback(feedback) {
       this.feedbacks.push({
         rating: feedback.rating,
