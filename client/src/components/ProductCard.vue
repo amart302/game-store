@@ -7,11 +7,10 @@
   <div v-else class="productCard" @click="navigateToProductPage">
     <img :src="game.large_capsule_image" class="productImg" ref="productImage" alt="Game Image" />
 
-    <button v-if="!isPurchased" class="addCardBtn" @click.stop="() => {
+    <button class="addCardBtn" @click.stop="() => {
       mainStore.addToBasket(game);
       animateToCart();
     }">В корзину</button>
-    <span v-else class="purchased-label">Куплено</span>
 
     <div class="product-like">
       <button @click.stop="mainStore.addToFavourites(game)" class="favourite-btn" :class="{ 'active': isFavourite }">
@@ -80,9 +79,6 @@ export default {
   computed: {
     isFavourite() {
       return this.mainStore.favourites.some(fav => fav.id === this.game.id);
-    },
-    isPurchased() {
-      return this.mainStore.purchaseHistory.some(purchase => purchase.items.some(item => item.id === this.game.id));
     },
   },
   mounted() {
@@ -196,26 +192,8 @@ export default {
   transition: all 0.2s;
 }
 
-.purchased-label {
-  display: none;
-  opacity: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%);
-  width: 86%;
-  justify-content: center;
-  align-items: center;
-  color: #201b1b;
-  font-weight: 500;
-  font-size: 16px;
-  background-color: rgba(255, 255, 255, 0.829);
-  padding: 10px;
-  border-radius: 12px;
-}
-
 .productCard:hover .addCardBtn,
-.productCard:hover .purchased-label {
+.productCard:hover{
   display: flex;
   opacity: 1;
 }
@@ -338,8 +316,7 @@ export default {
     height: 180px;
   }
 
-  .addCardBtn,
-  .purchased-label {
+  .addCardBtn {
     font-size: 14px;
     padding: 8px 12px;
   }
@@ -382,8 +359,7 @@ export default {
     height: 160px;
   }
 
-  .addCardBtn,
-  .purchased-label {
+  .addCardBtn{
     font-size: 12px;
     padding: 6px 10px;
     width: 90%;

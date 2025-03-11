@@ -7,11 +7,10 @@
         <div class="cart-items">
           <div v-for="item in mainStore.basket" :key="item.id" class="cart-item">
             <div class="cart-item-image">
-              <img :src="itemImage(item.id)" alt="Item Image" v-if="itemImage(item.id)" />
-              <div v-else class="image-placeholder">Изображение загружается...</div>
+              <img :src="item.large_capsule_image" alt="Item Image" />
             </div>
             <div class="cart-item-details">
-              <span class="cart-item-title">{{ item.title }}</span>
+              <span class="cart-item-title">{{ item.name }}</span>
               <div class="cart-item-dop-info">
                 <span>Регион активации:</span> Россия и страны СНГ
               </div>
@@ -41,7 +40,7 @@
               :class="{ active: selectedPayment === 'account' }">
               <div class="basket-so-card-title">
                 <input type="radio" :checked="selectedPayment === 'account'" />
-                Накопительный счёт ({{ accountBalance }} ₽)
+                Накопительный счёт ({{ mainStore.userData.balance }} ₽)
               </div>
             </div>
             <div class="basket-so-card" @click="selectPaymentMethod('wallets')"
@@ -130,10 +129,7 @@ export default {
   components: { Header, Footer },
   data() {
     return {
-      cartItems: JSON.parse(localStorage.getItem('productsInBasketInGames')) || [],
-      products: [],
       selectedPayment: null,
-      accountBalance: 0,
       loading: true,
     };
   },
@@ -152,37 +148,11 @@ export default {
       return `${count} товаров`;
     },
   },
-  async mounted() {
-    await this.fetchProducts();
-    this.loadAccountBalance();
-  },
   setup(){
     const mainStore = useMainStore();
     return { mainStore };
   },
   methods: {
-    async fetchProducts() {
-      try {
-        this.loading = true;
-        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = response.data[0] || {};
-        this.products = [
-          ...(data.hit_games || []),
-          ...(data.new_games || []),
-          ...(data.top_games || []),
-          ...(data.game_catalog || []),
-        ];
-      } catch (error) {
-        console.error('Ошибка загрузки продуктов:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    itemImage(id) {
-      if (this.loading) return '';
-      const product = this.products.find(p => p.id === id);
-      return product ? product.small_capsule_image : '';
-    },
     calculatePrice(item) {
       const priceStr = item.final_price.toString().replace(' ₽', '').replace(' ', '');
       const price = parseFloat(priceStr) || 0;
@@ -200,15 +170,8 @@ export default {
         alert('Пожалуйста, выберите способ оплаты!');
         return;
       }
-      localStorage.setItem('selectedGameForCheckout', JSON.stringify(this.cartItems)); // Удалить
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
       this.$router.push('/checkout');
-    },
-    loadAccountBalance() {
-      const userData = (sessionStorage.getItem('userData')) ? JSON.parse(sessionStorage.getItem('userData')) : null;
-      if(userData){
-        this.accountBalance = userData.balance !== null ? parseInt(userData.balance) : 10000;
-      }
     },
   },
 };

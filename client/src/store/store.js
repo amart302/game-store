@@ -32,6 +32,12 @@ export const useMainStore = defineStore("main", {
               console.error('Ошибка загрузки игр:', error);
             }
         },
+        updateUserData(){
+          if(!this.userData) return;
+          const users = JSON.parse(localStorage.getItem('users')) || [];
+          const foundUser = users.find(item => item.id === this.userData.id);
+          this.userData = foundUser;
+        },
         addToFavourites(game) {
           const isAlreadyFavourite = this.favourites.some(item => item.id == game.id);
           if (isAlreadyFavourite) {
@@ -50,11 +56,6 @@ export const useMainStore = defineStore("main", {
           localStorage.setItem('favourites', JSON.stringify(this.favourites));
         },
         addToBasket(game) {
-          const isPurchased = this.purchaseHistory.some(purchase => purchase.items.some(item => item.id === game.id));
-          if (isPurchased) {
-            alert('Эта игра уже куплена!');
-            return;
-          }
           const product = {
             id: game.id,
             name: game.name,
@@ -89,7 +90,7 @@ export const useMainStore = defineStore("main", {
         },
         removeFromCart(id) {
           this.basket = this.basket.filter(item => item.id !== id);
-          localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
+          localStorage.setItem('basket', JSON.stringify(this.basket));
         },
     },
 });

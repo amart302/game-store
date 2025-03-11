@@ -13,7 +13,7 @@
                                 <label class="upload" name="upload" >
                                     <input type="file" style="display: none;" @change="handleFileChange" accept="image/*">
                                     <!-- <img :src="upload" for="upload" name="upload" alt=""> -->
-                                     <img src="../assets/images/upload.svg" alt="">
+                                    <img src="../assets/images/upload.svg" alt="">
                                 </label>
                             
                         </div>
@@ -62,26 +62,27 @@
 <script setup>
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
+import { useMainStore } from '@/store/store';
 import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 
+const mainStore = useMainStore();
 const router = useRouter();
 
 const props = defineProps({
     showAndHideProfile: Function
 });
 
-const userData = JSON.parse(sessionStorage.getItem("userData"));
 const users = JSON.parse(localStorage.getItem("users"));
 
-let avatarIcon = ref(userData.avatarIcon || 'src/assets/images/avatarIcon.png');
-const updateUsername = ref(userData.username);
-const updateEmail = ref(userData.email);
-const updateFullName = ref(userData.fullName || "");
+let avatarIcon = ref(mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png');
+const updateUsername = ref(mainStore.userData.username);
+const updateEmail = ref(mainStore.userData.email);
+const updateFullName = ref(mainStore.userData.fullName || "");
 const updatePassword = ref("");
 const confirmPassword = ref("");
-const updateBirthDate = ref(userData.birthDate || "");
+const updateBirthDate = ref(mainStore.userData.birthDate || "");
 
 const errors = reactive({
     username: "",
@@ -124,11 +125,11 @@ const validateData = () => {
     }
 
     users.map(item => {
-        if (item.email == updateEmail.value && item.id != userData.id) {
+        if (item.email == updateEmail.value && item.id != mainStore.userData.id) {
             errors.email = "Эта почта уже занят";
         }
         
-        if(item.username == updateUsername.value && item.id != userData.id){
+        if(item.username == updateUsername.value && item.id != mainStore.userData.id){
             errors.username = "Этот ник уже занят";
         }
     });
@@ -147,12 +148,12 @@ const handleFileChange = (event) => {
 };
 
 const updateUserData = () => {
-    const response = axios.post("http://localhost:3000/upload", { file: avatarIcon.value });
     validateData();
     if (errors.generalError || errors.email || errors.username || 
         errors.updatePassword || errors.confirmPassword) return;
     users.map(item => {
-        if (item.id == userData.id) {
+        if (item.id == mainStore.userData.id) {
+            item.avatarIcon = avatarIcon.value;
             item.username = updateUsername.value;
             item.email = updateEmail.value;
             item.password = updatePassword.value;
@@ -161,6 +162,7 @@ const updateUserData = () => {
         }
     });
     localStorage.setItem("users", JSON.stringify(users));
+    mainStore.updateUserData();
     alert("Данные обновлены");
     router.push("/");
 };

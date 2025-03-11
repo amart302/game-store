@@ -13,7 +13,7 @@
             <div class="product-title">{{ currentProduct.name }}</div>
             <div class="product-v-nalichii">
               <div class="product-v-nalichii-tochka"></div>
-              {{ translations[language].inStock }}
+              В наличии
             </div>
 
             <div class="product-prices">
@@ -23,11 +23,10 @@
             </div>
 
             <div class="product-deystvia">
-              <div v-if="!isPurchased" class="product-buy" @click="addToCart">{{ translations[language].buy }}</div>
-              <div v-else class="product-buy purchased">{{ translations[language].purchased }}</div>
+              <div class="product-buy" @click="addToCart">Добавить в корзину</div>
 
               <div class="product-like">
-                <button @click="toggleFavourite" class="favourite-btn" :class="{ 'active': isFavourite }">
+                <button @click="addToFavourites()" class="favourite-btn" :class="{ 'active': isFavourite }">
                   <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
                   </svg>
@@ -42,9 +41,9 @@
               <table>
                 <thead>
                   <tr class="product-tr1">
-                    <td>{{ translations[language].platforms }}</td>
-                    <td>{{ translations[language].activationRegion }}</td>
-                    <td>{{ translations[language].itemType }}</td>
+                    <td>Платформы</td>
+                    <td>Регион активации</td>
+                    <td>Тип товара</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -54,22 +53,22 @@
                       <span v-if="currentProduct.platforms.mac">, Mac</span>
                       <span v-if="currentProduct.platforms.linux">, Linux</span>
                     </td>
-                    <td>{{ translations[language].cisCountries }}</td>
-                    <td>{{ translations[language].key }}</td>
+                    <td>Страны СНГ</td>
+                    <td>Ключ</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div class="product-deystvia-2">
-              <div class="product-moment-dost-but">{{ translations[language].instantDelivery }}</div>
+              <div class="product-moment-dost-but">Моментальная доставка</div>
               <div class="product-garantia">
                 <div class="product-garantia-galochka">
                   <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5837 4.96466L8.49779 0L10 1.51767L3.5837 8L0 4.37942L1.50221 2.86175L3.5837 4.96466Z" fill="#77BE1D" />
                   </svg>
                 </div>
-                {{ translations[language].qualityGuarantee }}
+                Гарантия качества
               </div>
             </div>
           </div>
@@ -94,31 +93,31 @@
         <div class="product-ostas-title">
           <div class="product-osta" @click="activeTab = 'description'">
             <div :class="{ 'product-osta-left': true, active: activeTab === 'description' }">
-              {{ translations[language].productDescription }}
+              Описание товара
             </div>
           </div>
           <div class="product-osta" @click="activeTab = 'requirements'">
             <div :class="{ 'product-osta-center': true, active: activeTab === 'requirements' }">
-              {{ translations[language].systemRequirements }}
+              Системные требования
             </div>
           </div>
           <div class="product-osta" @click="activeTab = 'activation'">
             <div :class="{ 'product-osta-right': true, active: activeTab === 'activation' }">
-              {{ translations[language].activation }}
+              Активация
             </div>
           </div>
         </div>
         <div class="product-ostas-container">
           <div v-if="activeTab === 'description'" class="product-opisanie">
-            <div class="product-opisanie-title">{{ translations[language].fullImmersion }} {{ currentProduct.name }}</div>
+            <div class="product-opisanie-title">Полное погружение в {{ currentProduct.name }}</div>
             <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
           </div>
           <div v-if="activeTab === 'requirements'" class="product-sisTreb">
-            <div class="product-sisTreb-title">{{ translations[language].recommendedRequirements }}</div>
+            <div class="product-sisTreb-title">Рекомендованные системные требования</div>
             <table class="product-sisTreb-table">
               <tbody>
                 <tr>
-                  <td>{{ translations[language].platforms }}</td>
+                  <td>Платформы</td>
                   <td>
                     <span v-if="currentProduct.windows_available">Windows</span>
                     <span v-if="currentProduct.mac_available">, Mac</span>
@@ -129,10 +128,10 @@
             </table>
           </div>
           <div v-if="activeTab === 'activation'" class="product-activate">
-            <div class="product-activate-title">{{ translations[language].enterProductKey }}</div>
+            <div class="product-activate-title">Введите цифровой ключ продукта</div>
             <div class="product-activate-input">
               <label>
-                {{ translations[language].productKey }}<br />
+                Ключ продукта<br />
                 <input type="text" v-model="activationKey" placeholder="XXXX-XXXX-XXXX" />
               </label>
             </div>
@@ -141,7 +140,7 @@
       </div>
 
       <div class="vam-budet-interesno">
-        <div class="vam-budet-interesno-title">{{ translations[language].youMightLike }}</div>
+        <div class="vam-budet-interesno-title">Вам будет интересно</div>
         <div class="vam-budet-interesno-cont">
           <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
         </div>
@@ -157,7 +156,7 @@
             <img v-if="index == 4 && !slide.video" :src="slide.poster" class="product-gallery-img" />
             <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="video-player">
               <source :src="slide.video" />
-              {{ translations[language].videoNotSupported }}
+              Ваш браузер не поддерживает видео.
             </video>
           </div>
           <a class="prev" @click="plusSlides(-1)">❮</a>
@@ -176,6 +175,7 @@ import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import ProductCard from '@/components/ProductCard.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'ProductPage',
@@ -192,7 +192,6 @@ export default {
       slideIndex: 1,
       basketCount: 0,
       showHeartAnimation: false,
-      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
       productData: null,
       language: 'RU',
       selectedCurrency: '₽',
@@ -202,54 +201,12 @@ export default {
         '$': { '₽': 92, '€': 92 / 100, '$': 1 },
         '€': { '₽': 100, '$': 100 / 92, '€': 1 },
       },
-      
-      translations: {
-        RU: {
-          inStock: 'В наличии',
-          buy: 'Добавить в корзину',
-          purchased: 'Куплено',
-          platforms: 'Платформы',
-          activationRegion: 'Регион активации',
-          itemType: 'Тип товара',
-          cisCountries: 'Страны СНГ',
-          key: 'Ключ',
-          instantDelivery: 'Моментальная доставка',
-          qualityGuarantee: 'Гарантия качества',
-          productDescription: 'Описание товара',
-          systemRequirements: 'Системные требования',
-          activation: 'Активация',
-          fullImmersion: 'Полное погружение в',
-          recommendedRequirements: 'Рекомендованные системные требования',
-          enterProductKey: 'Введите цифровой ключ продукта',
-          productKey: 'Ключ продукта',
-          youMightLike: 'Вам будет интересно',
-          videoNotSupported: 'Ваш браузер не поддерживает видео.',
-        },
-        EN: {
-          inStock: 'In Stock',
-          buy: 'Buy',
-          purchased: 'Purchased',
-          platforms: 'Platforms',
-          activationRegion: 'Activation Region',
-          itemType: 'Item Type',
-          cisCountries: 'CIS Countries',
-          key: 'Key',
-          instantDelivery: 'Instant Delivery',
-          qualityGuarantee: 'Quality Guarantee',
-          productDescription: 'Product Description',
-          systemRequirements: 'System Requirements',
-          activation: 'Activation',
-          fullImmersion: 'Full Immersion in',
-          recommendedRequirements: 'Recommended System Requirements',
-          enterProductKey: 'Enter Product Key',
-          productKey: 'Product Key',
-          youMightLike: 'You Might Like',
-          videoNotSupported: 'Your browser does not support video.',
-        },
-      },
     };
   },
-
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
+  },
   computed: {
     galleryImages() {
       if (!this.currentProduct.name) return [];
@@ -269,13 +226,8 @@ export default {
       return this.galleryImages.length ? [...this.galleryImages] : [];
     },
 
-    isPurchased() {
-      const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      return purchaseHistory.some(purchase => purchase.items.some(item => String(item.id) === String(this.productData)));
-    },
-
     isFavourite() {
-      return this.favourites.some(fav => String(fav.id) === String(this.productData));
+      return this.mainStore.favourites.some(fav => String(fav.id) === String(this.productData));
     },
 
     convertedFinalPrice() {
@@ -330,8 +282,8 @@ export default {
       }
     },
 
-    toggleFavourite() {
-      let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
+    addToFavourites() {
+      let favourites = this.mainStore.favourites;
       const isAlreadyFavourite = this.isFavourite;
       if (isAlreadyFavourite) {
         favourites = favourites.filter(fav => fav.id !== this.productData);
@@ -346,31 +298,29 @@ export default {
           linux_available: this.currentProduct.linux_available
         });
       }
-      this.favourites = favourites
+      this.mainStore.favourites = favourites
       localStorage.setItem('favourites', JSON.stringify(favourites));
-      this.$emit('favourites-updated');
     },
     addToCart() {      
-      let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
       const product = {
         id: this.productData,
         name: this.currentProduct.name,
         final_price: `${this.currentProduct.final_price} ₽`,
-        large_capsule_image: this.currentProduct.large_capsule_image,
+        large_capsule_image: this.currentProduct.header_image,
         windows_available: this.currentProduct.windows_available,
         linux_available: this.currentProduct.linux_available,
         mac_available: this.currentProduct.mac_available,
         count: 1,
       };
 
-      const existing = basket.find(item => item.id === product.id);
+      const existing = this.mainStore.basket.find(item => item.id === product.id);
       if (existing) {
         existing.count += 1;
       } else {
-        basket.push(product);
+        this.mainStore.basket.push(product);
       }
 
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
+      localStorage.setItem('basket', JSON.stringify(this.mainStore.basket));
       this.animateToCart();
     },
     animateToCart() {

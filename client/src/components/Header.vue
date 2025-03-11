@@ -21,14 +21,18 @@
           </div>
         </div>
         <div class="bl-cash" @click="toggleCashModal">
-          Баланс: {{ accountBalance }} {{ selectedVal }}
+          Баланс: {{ (mainStore.userData) ? mainStore.userData.balance : 0 }} {{ selectedVal }}
         </div>
-        <div class="bl-state">
-          <a v-for="link in links" :key="link.text" :href="link.href" @click.prevent="handleLinkClick(link.href)">{{ link.text }}</a>
-        </div>
+        <nav class="bl-state">
+          <RouterLink to="#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
+          <RouterLink to="#">Гарантии</RouterLink>
+          <RouterLink to="#">Как купить</RouterLink>
+          <RouterLink to="#">Накопительная</RouterLink>
+          <RouterLink to="/history">История покупок</RouterLink>
+        </nav>
         <div class="bl-pr" @click="() => goToProfile()">
           <p>{{ truncatedUsername }}</p>
-          <img :src="userData.avatarIcon || 'src/assets/images/avatarIcon.png'" class="pr-img" />
+          <img :src="(mainStore.userData) ? mainStore.userData.avatarIcon : 'src/assets/images/avatarIcon.png'" class="pr-img" />
         </div>
       </div>
 
@@ -49,7 +53,7 @@
             </svg>
           </button>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
-          <div class="uveda" v-if="basketCount > 0">{{ mainStore.basket.length }}</div>
+          <div class="uveda" v-if="mainStore.basket.length > 0">{{ mainStore.basket.length }}</div>
         </div>
       </div>
     </div>
@@ -62,7 +66,7 @@
         <button @click="depositCash" class="deposit-btn">Пополнить</button>
       </div>
     </div>
-    <Search :searchQuery="searchQuery" :searchGames="searchGames"/>
+    <Search :searchQuery="searchQuery" />
   </header>
   <Register v-if="mainStore.showForm == 'Register'"/>
   <Login v-if="mainStore.showForm == 'Login'"/>
@@ -85,22 +89,12 @@ export default {
   props: { searchGames: Function, showForm: Boolean },
   data() {
     return {
-      userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },
       selectedLang: 'RU',
       selectedVal: '₽',
       isDropdownVisible: false,
       searchQuery: '',
-      basketCount: 0,
       showCashModal: false,
       depositAmount: '',
-      accountBalance: (this.userData) ? this.userData.balance : 0,
-      links: [
-        { text: 'Отзывы', href: '#FeedbackForm' },
-        { text: 'Гарантии', href: '#' },
-        { text: 'Как купить', href: '#' },
-        { text: 'Накопительная', href: '#' },
-        { text: 'История покупок', href: '/history' },
-      ],
     };
   },
   setup(){
@@ -109,21 +103,29 @@ export default {
   },
   computed: {
     truncatedUsername() {
-      const username = this.userData.username;
-      return username.length > 11 ? username.slice(0, 8) + "..." : username;
+      if(this.mainStore.userData){
+        const username = this.mainStore.userData.username;
+        return username.length > 11 ? username.slice(0, 8) + "..." : username;
+      }else{
+        return "Гость";
+      }
     },
   },
-  mounted() {
-    document.addEventListener('click', this.closeDropdown);
-    this.loadAccountBalance();
+  watch: {
+    userData(){
+      console.log(this.userData);
+      
+    }
+  },
+  mounted() {    
+    document.addEventListener('click', this.closeDropdown);    
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);
   },
   methods: {
     goToProfile(){
-      const user = sessionStorage.getItem("userData");
-      if(!user){
+      if(!this.mainStore.userData){
         this.mainStore.openRegisterForm();
         return;
       }
@@ -168,38 +170,12 @@ export default {
         alert('Пожалуйста, введите корректную сумму');
         return;
       }
-      this.accountBalance += amount;
-      this.saveAccountBalance();
-      this.toggleCashModal();
-    },
-    loadAccountBalance() {
-      const savedBalance = this.userData.balance;
-      if (savedBalance) {
-        this.accountBalance = parseInt(savedBalance);
-      } else {
-        this.saveAccountBalance();
-      }
-    },
-    saveAccountBalance() {
-      return 12;
-    //   const usersArr = JSON.parse(users);
-    //   usersArr.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
-    //   localStorage.setItem("users", JSON.stringify(usersArr));
-    },
-    handleLinkClick(href) {
-      if (href === '#FeedbackForm') {
-        if (this.$route.path !== '/') {
-          this.$router.push('/').then(() => {
-            this.scrollToFeedback();
-          });
-        } else {
-          this.scrollToFeedback();
-        }
-      } else if (href === '/history') {
-        this.$router.push('/history');
-      } else {
-        window.location.href = href;
-      }
+      this.mainStore.userData.balance += amount;
+      const users = localStorage.getItem("users");
+      const usersArr = JSON.parse(users);
+      usersArr.map(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
+      localStorage.setItem("users", JSON.stringify(usersArr));
+      window.location.reload();
     },
     scrollToFeedback() {
       const feedbackSection = document.querySelector('#FeedbackForm');
