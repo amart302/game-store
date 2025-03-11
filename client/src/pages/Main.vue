@@ -112,10 +112,6 @@ export default {
       mainStore
     };
   },
-  mounted(){
-    console.log(this.mainStore.userData);
-    
-  },
   methods: {
     addFeedback(feedback) {
       this.feedbacks.push({

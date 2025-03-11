@@ -8,6 +8,7 @@ export const useMainStore = defineStore("main", {
         gameCatalog: [],
         favourites: JSON.parse(localStorage.getItem("favourites")) || [],
         basket: JSON.parse(localStorage.getItem("basket")) || [],
+        purchaseHistory: JSON.parse(localStorage.getItem("purchaseHistory")) || [],
         foundGames: [],
         showForm: false
     }),
@@ -30,6 +31,65 @@ export const useMainStore = defineStore("main", {
             } catch (error) {
               console.error('Ошибка загрузки игр:', error);
             }
+        },
+        addToFavourites(game) {
+          const isAlreadyFavourite = this.favourites.some(item => item.id == game.id);
+          if (isAlreadyFavourite) {
+            this.favourites = this.favourites.filter(fav => fav.id !== game.id);
+          } else {
+            this.favourites.push({
+              id: game.id,
+              name: game.name,
+              large_capsule_image: game.large_capsule_image,
+              final_price: game.final_price,
+              windows_available: game.windows_available,
+              mac_available: game.mac_available,
+              linux_available: game.linux_available
+            });
+          }
+          localStorage.setItem('favourites', JSON.stringify(this.favourites));
+        },
+        addToBasket(game) {
+          const isPurchased = this.purchaseHistory.some(purchase => purchase.items.some(item => item.id === game.id));
+          if (isPurchased) {
+            alert('Эта игра уже куплена!');
+            return;
+          }
+          const product = {
+            id: game.id,
+            name: game.name,
+            final_price: `${game.final_price} ₽`,
+            large_capsule_image: game.large_capsule_image,
+            windows_available: game.windows_available,
+            linux_available: game.linux_available,
+            mac_available: game.mac_available,
+            count: 1,
+          };
+          const existing = this.basket.find(item => item.id === product.id);
+          if (existing) {
+            existing.count += 1;
+          } else {
+            this.basket.push(product);
+          }
+          localStorage.setItem('basket', JSON.stringify(this.basket));          
+        },
+        increaseQuantity(id) {
+          this.basket = this.basket.map(item => {
+            if (item.id === id) item.count += 1;
+            return item;
+          });
+          localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
+        },
+        decreaseQuantity(id) {
+          this.basket = this.basket.map(item => {
+            if (item.id === id && item.count > 1) item.count -= 1;
+            return item;
+          });
+          localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
+        },
+        removeFromCart(id) {
+          this.basket = this.basket.filter(item => item.id !== id);
+          localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
         },
     },
 });

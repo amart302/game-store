@@ -2,10 +2,10 @@
   <div class="cart-page">
     <Header />
     <main>
-      <h1 class="cart-title">Корзина <span v-if="!cartItems.length">пуста</span></h1>
-      <div class="cart-container" v-if="cartItems.length">
+      <h1 class="cart-title">Корзина <span v-if="!mainStore.basket.length">пуста</span></h1>
+      <div class="cart-container" v-if="mainStore.basket.length">
         <div class="cart-items">
-          <div v-for="item in cartItems" :key="item.id" class="cart-item">
+          <div v-for="item in mainStore.basket" :key="item.id" class="cart-item">
             <div class="cart-item-image">
               <img :src="itemImage(item.id)" alt="Item Image" v-if="itemImage(item.id)" />
               <div v-else class="image-placeholder">Изображение загружается...</div>
@@ -21,12 +21,12 @@
                 <span class="cart-item-old-price" v-if="item.oldPrice">{{ item.oldPrice }}</span>
               </div>
               <div class="cart-item-quantity">
-                <button @click="decreaseQuantity(item.id)" :disabled="item.count <= 1">-</button>
+                <button @click="mainStore.decreaseQuantity(item.id)" :disabled="item.count <= 1">-</button>
                 <span :key="item.count">{{ item.count }}</span>
-                <button @click="increaseQuantity(item.id)">+</button>
+                <button @click="mainStore.increaseQuantity(item.id)">+</button>
               </div>
             </div>
-            <button class="remove-btn" @click="removeFromCart(item.id)">
+            <button class="remove-btn" @click="mainStore.removeFromCart(item.id)">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M5.58377 6.99662L0 12.583L1.41388 13.9976L6.99765 8.41116L12.5814 13.9976L13.9953 12.583L8.41153 6.99662L13.9917 1.41382L12.5778 -0.000732422L6.99765 5.58207L1.41748 -0.000730515L0.00360323 1.41382L5.58377 6.99662Z"
@@ -139,14 +139,14 @@ export default {
   },
   computed: {
     totalPrice() {
-      const total = this.cartItems.reduce((total, item) => {
+      const total = this.mainStore.basket.reduce((total, item) => {
         const price = parseFloat(item.final_price.replace(' ₽', '').replace(' ', '')) || 0;
         return total + price * item.count;
       }, 0);
       return total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     },
     itemsCountText() {
-      const count = this.cartItems.length;
+      const count = this.mainStore.basket.length;
       if (count === 1) return '1 товар';
       if (count >= 2 && count <= 4) return `${count} товара`;
       return `${count} товаров`;
@@ -188,30 +188,11 @@ export default {
       const price = parseFloat(priceStr) || 0;
       return (price * item.count).toFixed(2);
     },
-    increaseQuantity(id) {
-      this.cartItems = this.cartItems.map(item => {
-        if (item.id === id) item.count += 1;
-        return item;
-      });
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-    },
-    decreaseQuantity(id) {
-      this.cartItems = this.cartItems.map(item => {
-        if (item.id === id && item.count > 1) item.count -= 1;
-        return item;
-      });
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-    },
-    removeFromCart(id) {
-      this.cartItems = this.cartItems.filter(item => item.id !== id);
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(this.cartItems));
-    },
     selectPaymentMethod(method) {
       this.selectedPayment = method;
     },
     checkout() {
-      const user = sessionStorage.getItem("userData");
-      if(!user){
+      if(!this.mainStore.userData){
         this.mainStore.openRegisterForm();
         return;
       }
@@ -219,7 +200,7 @@ export default {
         alert('Пожалуйста, выберите способ оплаты!');
         return;
       }
-      localStorage.setItem('selectedGameForCheckout', JSON.stringify(this.cartItems));
+      localStorage.setItem('selectedGameForCheckout', JSON.stringify(this.cartItems)); // Удалить
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
       this.$router.push('/checkout');
     },

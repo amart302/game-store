@@ -49,7 +49,7 @@
             </svg>
           </button>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
-          <div class="uveda" v-if="basketCount > 0">{{ basketCount }}</div>
+          <div class="uveda" v-if="basketCount > 0">{{ mainStore.basket.length }}</div>
         </div>
       </div>
     </div>
