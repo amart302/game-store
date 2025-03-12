@@ -3,12 +3,12 @@
     <Header />
     <main>
       <h1 class="checkout-title">Оформление заказа</h1>
-      <div v-if="selectedGames.length" class="checkout-container">
-        <div v-for="game in selectedGames" :key="game.id" class="game-info">
+      <div v-if="mainStore.basket.length" class="checkout-container">
+        <div v-for="game in mainStore.basket" :key="game.id" class="game-info">
           <div class="game-info-header">
-            <h2>{{ game.title }}</h2>
+            <h2>{{ game.name }}</h2>
             <div class="product-like">
-              <button @click="toggleFavourite(game)" class="favourite-btn" :class="{ 'active': isGameFavourite(game.id) }">
+              <button @click="mainStore.addToFavourites(game)" class="favourite-btn" :class="{ 'active': isGameFavourite(game.id) }">
                 <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
                 </svg>
@@ -18,7 +18,7 @@
               </button>
             </div>
           </div>
-          <p>Цена: {{ game.price }}</p>
+          <p>Цена: {{ game.final_price }}</p>
           <p v-if="game.skidka">Скидка: {{ game.skidka }}</p>
           <p v-if="game.oldPrice">Старая цена: {{ game.oldPrice }}</p>
           <p>Количество: {{ game.count }}</p>
@@ -28,8 +28,8 @@
           <h3>Способ оплаты: {{ paymentMethodDisplay }}</h3>
           <p>Общая сумма: {{ totalPrice }} {{ currencySymbol }}</p>
           <div v-if="selectedPaymentMethod === 'account'" class="balance-info">
-            <p>Баланс накопительного счёта: {{ accountBalance }} {{ currencySymbol }}</p>
-            <p v-if="accountBalance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
+            <p>Баланс накопительного счёта: {{ mainStore.userData.balance }} {{ currencySymbol }}</p>
+            <p v-if="mainStore.userData.balance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
           </div>
         </div>
         <button
@@ -53,6 +53,7 @@
 <script>
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'Checkout',
@@ -60,18 +61,18 @@ export default {
 
   data() {
     return {
-      userData: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")) : { username: "Гость" },
-      selectedGames: [],
-      selectedPaymentMethod: null,
-      accountBalance: 0,
+      selectedPaymentMethod: localStorage.getItem('selectedPaymentMethod') || null,
       currencySymbol: '₽',
       favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
     };
   },
-
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
+  },
   computed: {
     totalPriceRaw() {
-      return this.selectedGames.reduce((sum, game) => {
+      return this.mainStore.basket.reduce((sum, game) => {
         const price = parseFloat(game.final_price.split(' ')[0]);
         return sum + price * game.count;
       }, 0);
@@ -94,75 +95,25 @@ export default {
 
     isPaymentDisabled() {
       if (this.selectedPaymentMethod === 'account') {
-        return this.accountBalance < this.totalPriceRaw;
+        return this.mainStore.userData.balance < this.totalPriceRaw;
       }
       return false;
     },
   },
-
-  created() {
-    this.loadSelectedGames();
-    this.loadPaymentMethod();
-    this.loadAccountBalance();
-    this.loadCurrencySymbol();
-  },
-
   methods: {
-    loadSelectedGames() {
-      const games = JSON.parse(localStorage.getItem('selectedGameForCheckout')) || [];
-      this.selectedGames = games;
-    },
-
-    loadPaymentMethod() {
-      this.selectedPaymentMethod = localStorage.getItem('selectedPaymentMethod') || null;
-    },
-
-    loadAccountBalance() {
-      const userData = (sessionStorage.getItem('userData')) ? JSON.parse(sessionStorage.getItem('userData')) : null;
-      if(userData){
-        this.accountBalance = userData.balance !== null ? parseInt(userData.balance) : 10000;
-      }
-    },
-
     saveAccountBalance() {
       const users = JSON.parse(localStorage.getItem("users"));
-      users.map(item => (item.id == this.userData.id) ? item.balance = this.accountBalance : false);
+      users.map(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
       localStorage.setItem("users", JSON.stringify(users));
     },
 
-    loadCurrencySymbol() {
-      const savedVal = localStorage.getItem('selectedVal');
-      this.currencySymbol = savedVal || '₽';
-    },
-
     isGameFavourite(gameId) {
-      return this.favourites.some(fav => fav.id === gameId);
-    },
-
-    toggleFavourite(game) {
-      let updatedFavourites = [...this.favourites];
-      const isAlreadyFavourite = this.isGameFavourite(game.id);
-
-      if (isAlreadyFavourite) {
-        updatedFavourites = updatedFavourites.filter(fav => fav.id !== game.id);
-      } else {
-        updatedFavourites.push({
-          id: game.id,
-          title: game.title,
-          large_capsule_image: game.large_capsule_image || '',
-          windows_available: game.windows_available,
-          linux_available: game.linux_available,
-          mac_available: game.mac_available
-        });
-      }
-
-      this.favourites = updatedFavourites;
-      localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      return this.mainStore.favourites.some(fav => fav.id === gameId);
     },
 
     savePurchaseHistory() {
       const purchase = {
-        items: this.selectedGames.map(item => ({
+        items: this.mainStore.basket.map(item => ({
           id: item.id,
           name: item.name,
           final_price: item.final_price.replace(' ₽', '').replace(' ', ''),
@@ -177,9 +128,8 @@ export default {
         date: new Date().toLocaleString('ru-RU'),
         status: 'Куплен',
       };
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      history.push(purchase);
-      localStorage.setItem('purchaseHistory', JSON.stringify(history));
+      this.mainStore.purchaseHistory.push(purchase);
+      localStorage.setItem('purchaseHistory', JSON.stringify(this.mainStore.purchaseHistory));
     },
 
     completePurchase() {
@@ -189,8 +139,8 @@ export default {
       }
 
       if (this.selectedPaymentMethod === 'account') {
-        if (this.accountBalance >= this.totalPriceRaw) {
-          this.accountBalance -= this.totalPriceRaw;
+        if (this.mainStore.userData.balance >= this.totalPriceRaw) {
+          this.mainStore.userData.balance -= this.totalPriceRaw;
           this.saveAccountBalance();
           this.savePurchaseHistory();
           alert('Покупка успешно завершена с накопительного счёта!');
@@ -208,8 +158,8 @@ export default {
     },
 
     clearCheckout() {
-      localStorage.removeItem('selectedGameForCheckout');
-      localStorage.removeItem('productsInBasketInGames');
+      this.mainStore.basket = [];
+      localStorage.removeItem('basket');
       localStorage.removeItem('selectedPaymentMethod');
     },
   },

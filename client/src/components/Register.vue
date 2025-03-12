@@ -109,7 +109,7 @@
             username: username.value,
             email: email.value,
             password: password.value,
-            avatarIcon: null,
+            avatarIcon: "src/assets/images/avatarIcon.png",
             fullName: null,
             dateOfBirth: null,
             balance: 10000

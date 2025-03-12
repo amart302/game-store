@@ -3,7 +3,7 @@
     <Header />
     <main>
       <h1 class="favorites-title">Избранное</h1>
-      <div class="favorites-container" v-if="favourites.length">
+      <div class="favorites-container" v-if="mainStore.favourites.length">
         <transition-group name="fade" tag="div" class="favorites-grid">
           <div v-for="game in paginatedFavourites" :key="game.id" class="favorite-item">
             <ProductCard :game="game" @favourites-updated="updateFavourites" />
@@ -32,6 +32,7 @@
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import ProductCard from '@/components/ProductCard.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'Favorites',
@@ -43,6 +44,10 @@ export default {
       itemsPerPage: 8,
     };
   },
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
+  },
   computed: {
     totalPages() {
       return Math.ceil(this.favourites.length / this.itemsPerPage);
@@ -50,7 +55,7 @@ export default {
     paginatedFavourites() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.favourites.slice(start, end);
+      return this.mainStore.favourites.slice(start, end);
     },
   },
   methods: {

@@ -3,8 +3,18 @@
 </template>
 
 <script>
+import { useMainStore } from './store/store';
+
 export default {
   name: 'App',
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
+  },
+  created(){
+    this.mainStore.fetchGames();
+    this.mainStore.updateUserData();
+  }
 };
 </script>
 

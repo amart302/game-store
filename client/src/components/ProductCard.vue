@@ -7,19 +7,13 @@
   <div v-else class="productCard" @click="navigateToProductPage">
     <img :src="game.large_capsule_image" class="productImg" ref="productImage" alt="Game Image" />
 
-    <div class="cardCategoriesBlock">
-      <div v-if="!isTopOnly && isHit" class="hitBlock">Хит продаж</div>
-      <div v-if="!isTopOnly && isNew" class="newBlock">Новинка</div>
-      <div v-if="game.top" class="topBlock">
-        Top <img src="../assets/images/lightning.svg" alt="Lightning" /> 4
-      </div>
-    </div>
-
-    <button v-if="!isPurchased" class="addCardBtn" @click.stop="addToCart">В корзину</button>
-    <span v-else class="purchased-label">Куплено</span>
+    <button class="addCardBtn" @click.stop="() => {
+      mainStore.addToBasket(game);
+      animateToCart();
+    }">В корзину</button>
 
     <div class="product-like">
-      <button @click.stop="toggleFavourite" class="favourite-btn" :class="{ 'active': isFavourite }">
+      <button @click.stop="mainStore.addToFavourites(game)" class="favourite-btn" :class="{ 'active': isFavourite }">
         <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
         </svg>
@@ -57,6 +51,7 @@
 </template>
 
 <script>
+import { useMainStore } from '@/store/store';
 import Skeleton from 'primevue/skeleton';
 
 export default {
@@ -75,29 +70,15 @@ export default {
   data() {
     return {
       loading: true,
-      favourites: (localStorage.getItem("favourites")) ? JSON.parse(localStorage.getItem("favourites")) : [], // Локальная копия избранного для реактивности
     };
+  },
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
   },
   computed: {
     isFavourite() {
-      return this.favourites.some(fav => fav.id === this.game.id);
-    },
-    isHit() {
-      return this.$parent?.hitGames?.some(hit => hit.id === this.game.id) || false;
-    },
-    isNew() {
-      return this.$parent?.newGames?.some(newGame => newGame.id === this.game.id) || false;
-    },
-    isPurchased() {
-      const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      return purchaseHistory.some(purchase => purchase.items.some(item => item.id === this.game.id));
-    },
-  },
-  watch: {
-    game(newGame) {
-      if (newGame) {
-        this.startLoading();
-      }
+      return this.mainStore.favourites.some(fav => fav.id === this.game.id);
     },
   },
   mounted() {
@@ -118,35 +99,6 @@ export default {
         linux_available:this.game.linux_available
       }));
       this.$router.push('/product');
-    },
-    addToCart() {
-      if (this.isPurchased) {
-        alert('Эта игра уже куплена!');
-        return;
-      }
-
-      let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
-      const product = {
-        id: this.game.id,
-        name: this.game.name,
-        final_price: `${this.game.final_price} ₽`,
-        large_capsule_image: this.game.large_capsule_image,
-        windows_available: this.game.windows_available,
-        linux_available: this.game.linux_available,
-        mac_available: this.game.mac_available,
-        count: 1,
-      };
-
-      const existing = basket.find(item => item.id === product.id);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        basket.push(product);
-      }
-
-      localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
-      this.$emit('update-basket', basket.length);
-      this.animateToCart();
     },
     animateToCart() {
       const productImg = this.$refs.productImage;
@@ -174,29 +126,7 @@ export default {
         setTimeout(() => cloned.remove(), 1000);
       });
     },
-    toggleFavourite() {
-      let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-      const isAlreadyFavourite = this.isFavourite;
-
-      if (isAlreadyFavourite) {
-        favourites = favourites.filter(fav => fav.id !== this.game.id);
-      } else {
-        favourites.push({
-          id: this.game.id,
-          name: this.game.name,
-          large_capsule_image: this.game.large_capsule_image,
-          final_price: this.game.final_price,
-          windows_available: this.game.windows_available,
-          mac_available: this.game.mac_available,
-          linux_available: this.game.linux_available
-        });
-        
-      }
-      this.favourites = favourites
-
-      localStorage.setItem('favourites', JSON.stringify(favourites));
-      this.$emit('favourites-updated');
-    },
+    
   },
 };
 </script>
@@ -262,26 +192,8 @@ export default {
   transition: all 0.2s;
 }
 
-.purchased-label {
-  display: none;
-  opacity: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%);
-  width: 86%;
-  justify-content: center;
-  align-items: center;
-  color: #201b1b;
-  font-weight: 500;
-  font-size: 16px;
-  background-color: rgba(255, 255, 255, 0.829);
-  padding: 10px;
-  border-radius: 12px;
-}
-
 .productCard:hover .addCardBtn,
-.productCard:hover .purchased-label {
+.productCard:hover{
   display: flex;
   opacity: 1;
 }
@@ -404,8 +316,7 @@ export default {
     height: 180px;
   }
 
-  .addCardBtn,
-  .purchased-label {
+  .addCardBtn {
     font-size: 14px;
     padding: 8px 12px;
   }
@@ -448,8 +359,7 @@ export default {
     height: 160px;
   }
 
-  .addCardBtn,
-  .purchased-label {
+  .addCardBtn{
     font-size: 12px;
     padding: 6px 10px;
     width: 90%;
