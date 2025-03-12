@@ -40,7 +40,7 @@
               :class="{ active: selectedPayment === 'account' }">
               <div class="basket-so-card-title">
                 <input type="radio" :checked="selectedPayment === 'account'" />
-                Накопительный счёт ({{ mainStore.userData.balance }} ₽)
+                Накопительный счёт ({{ (mainStore.userData) ? mainStore.userData.balance : 0 }} ₽)
               </div>
             </div>
             <div class="basket-so-card" @click="selectPaymentMethod('wallets')"
