@@ -161,8 +161,12 @@ export default {
       this.$router.push('/');
     },
     toggleCashModal() {
-      this.showCashModal = !this.showCashModal;
-      if (!this.showCashModal) this.depositAmount = '';
+      if(this.mainStore.userData){
+        this.showCashModal = !this.showCashModal;
+        if (!this.showCashModal) this.depositAmount = '';
+      }else{
+        this.mainStore.openRegisterForm();
+      }
     },
     depositCash() {
       const amount = parseInt(this.depositAmount);
