@@ -37,7 +37,7 @@ import { useMainStore } from '@/store/store';
       return { 
         searchResults: [],
         selectedCurrency: '₽',
-       };
+      };
     },
     watch: {
       searchQuery() {
@@ -46,7 +46,7 @@ import { useMainStore } from '@/store/store';
         this.searchResults = [];
         
         const allGames = [...mainStore.topGames, ...mainStore.gameCatalog];
-        allGames.map(item => {
+        allGames.forEach(item => {
           if(regex.test(item.name)){
             this.searchResults.push(item);
           }

@@ -66,8 +66,10 @@ import { useMainStore } from '@/store/store';
 import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const mainStore = useMainStore();
+const toast = useToast();
 const router = useRouter();
 
 const props = defineProps({
@@ -124,7 +126,7 @@ const validateData = () => {
         }
     }
 
-    users.map(item => {
+    users.forEach(item => {
         if (item.email == updateEmail.value && item.id != mainStore.userData.id) {
             errors.email = "Эта почта уже занят";
         }
@@ -151,20 +153,20 @@ const updateUserData = () => {
     validateData();
     if (errors.generalError || errors.email || errors.username || 
         errors.updatePassword || errors.confirmPassword) return;
-    users.map(item => {
+    users.forEach(item => {
         if (item.id == mainStore.userData.id) {
             item.avatarIcon = avatarIcon.value;
             item.username = updateUsername.value;
             item.email = updateEmail.value;
-            item.password = updatePassword.value;
+            item.password = (updatePassword.value.length) ? updatePassword.value : item.password;
             item.dateOfBirth = updateBirthDate.value;
             item.fullName = updateFullName.value;
         }
     });
     localStorage.setItem("users", JSON.stringify(users));
     mainStore.updateUserData();
-    alert("Данные обновлены");
-    router.push("/");
+    toast.success("Данные обновлены");
+    setTimeout(() => router.push("/"), 1200);
 };
 </script>
 

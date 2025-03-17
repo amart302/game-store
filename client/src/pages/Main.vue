@@ -33,7 +33,7 @@
       </div>
 
       <div class="mainBlock3">
-        <h2>Акции и скидки <span>%</span></h2>
+        <h2>Акции и скидки</h2>
         <div class="bigProductCardsConteiner">
           <ProductCard
             v-for="game in discountedGames"
@@ -44,7 +44,7 @@
       </div>
       <div class="mainBlock5" id="FeedbackForm">
         <h2>Отзывы</h2>
-        <FeedbackForm @add-feedback="addFeedback" />
+        <FeedbackForm />
         <div class="feedbackCardsConteiner">
           <div class="feedbackCard">
             <div class="estimationBlock">
@@ -56,7 +56,7 @@
             <p class="feedback">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur repellat illum necessitatibus, deleniti quibusdam quo!</p>
             <p class="feedbackUserName">Amart</p>
           </div>
-          <div class="feedbackCard" v-for="(feedback, index) in feedbacks" :key="index">
+          <div class="feedbackCard" v-for="(feedback, index) in mainStore.feedbacks" :key="index">
             <div class="estimationBlock">
               <div class="starBlock" v-for="n in feedback.rating" :key="n">
                 <img src="../assets/images/star.svg" alt="Star" />
@@ -95,7 +95,6 @@ export default {
   data() {
     return {
       newGames: [],
-      feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
   computed: {
@@ -111,17 +110,6 @@ export default {
     return {
       mainStore
     };
-  },
-  methods: {
-    addFeedback(feedback) {
-      this.feedbacks.push({
-        rating: feedback.rating,
-        date: new Date().toLocaleDateString('ru-RU'),
-        text: feedback.text,
-        userName: feedback.userName || 'Аноним',
-      });
-      localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
-    },    
   },
 };
 </script>

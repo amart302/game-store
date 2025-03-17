@@ -63,7 +63,6 @@ export default {
     return {
       selectedPaymentMethod: localStorage.getItem('selectedPaymentMethod') || null,
       currencySymbol: '₽',
-      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
     };
   },
   setup(){
@@ -103,7 +102,7 @@ export default {
   methods: {
     saveAccountBalance() {
       const users = JSON.parse(localStorage.getItem("users"));
-      users.map(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
+      users.forEach(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
       localStorage.setItem("users", JSON.stringify(users));
     },
 
@@ -128,8 +127,7 @@ export default {
         date: new Date().toLocaleString('ru-RU'),
         status: 'Куплен',
       };
-      this.mainStore.purchaseHistory.push(purchase);
-      localStorage.setItem('purchaseHistory', JSON.stringify(this.mainStore.purchaseHistory));
+      this.mainStore.savePurchaseHistory(purchase);
     },
 
     completePurchase() {

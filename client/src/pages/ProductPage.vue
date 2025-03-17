@@ -23,7 +23,7 @@
             </div>
 
             <div class="product-deystvia">
-              <div class="product-buy" @click="addToCart">Добавить в корзину</div>
+              <div class="product-buy" @click="() => addToCart()">Добавить в корзину</div>
 
               <div class="product-like">
                 <button @click="addToFavourites()" class="favourite-btn" :class="{ 'active': isFavourite }">
@@ -176,6 +176,7 @@ import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'ProductPage',
@@ -205,7 +206,8 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     galleryImages() {
@@ -266,7 +268,7 @@ export default {
         const gameData = response.data[productData.id];
         const responseGameCatalog = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
         const data = responseGameCatalog.data[0];
-        this.ads = (data.game_catalog).map(game => ({ ...game }));
+        this.ads = (data.game_catalog).forEach(game => ({ ...game }));
         if (gameData.success) {
           gameData.data.final_price = productData.price;
           gameData.data.windows_available = productData.windows_available;
@@ -283,12 +285,7 @@ export default {
     },
 
     addToFavourites() {
-      let favourites = this.mainStore.favourites;
-      const isAlreadyFavourite = this.isFavourite;
-      if (isAlreadyFavourite) {
-        favourites = favourites.filter(fav => fav.id !== this.productData);
-      } else {
-        favourites.push({
+      const product = {
           id: this.productData,
           name: this.currentProduct.name,
           large_capsule_image: this.currentProduct.header_image,
@@ -296,10 +293,14 @@ export default {
           windows_available: this.currentProduct.windows_available,
           mac_available: this.currentProduct.mac_available,
           linux_available: this.currentProduct.linux_available
-        });
+      };
+      const check = this.mainStore.addToFavourites(product);
+      
+      if(check.status === "added"){
+        this.toast.success("Игра добавлена в избранное");
+      }else{
+        this.toast.success("Игра удалена из избранного");
       }
-      this.mainStore.favourites = favourites
-      localStorage.setItem('favourites', JSON.stringify(favourites));
     },
     addToCart() {      
       const product = {
@@ -313,41 +314,8 @@ export default {
         count: 1,
       };
 
-      const existing = this.mainStore.basket.find(item => item.id === product.id);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        this.mainStore.basket.push(product);
-      }
-
-      localStorage.setItem('basket', JSON.stringify(this.mainStore.basket));
-      this.animateToCart();
-    },
-    animateToCart() {
-      const productImg = this.$refs.productImage;
-      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
-      if (!productImg || !cartIcon) return;
-
-      const cloned = productImg.cloneNode(true);
-      cloned.classList.add('cart-animation');
-      cloned.style.position = 'absolute';
-      cloned.style.width = '50px';
-      cloned.style.height = '30px';
-      cloned.style.zIndex = '1000';
-      cloned.style.left = `${productImg.getBoundingClientRect().left + window.scrollX}px`;
-      cloned.style.top = `${productImg.getBoundingClientRect().top + window.scrollY}px`;
-
-      document.body.appendChild(cloned);
-
-      const targetX = cartIcon.getBoundingClientRect().left + window.scrollX - cloned.getBoundingClientRect().left;
-      const targetY = cartIcon.getBoundingClientRect().top + window.scrollY - cloned.getBoundingClientRect().top;
-
-      requestAnimationFrame(() => {
-        cloned.style.transition = 'all 1s ease-out';
-        cloned.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.5)`;
-        cloned.style.opacity = '0.5';
-        setTimeout(() => cloned.remove(), 1000);
-      });
+      this.mainStore.addToBasket(product);
+      this.toast.success("Игра добавлена в корзину");
     },
     closeModal() {
       this.modalOpen = false;

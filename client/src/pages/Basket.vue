@@ -123,6 +123,7 @@ import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'Cart',
@@ -150,7 +151,8 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   methods: {
     calculatePrice(item) {
@@ -164,10 +166,11 @@ export default {
     checkout() {
       if(!this.mainStore.userData){
         this.mainStore.openRegisterForm();
+        this.toast.warning('Авторизуйтесь, чтобы продолжить');
         return;
       }
       else if (!this.selectedPayment) {
-        alert('Пожалуйста, выберите способ оплаты!');
+        this.toast.warning('Пожалуйста, выберите способ оплаты');
         return;
       }
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);

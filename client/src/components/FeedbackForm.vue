@@ -10,7 +10,7 @@
         </div>
       </div>
       <textarea v-model="text" placeholder="Ваш отзыв" rows="4"></textarea>
-      <p>{{ userName }}</p>
+      <p>{{ (mainStore.userData) ? mainStore.userData.username : "Гость" }}</p>
       <div class="form-buttons">
         <button @click="submitFeedback" class="submitBtn">Отправить</button>
         <button @click="showForm = false" class="cancelBtn">Отмена</button>
@@ -20,6 +20,9 @@
 </template>
 
 <script>
+import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
+
 export default {
   name: 'FeedbackForm',
   data() {
@@ -27,24 +30,28 @@ export default {
       showForm: false,
       rating: 0,
       text: '',
-      userName: (sessionStorage.getItem("userData")) ? JSON.parse(sessionStorage.getItem("userData")).username : "",
     };
+  },
+  setup(){
+    const mainStore = useMainStore();
+    const toast = useToast();
+    return { mainStore, toast };
   },
   methods: {
     submitFeedback() {
       if (this.rating === 0 || !this.text.trim()) {
-        alert('Пожалуйста, укажите оценку и текст отзыва');
+        this.toast.error("Пожалуйста, укажите оценку и текст отзыва")
         return;
       }
-      this.$emit('add-feedback', {
+      this.mainStore.addFeedback({
         rating: this.rating,
         text: this.text.trim(),
-        userName: this.userName.trim(),
+        userName: (this.mainStore.userData) ? this.mainStore.userData.username.trim() : "Гость",
       });
       this.rating = 0;
       this.text = '';
-      this.userName = '';
       this.showForm = false;
+      this.toast.success("Отзыв успешно добавлен");
     },
   },
 };
@@ -119,7 +126,7 @@ h3 {
 }
 
 textarea {
-  width: 80%;
+  width: 40%;
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
@@ -131,7 +138,7 @@ textarea {
 }
 
 p{
-  width: 80%;
+  width: 40%;
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;

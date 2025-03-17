@@ -32,10 +32,11 @@
     import { useMainStore } from "@/store/store";
     import { ref, reactive } from "vue";
     import { useRouter } from "vue-router";
+    import { useToast } from "vue-toastification";
     sessionStorage.removeItem("userData");
 
     const mainStore = useMainStore();
-
+    const toast = useToast();
     const router = useRouter();
 
     const username = ref("");
@@ -92,7 +93,7 @@
         const users = JSON.parse(sessionStorage.getItem("users")) || [];
 
         
-        users.map(item => {
+        users.forEach(item => {
             if(item.username == username.value){
                 errors.generalError = "Пользователь с таким ником уже существует";
             }else if(item.email == email.value){
@@ -112,12 +113,14 @@
             avatarIcon: "src/assets/images/avatarIcon.png",
             fullName: null,
             dateOfBirth: null,
-            balance: 10000
+            balance: 10000,
+            purchaseHistory: []
         };
         users.push(newUser);
         sessionStorage.setItem('userData', JSON.stringify(newUser));
         localStorage.setItem("users", JSON.stringify(users));
-        setTimeout(() => window.location.reload(), 1000);
+        toast.success("Успешная регистрация");
+        setTimeout(() => window.location.reload(), 1200);
     };
 
     
@@ -151,8 +154,8 @@
     }
     .cross-icon{
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 30px;
+        right: 30px;
         width: 20px;
         height: 20px;
         cursor: pointer;
@@ -161,7 +164,7 @@
         text-align: center;
     }
     form input{
-        width: calc(100% - 12px);
+        width: 100%;
         padding: 8px;
         background-color: rgba(196, 196, 196, 0.05);
         border: none;
