@@ -90,7 +90,7 @@
             errors.generalError = "Пароли не совпадают";
             return 1;
         }
-        const users = JSON.parse(sessionStorage.getItem("users")) || [];
+        const users = JSON.parse(localStorage.getItem("users")) || [];
 
         
         users.forEach(item => {

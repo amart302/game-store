@@ -3,7 +3,11 @@
     <Header />
     <main>
       <h1 class="checkout-title">Оформление заказа</h1>
-      <div v-if="mainStore.basket.length" class="checkout-container">
+      <div v-if="!mainStore.userData || !mainStore.basket.length" class="empty-checkout">
+        <p>Выберите товар для покупки</p>
+        <router-link to="/" class="back-to-main">Вернуться на главную</router-link>
+      </div>
+      <div v-else class="checkout-container">
         <div v-for="game in mainStore.basket" :key="game.id" class="game-info">
           <div class="game-info-header">
             <h2>{{ game.name }}</h2>
@@ -40,10 +44,6 @@
           Завершить покупку
         </button>
       </div>
-      <div v-else class="empty-checkout">
-        <p>Выберите товар для покупки</p>
-        <router-link to="/" class="back-to-main">Вернуться на главную</router-link>
-      </div>
     </main>
 
     <Footer />
@@ -54,6 +54,7 @@
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'Checkout',
@@ -67,13 +68,14 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     totalPriceRaw() {
       return this.mainStore.basket.reduce((sum, game) => {
         const price = parseFloat(game.final_price.split(' ')[0]);
-        return sum + price * game.count;
+        return sum + price * game.quantity;
       }, 0);
     },
 
@@ -125,7 +127,7 @@ export default {
         total: this.totalPriceRaw,
         method: this.selectedPaymentMethod,
         date: new Date().toLocaleString('ru-RU'),
-        status: 'Куплен',
+        status: 'Оплачено',
       };
       this.mainStore.savePurchaseHistory(purchase);
     },
@@ -141,17 +143,17 @@ export default {
           this.mainStore.userData.balance -= this.totalPriceRaw;
           this.saveAccountBalance();
           this.savePurchaseHistory();
-          alert('Покупка успешно завершена с накопительного счёта!');
+          this.toast.success('Покупка успешно завершена с накопительного счёта');
           this.clearCheckout();
-          this.$router.push('/');
+          setTimeout(() => this.$router.push('/'), 1200);
         } else {
-          alert('Недостаточно средств на накопительном счёте!');
+          this.toast.warning('Недостаточно средств на накопительном счёте!');
         }
       } else {
         this.savePurchaseHistory();
-        alert(`Покупка успешно оплачена через ${this.paymentMethodDisplay}!`);
+        this.toast.success(`Покупка успешно оплачена через ${this.paymentMethodDisplay}!`);
         this.clearCheckout();
-        this.$router.push('/');
+        setTimeout(() => this.$router.push('/'), 1200);
       }
     },
 

@@ -63,28 +63,28 @@
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
-import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
 const mainStore = useMainStore();
-const toast = useToast();
 const router = useRouter();
 
-const props = defineProps({
-    showAndHideProfile: Function
-});
+if (!mainStore.userData) {
+    console.log(123);
+    router.push('/');
+}
+const toast = useToast();
 
 const users = JSON.parse(localStorage.getItem("users"));
 
-let avatarIcon = ref(mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png');
-const updateUsername = ref(mainStore.userData.username);
-const updateEmail = ref(mainStore.userData.email);
-const updateFullName = ref(mainStore.userData.fullName || "");
+let avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon : 'src/assets/images/avatarIcon.png');
+const updateUsername = ref((mainStore.userData) ? mainStore.userData.username : "");
+const updateEmail = ref((mainStore.userData) ? mainStore.userData.email : "");
+const updateFullName = ref((mainStore.userData) ? mainStore.userData.fullName : "");
 const updatePassword = ref("");
 const confirmPassword = ref("");
-const updateBirthDate = ref(mainStore.userData.birthDate || "");
+const updateBirthDate = ref((mainStore.userData) ? mainStore.userData.birthDate : "");
 
 const errors = reactive({
     username: "",

@@ -92,17 +92,17 @@
       <div class="product-ostas">
         <div class="product-ostas-title">
           <div class="product-osta" @click="activeTab = 'description'">
-            <div :class="{ 'product-osta-left': true, active: activeTab === 'description' }">
+            <div :class="['product-osta-center', { active: activeTab === 'description' }]">
               Описание товара
             </div>
           </div>
           <div class="product-osta" @click="activeTab = 'requirements'">
-            <div :class="{ 'product-osta-center': true, active: activeTab === 'requirements' }">
+            <div :class="['product-osta-center', { active: activeTab === 'requirements' }]">
               Системные требования
             </div>
           </div>
           <div class="product-osta" @click="activeTab = 'activation'">
-            <div :class="{ 'product-osta-right': true, active: activeTab === 'activation' }">
+            <div :class="['product-osta-center', { active: activeTab === 'activation' }]">
               Активация
             </div>
           </div>
@@ -255,7 +255,7 @@ export default {
   },
   mounted() {
     document.title = `Playnchill`;
-    this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
+    this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
     this.addEventListeners();
     this.loadCurrencyAndLanguage();    
   },
@@ -266,9 +266,8 @@ export default {
         const productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
         const response = await axios.get(`http://localhost:3000/api/steam/${productData.id}`);
         const gameData = response.data[productData.id];
-        const responseGameCatalog = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = responseGameCatalog.data[0];
-        this.ads = (data.game_catalog).forEach(game => ({ ...game }));
+        const data = this.mainStore.gameCatalog;
+        this.ads = data.map(game => ({ ...game }));
         if (gameData.success) {
           gameData.data.final_price = productData.price;
           gameData.data.windows_available = productData.windows_available;

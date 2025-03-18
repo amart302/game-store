@@ -20,8 +20,8 @@
                 <span class="cart-item-old-price" v-if="item.oldPrice">{{ item.oldPrice }}</span>
               </div>
               <div class="cart-item-quantity">
-                <button @click="mainStore.decreaseQuantity(item.id)" :disabled="item.count <= 1">-</button>
-                <span :key="item.count">{{ item.count }}</span>
+                <button @click="mainStore.decreaseQuantity(item.id)" :disabled="item.quantity <= 1">-</button>
+                <span :key="item.quantity">{{ item.quantity }}</span>
                 <button @click="mainStore.increaseQuantity(item.id)">+</button>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default {
     totalPrice() {
       const total = this.mainStore.basket.reduce((total, item) => {
         const price = parseFloat(item.final_price.replace(' ₽', '').replace(' ', '')) || 0;
-        return total + price * item.count;
+        return total + price * item.quantity;
       }, 0);
       return total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     },
@@ -158,7 +158,7 @@ export default {
     calculatePrice(item) {
       const priceStr = item.final_price.toString().replace(' ₽', '').replace(' ', '');
       const price = parseFloat(priceStr) || 0;
-      return (price * item.count).toFixed(2);
+      return (price * item.quantity).toFixed(2);
     },
     selectPaymentMethod(method) {
       this.selectedPayment = method;

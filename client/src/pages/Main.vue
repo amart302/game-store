@@ -99,10 +99,10 @@ export default {
   },
   computed: {
     catalogGames() {
-      return this.mainStore.gameCatalog.slice(0, 20);
+      return this.mainStore.gameCatalog.slice(0, 24);
     },
     discountedGames() {
-      return this.mainStore.gameCatalog.filter(game => game.discounted).slice(0, 9);
+      return this.mainStore.gameCatalog.filter(game => game.discounted).slice(-9);
     },
   },
   setup(){

@@ -3,8 +3,12 @@
     <Header />
     <main>
       <h1 class="history-title">История покупок</h1>
-      <div class="history-container" v-if="purchaseHistory.length">
-        <div class="history-item" v-for="(purchase, index) in purchaseHistory" :key="index">
+      <div v-if="!mainStore.userData || !mainStore.userData.purchaseHistory.length" class="empty-history">
+        <p>История покупок пуста</p>
+        <router-link to="/" class="back-to-main">Начать покупки</router-link>
+      </div>
+      <div class="history-container" v-else>
+        <div class="history-item" v-for="(purchase, index) in mainStore.userData.purchaseHistory" :key="index">
           <div class="purchase-header">
             <div class="purchase-date">{{ purchase.date }}</div>
             <div class="purchase-summary">
@@ -23,20 +27,16 @@
           </div>
         </div>
       </div>
-      <div v-else class="empty-history">
-        <p>История покупок пуста</p>
-        <router-link to="/" class="back-to-main">Начать покупки</router-link>
-      </div>
     </main>
     <Footer />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import ProductCard from '@/components/ProductCard.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'PurchaseHistory',
@@ -44,48 +44,17 @@ export default {
 
   data() {
     return {
-      purchaseHistory: [],
+      purchaseHistory:  [],
       currencySymbol: '₽',
-      products: [],
       loading: true,
     };
   },
-
-  created() {
-    this.loadPurchaseHistory();
-    this.loadCurrencySymbol();
-    this.fetchProducts();
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
   },
 
   methods: {
-    loadPurchaseHistory() {
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      this.purchaseHistory = history;
-    },
-
-    loadCurrencySymbol() {
-      const savedVal = localStorage.getItem('selectedVal');
-      this.currencySymbol = savedVal || '₽';
-    },
-
-    async fetchProducts() {
-      try {
-        this.loading = true;
-        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = response.data[0] || {};
-        this.products = [
-          ...(data.hit_games || []),
-          ...(data.new_games || []),
-          ...(data.top_games || []),
-          ...(data.game_catalog || []),
-        ];
-      } catch (error) {
-        console.error('Ошибка загрузки продуктов:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
-
     paymentMethodDisplay(method) {
       switch (method) {
         case 'account': return 'Накопительный счёт';

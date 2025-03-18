@@ -67,9 +67,9 @@
       </div>
     </div>
     <Search :searchQuery="searchQuery" />
+    <Register v-if="mainStore.showForm == 'Register'"/>
+    <Login v-if="mainStore.showForm == 'Login'"/>
   </header>
-  <Register v-if="mainStore.showForm == 'Register'"/>
-  <Login v-if="mainStore.showForm == 'Login'"/>
 </template>
 
 <script>

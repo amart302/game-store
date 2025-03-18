@@ -8,7 +8,6 @@ export const useMainStore = defineStore("main", {
         gameCatalog: [],
         favourites: JSON.parse(localStorage.getItem("favourites")) || [],
         basket: JSON.parse(localStorage.getItem("basket")) || [],
-        purchaseHistory: JSON.parse(localStorage.getItem("purchaseHistory")) || [],
         foundGames: [],
         showForm: false,
         feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || [],
@@ -68,26 +67,27 @@ export const useMainStore = defineStore("main", {
             windows_available: game.windows_available,
             linux_available: game.linux_available,
             mac_available: game.mac_available,
-            count: 1,
+            quantity: 1,
           };
           const existing = this.basket.find(item => item.id === product.id);
+          
           if (existing) {
-            existing.count += 1;
+            existing.quantity += 1;
           } else {
             this.basket.push(product);
           }
           localStorage.setItem('basket', JSON.stringify(this.basket));          
         },
         increaseQuantity(id) {
-          this.basket = this.basket.forEach(item => {
-            if (item.id === id) item.count += 1;
+          this.basket.forEach(item => {
+            if (item.id === id) item.quantity += 1;
             return item;
           });
           localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
         },
         decreaseQuantity(id) {
-          this.basket = this.basket.forEach(item => {
-            if (item.id === id && item.count > 1) item.count -= 1;
+          this.basket.forEach(item => {
+            if (item.id === id && item.quantity > 1) item.quantity -= 1;
             return item;
           });
           localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
@@ -111,8 +111,6 @@ export const useMainStore = defineStore("main", {
           users.forEach(item => (item.id === this.userData.id) ? item.purchaseHistory = this.userData.purchaseHistory : false);
           
           localStorage.setItem("users", JSON.stringify(users));
-          console.log(this.userData);
-          
         }
     },
 });

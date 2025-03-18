@@ -21,7 +21,7 @@
     </div>
 
     <div class="productCard_podBlock1">
-      <span class="product_priceWithDiscount">{{ game.final_price }} ₽</span>
+      <span class="product_priceWithDiscount">{{ (game.final_price) ? `${game.final_price} ₽` : "Бесплатно"  }}</span>
       <span v-if="game.discounted" class="product_discount">-{{ game.discount_percent }}%</span>
       <span v-if="game.discounted" class="product_priceWithoutDiscount">{{ game.original_price }} ₽</span>
     </div>
