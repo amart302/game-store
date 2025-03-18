@@ -6,14 +6,24 @@
       <div v-if="mainStore.basket.length" class="checkout-container">
         <div v-for="game in mainStore.basket" :key="game.id" class="game-info">
           <div class="game-info-header">
+            <div class="cart-item-image">
+              <img :src="game.large_capsule_image" alt="Item Image" />
+            </div>
             <h2>{{ game.name }}</h2>
+            <img src="" alt="">
             <div class="product-like">
-              <button @click="mainStore.addToFavourites(game)" class="favourite-btn" :class="{ 'active': isGameFavourite(game.id) }">
-                <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
+              <button @click="mainStore.addToFavourites(game)" class="favourite-btn"
+                :class="{ 'active': isGameFavourite(game.id) }">
+                <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                    fill="#FF3030" />
                 </svg>
                 <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                    fill="none" stroke="#FFFFFF" stroke-width="2" />
                 </svg>
               </button>
             </div>
@@ -32,11 +42,7 @@
             <p v-if="mainStore.userData.balance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
           </div>
         </div>
-        <button
-          @click="completePurchase"
-          class="complete-btn"
-          :disabled="isPaymentDisabled"
-        >
+        <button @click="completePurchase" class="complete-btn" :disabled="isPaymentDisabled">
           Завершить покупку
         </button>
       </div>
@@ -66,7 +72,7 @@ export default {
       favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
     };
   },
-  setup(){
+  setup() {
     const mainStore = useMainStore();
     return { mainStore };
   },
@@ -169,60 +175,82 @@ export default {
 <style scoped>
 .checkout-page {
   min-height: 100vh;
+  background: linear-gradient(180deg, #121212, #000);
   color: #fff;
+  font-family: 'Roboto', sans-serif;
 }
 
 main {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 40px 20px;
-  min-height: calc(100vh - 766px);
+  padding: 50px 20px;
 }
 
 .checkout-title {
-  font-size: 36px;
-  font-weight: 800;
-  background: linear-gradient(90deg, #77BE1D, #97E238);
+  font-size: 48px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 2px 4px rgba(119, 190, 29, 0.3);
-  margin-bottom: 30px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 40px;
+}
+.game-info-header{
+}
+.cart-item-image {
+  width: 280px;
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
 }
 
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.cart-item:hover .cart-item-image img {
+  transform: scale(1.05);
+}
 .checkout-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 }
 
 .game-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
   margin-bottom: 20px;
-  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.game-info-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.game-info:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
 }
-
 .game-info h2 {
-  font-size: 28px;
+  font-size: 24px;
   margin-bottom: 10px;
+  color: #fff;
 }
-
 .game-info p {
-  font-size: 20px;
+  font-size: 18px;
+  margin: 5px 0;
   color: #97E238;
 }
 
 .product-like {
   position: relative;
 }
-
 .favourite-btn {
   background: rgba(255, 255, 255, 0.1);
   border: none;
@@ -234,209 +262,147 @@ main {
   align-items: center;
   justify-content: center;
 }
-
 .favourite-btn:hover {
   background: rgba(255, 48, 48, 0.2);
 }
-
 .favourite-btn.active {
   background: rgba(255, 48, 48, 0.3);
-  animation: pulse 0.5s ease;
-}
-
-.favourite-btn svg {
-  transition: transform 0.3s ease;
-}
-
-.favourite-btn.active svg {
-  transform: scale(1.1);
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
 }
 
 .payment-options {
-  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.payment-options:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+}
 .payment-options h3 {
   font-size: 24px;
   margin-bottom: 15px;
 }
-
 .payment-options p {
-  font-size: 20px;
-  color: #97E238;
-  margin-bottom: 15px;
-}
-
-.balance-info p {
   font-size: 18px;
   margin: 5px 0;
 }
 
-.balance-info .error {
-  color: #FF3030;
-}
-
 .complete-btn {
   padding: 15px 30px;
-  background: linear-gradient(90deg, #77BE1D, #97E238);
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   color: white;
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: bold;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 20px;
+  box-shadow: 0 10px 30px rgba(0, 255, 0, 0.4);
 }
-
 .complete-btn:hover {
-  background: linear-gradient(90deg, #649E18, #7BC22F);
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 255, 0, 0.6);
 }
-
 .complete-btn:disabled {
   background: #555;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .empty-checkout {
   text-align: center;
-  padding: 60px;
+  padding: 80px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   backdrop-filter: blur(15px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
-
 .empty-checkout p {
-  font-size: 24px;
+  font-size: 28px;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 20px;
 }
-
 .back-to-main {
-  font-size: 18px;
-  color: #77BE1D;
+  font-size: 20px;
+  color: #4CAF50;
   text-decoration: none;
-  padding: 10px 20px;
-  border: 2px solid #77BE1D;
-  border-radius: 25px;
+  padding: 15px 30px;
+  border: 2px solid #4CAF50;
+  border-radius: 30px;
   transition: all 0.3s ease;
 }
-
 .back-to-main:hover {
-  background: #77BE1D;
+  background: #4CAF50;
   color: white;
 }
 
 @media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-    min-height: calc(100vh - 700px);
-  }
-
-  .checkout-title {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
   .checkout-container {
-    padding: 20px;
+    grid-template-columns: 1fr;
   }
-
+  .checkout-title {
+    font-size: 40px;
+  }
   .game-info h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
-
   .game-info p {
-    font-size: 18px;
+    font-size: 16px;
   }
-
   .payment-options h3 {
     font-size: 20px;
   }
-
   .payment-options p {
-    font-size: 18px;
-  }
-
-  .complete-btn {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-
-  .empty-checkout {
-    padding: 40px;
-  }
-
-  .empty-checkout p {
-    font-size: 20px;
-  }
-
-  .back-to-main {
     font-size: 16px;
-    padding: 8px 16px;
+  }
+  .complete-btn {
+    font-size: 16px;
+    padding: 12px 20px;
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   main {
-    padding: 15px 10px;
-    min-height: calc(100vh - 650px);
+    padding: 30px 15px;
   }
-
   .checkout-title {
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 32px;
   }
-
   .checkout-container {
-    padding: 15px;
+    padding: 20px;
   }
-
   .game-info h2 {
     font-size: 20px;
   }
-
   .game-info p {
-    font-size: 16px;
+    font-size: 14px;
   }
-
   .payment-options h3 {
     font-size: 18px;
-    margin-bottom: 10px;
   }
-
   .payment-options p {
-    font-size: 16px;
-  }
-
-  .complete-btn {
-    padding: 10px 16px;
-    font-size: 12px;
-    width: 100%;
-  }
-
-  .empty-checkout {
-    padding: 30px;
-  }
-
-  .empty-checkout p {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-
-  .back-to-main {
     font-size: 14px;
-    padding: 6px 12px;
+  }
+  .complete-btn {
+    font-size: 14px;
+    padding: 10px 15px;
     width: 100%;
-    text-align: center;
+  }
+  .empty-checkout {
+    padding: 50px;
+  }
+  .empty-checkout p {
+    font-size: 20px;
+  }
+  .back-to-main {
+    font-size: 16px;
+    padding: 10px 15px;
+    width: 100%;
   }
 }
 </style>

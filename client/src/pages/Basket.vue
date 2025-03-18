@@ -43,55 +43,52 @@
                 Накопительный счёт ({{ (mainStore.userData) ? mainStore.userData.balance : 0 }} ₽)
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('wallets')"
-              :class="{ active: selectedPayment === 'wallets' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('sberbank')"
+              :class="{ active: selectedPayment === 'sberbank' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'wallets'" />
-                Электронные кошельки
+                <input type="radio" :checked="selectedPayment === 'sberbank'" />
+                Сбербанк
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/WebMoney_logo_blue 2 1.svg" alt="WebMoney" />
-                <img src="@/assets/images/Logo_qiwi_rgb 1.svg" alt="Qiwi" />
+                <img src="@/assets/images/sberbank.png" alt="Сбербанк" />
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('cards')"
-              :class="{ active: selectedPayment === 'cards' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('yoomoney')"
+              :class="{ active: selectedPayment === 'yoomoney' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'cards'" />
-                Банковские карты
+                <input type="radio" :checked="selectedPayment === 'yoomoney'" />
+                ЮMoney
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/mastercard 2.svg" alt="Mastercard" />
-                <img src="@/assets/images/Visa_Inc._logo 1.svg" alt="Visa" />
-                <img src="@/assets/images/1920px-Mir-logo.SVG 1.svg" alt="Mir" />
+                <img src="@/assets/images/iomoney.png" alt="ЮMoney" />
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('crypto')"
-              :class="{ active: selectedPayment === 'crypto' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('tinkoff')"
+              :class="{ active: selectedPayment === 'tinkoff' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'crypto'" />
-                Криптовалюта
+                <input type="radio" :checked="selectedPayment === 'tinkoff'" />
+                Тинькофф
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/ETHEREUM-YOUTUBE-PROFILE-PIC 1.svg" alt="Ethereum" />
-                <img src="@/assets/images/2560px-Bitcoin_logo 1.svg" alt="Bitcoin" />
+                <img src="@/assets/images/tinkoff.png" alt="Тинькофф" />
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('samsung')"
-              :class="{ active: selectedPayment === 'samsung' }">
+            <!-- <div class="basket-so-card" @click="selectPaymentMethod('qiwi')"
+              :class="{ active: selectedPayment === 'qiwi' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'samsung'" />
-                Samsung Pay
+                <input type="radio" :checked="selectedPayment === 'qiwi'" />
+                Qiwi
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/640px-Samsung_Pay_icon 1.svg" alt="Samsung Pay" />
+                <img src="@/assets/images/Qiwi.png" alt="Qiwi" />
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="cart-total" :key="totalPrice">
             <div class="basket-oformit-zakaz-items_count">{{ itemsCountText }}</div>
             <div class="basket-oformit-zakaz-total_price">{{ totalPrice }} ₽</div>
-            <div class="basket-oformit-zakaz-but" :class="{ active: selectedPayment }" @click="checkout">Оформить заказ</div>
+            <div class="basket-oformit-zakaz-but" :class="{ active: selectedPayment }" @click="checkout">Оформить заказ
+            </div>
             <div class="basket-oformit-zakaz-uslovia">
               <div class="basket-oformit-zakaz-uslovia-galochka">
                 <svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,11 +98,13 @@
                 </svg>
               </div>
               <div class="basket-oformit-zakaz-uslovia-txt">
-                Покупая данный товар, я подтверждаю, что ознакомился и согласен с <a href="#">условиями</a> и <a href="#">условиями магазина</a>
+                Покупая данный товар, я подтверждаю, что ознакомился и согласен с <a href="#">условиями</a> и <a
+                  href="#">условиями магазина</a>
               </div>
             </div>
           </div>
         </div>
+
       </div>
       <div v-else class="empty-cart">
         <div class="empty-cart-content">
@@ -148,7 +147,7 @@ export default {
       return `${count} товаров`;
     },
   },
-  setup(){
+  setup() {
     const mainStore = useMainStore();
     return { mainStore };
   },
@@ -162,7 +161,7 @@ export default {
       this.selectedPayment = method;
     },
     checkout() {
-      if(!this.mainStore.userData){
+      if (!this.mainStore.userData) {
         this.mainStore.openRegisterForm();
         return;
       }
@@ -176,12 +175,12 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .cart-page {
   color: #fff;
   font-family: 'Manrope', sans-serif;
   overflow: hidden;
+  min-height: 100vh;
 }
 
 main {
@@ -201,6 +200,7 @@ main {
   text-shadow: 0 2px 6px rgba(119, 190, 29, 0.4);
   margin-bottom: 50px;
   text-align: center;
+  animation: fadeInDown 1s ease;
 }
 
 .cart-title span {
@@ -212,19 +212,32 @@ main {
   display: flex;
   justify-content: space-between;
   gap: 40px;
+  animation: fadeIn 1s ease;
+}
+
+@media (max-width: 768px) {
+  .cart-container {
+    flex-direction: column;
+  }
 }
 
 .cart-items {
   width: 900px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 30px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+  .cart-items {
+    width: 100%;
+  }
 }
 
 .cart-item {
@@ -234,11 +247,12 @@ main {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideIn 0.5s ease;
 }
 
 .cart-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(119, 190, 29, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(119, 190, 29, 0.5);
 }
 
 .cart-item-image {
@@ -256,7 +270,7 @@ main {
 }
 
 .cart-item:hover .cart-item-image img {
-  transform: scale(1.02);
+  transform: scale(1.05);
 }
 
 .cart-item-details {
@@ -265,20 +279,18 @@ main {
 }
 
 .cart-item-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
   color: #fff;
   margin-bottom: 10px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .cart-item-dop-info {
-  font-size: 16px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 20px;
-}
-
-.cart-item-dop-info span {
-  color: #FFFFFF4D;
+  font-family: 'Roboto', sans-serif;
 }
 
 .cart-item-prices {
@@ -291,7 +303,7 @@ main {
 .cart-item-price {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(90deg, #77BE1D, #97E238);
+  background: linear-gradient(90deg, #77BE1D 0%, #97E238 50%, #77BE1D 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -332,7 +344,7 @@ main {
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .cart-item-quantity button:disabled {
@@ -342,6 +354,7 @@ main {
 
 .cart-item-quantity button:hover:not(:disabled) {
   background: linear-gradient(90deg, #649E18, #7BC22F);
+  transform: scale(1.1);
 }
 
 .cart-item-quantity span {
@@ -364,12 +377,14 @@ main {
 
 .remove-btn:hover {
   background: rgba(255, 48, 48, 0.9);
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
-.remove-btn path{
+
+.remove-btn path {
   transition: all 0.3s;
 }
-.remove-btn:hover path{
+
+.remove-btn:hover path {
   fill-opacity: 1;
 }
 
@@ -378,11 +393,19 @@ main {
   height: 100%;
   position: sticky;
   top: 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 24px;
   padding: 30px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 6px 20px rgba(0, 0, 0, 0.5);
+  animation: fadeInRight 1s ease;
+}
+
+@media (max-width: 768px) {
+  .cart-summary {
+    width: 100%;
+    margin-top: 20px;
+  }
 }
 
 .basket-sposobi-oplati {
@@ -431,7 +454,7 @@ main {
 }
 
 .basket-so-card-imgs img {
-  height: 30px;
+  height: 48px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -461,25 +484,20 @@ main {
 }
 
 .basket-oformit-zakaz-but {
-  padding: 12px;
-  background: #77BE1D1A;
+  padding: 14px 30px;
+  background: linear-gradient(90deg, #77BE1D, #97E238);
   border: none;
-  border-radius: 15px;
-  color: #77BE1D;
+  border-radius: 30px;
+  color: white;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.basket-oformit-zakaz-but.active {
-  background: linear-gradient(90deg, #77BE1D, #97E238);
-  color: white;
-}
-
-.basket-oformit-zakaz-but.active:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 20px rgba(119, 190, 29, 0.5);
+.basket-oformit-zakaz-but:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(119, 190, 29, 0.8);
 }
 
 .basket-oformit-zakaz-uslovia {
@@ -500,17 +518,18 @@ main {
   text-decoration: none;
 }
 
-.basket-oformit-zakaz-uslovia-txt a:hover {
+.basket-oformit-zakaz-usloia-txt a:hover {
   text-decoration: underline;
 }
 
 .empty-cart {
   text-align: center;
   padding: 100px 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 24px;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 1s ease;
 }
 
 .empty-cart-content {
@@ -543,47 +562,61 @@ main {
 }
 
 /* Анимации */
-.cart-item-enter-active,
-.cart-item-leave-active {
-  transition: all 0.5s ease;
-}
-
-.cart-item-enter-from,
-.cart-item-leave-to {
-  opacity: 0;
-  transform: translateX(50px) scale(0.95);
-}
-
-.count-enter-active,
-.count-leave-active {
-  transition: all 0.3s ease;
-}
-
-.count-enter-from,
-.count-leave-to {
-  opacity: 0;
-  transform: scale(0.5);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+  }
+}
 
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-item-quantity button:hover {
+  animation: pulse 0.8s infinite;
 }
 </style>
