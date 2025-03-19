@@ -60,7 +60,7 @@
 
     <div class="cash-modal" v-if="showCashModal">
       <div class="cash-modal-content">
-        <span class="close-modal" @click="toggleCashModal">×</span>
+        <img src="../assets/images/cross.png" class="close-modal" @click="toggleCashModal" />
         <h3>Пополнить накопительный счёт</h3>
         <input type="number" v-model="depositAmount" placeholder="Введите сумму" min="1" step="1" />
         <button @click="depositCash" class="deposit-btn">Пополнить</button>
@@ -78,6 +78,7 @@ import ProfileUser from '../pages/ProfileUser.vue';
 import Search from './Search.vue';
 import Login from '@/components/Login.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from 'vue-toastification';
 
 export default {
   components: {
@@ -99,7 +100,8 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     truncatedUsername() {
@@ -110,12 +112,6 @@ export default {
         return "Гость";
       }
     },
-  },
-  watch: {
-    userData(){
-      console.log(this.userData);
-      
-    }
   },
   mounted() {    
     document.addEventListener('click', this.closeDropdown);    
@@ -165,6 +161,12 @@ export default {
       if (!this.showCashModal) this.depositAmount = '';
     },
     depositCash() {
+      if(!this.mainStore.userData){
+        this.toast.error("Авторизуйтес, чтобы продолжить");
+        this.showCashModal = false;
+        this.mainStore.openRegisterForm();
+        return;
+      }
       const amount = parseInt(this.depositAmount);
       if (isNaN(amount) || amount <= 0) {
         alert('Пожалуйста, введите корректную сумму');
@@ -416,8 +418,8 @@ input[type='text']:focus {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -425,28 +427,21 @@ input[type='text']:focus {
 }
 
 .cash-modal-content {
-  background: #1C1435;
-  padding: 20px;
+  background: #13101B;
+  padding: 40px;
   border-radius: 15px;
   text-align: center;
   position: relative;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  width: 500px;
 }
 
 .close-modal {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 30px;
-  color: #fff;
+  top: 30px;
+  right: 30px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.close-modal:hover {
-  color: #77BE1D;
 }
 
 .cash-modal-content h3 {

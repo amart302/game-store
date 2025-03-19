@@ -319,10 +319,9 @@ export default {
     closeModal() {
       this.modalOpen = false;
       document.body.style.overflow = 'auto';
-      if (this.$refs.videoPlayer) this.$refs.videoPlayer[0].pause();
+      this.$refs.videoPlayer[0].pause();
     },
     plusSlides(n) {
-      if (this.$refs.videoPlayer && n === 4) this.$refs.videoPlayer[0].play();
       this.modalOpen = true;
       this.showSlides(this.slideIndex + n);
     },
@@ -334,7 +333,8 @@ export default {
       if (n > this.slides.length) this.slideIndex = 1;
       else if (n < 1) this.slideIndex = this.slides.length;
       else this.slideIndex = n;
-      if (this.$refs.videoPlayer && this.slideIndex !== 5) this.$refs.videoPlayer[0].pause();
+      if(this.slideIndex === 5) this.$refs.videoPlayer[0].play();
+      else this.$refs.videoPlayer[0].pause();
     },
     addEventListeners() {
       const scrollContainer = this.$refs.photoVideos;

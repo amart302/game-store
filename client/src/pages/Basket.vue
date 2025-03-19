@@ -119,7 +119,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
@@ -166,7 +165,7 @@ export default {
     checkout() {
       if(!this.mainStore.userData){
         this.mainStore.openRegisterForm();
-        this.toast.warning('Авторизуйтесь, чтобы продолжить');
+        this.toast.error("Авторизуйтес, чтобы продолжить");
         return;
       }
       else if (!this.selectedPayment) {
