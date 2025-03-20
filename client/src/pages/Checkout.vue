@@ -4,47 +4,54 @@
     <main>
       <h1 class="checkout-title">Оформление заказа</h1>
       <div v-if="mainStore.basket.length" class="checkout-container">
-        <div v-for="game in mainStore.basket" :key="game.id" class="game-info">
-          <div class="game-info-header">
-            <div class="cart-item-image">
-              <img :src="game.large_capsule_image" alt="Item Image" />
+        <div class="game-container">
+          <div v-for="game in mainStore.basket" :key="game.id" class="game-info">
+            <div class="game-info-header">
+              <div class="cart-item-image">
+                <img :src="game.large_capsule_image" alt="Item Image" />
+              </div>
+              <h2>{{ game.name }}</h2>
+              <div class="product-like">
+                <button @click="mainStore.addToFavourites(game)" class="favourite-btn"
+                  :class="{ 'active': isGameFavourite(game.id) }">
+                  <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="#FF3030" />
+                  </svg>
+                  <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      fill="none" stroke="#FFFFFF" stroke-width="2" />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <h2>{{ game.name }}</h2>
-            <img src="" alt="">
-            <div class="product-like">
-              <button @click="mainStore.addToFavourites(game)" class="favourite-btn"
-                :class="{ 'active': isGameFavourite(game.id) }">
-                <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                    fill="#FF3030" />
-                </svg>
-                <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                    fill="none" stroke="#FFFFFF" stroke-width="2" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <p>Цена: {{ game.final_price }}</p>
-          <p v-if="game.skidka">Скидка: {{ game.skidka }}</p>
-          <p v-if="game.oldPrice">Старая цена: {{ game.oldPrice }}</p>
-          <p>Количество: {{ game.count }}</p>
-        </div>
-
-        <div class="payment-options">
-          <h3>Способ оплаты: {{ paymentMethodDisplay }}</h3>
-          <p>Общая сумма: {{ totalPrice }} {{ currencySymbol }}</p>
-          <div v-if="selectedPaymentMethod === 'account'" class="balance-info">
-            <p>Баланс накопительного счёта: {{ mainStore.userData.balance }} {{ currencySymbol }}</p>
-            <p v-if="mainStore.userData.balance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
+            <p>Цена: {{ game.final_price }}</p>
+            <p v-if="game.skidka">Скидка: {{ game.skidka }}</p>
+            <p v-if="game.oldPrice">Старая цена: {{ game.oldPrice }}</p>
+            <p>Количество: {{ game.count }}</p>
           </div>
         </div>
-        <button @click="completePurchase" class="complete-btn" :disabled="isPaymentDisabled">
-          Завершить покупку
-        </button>
+        <div class="payment-container">
+          <div class="payment-options">
+            <h3>Способ оплаты: {{ paymentMethodDisplay }}</h3>
+            <p>Общая сумма: {{ totalPrice }} {{ currencySymbol }}</p>
+            <div v-if="selectedPaymentMethod === 'account'" class="balance-info">
+              <p>Баланс накопительного счёта: {{ mainStore.userData.balance }} {{ currencySymbol }}</p>
+              <p v-if="mainStore.userData.balance < totalPriceRaw" class="error">Недостаточно средств на счёте!</p>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button @click="completePurchase" class="complete-btn" :disabled="isPaymentDisabled">
+              Завершить покупку
+            </button>
+            <button @click="cancelPurchase" class="cancel-btn">
+              Отмена
+            </button>
+          </div>
+        </div>
       </div>
       <div v-else class="empty-checkout">
         <p>Выберите товар для покупки</p>
@@ -55,7 +62,6 @@
     <Footer />
   </div>
 </template>
-
 <script>
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
@@ -163,6 +169,11 @@ export default {
       }
     },
 
+    cancelPurchase() {
+      this.clearCheckout();
+      this.$router.push('*');
+    },
+
     clearCheckout() {
       this.mainStore.basket = [];
       localStorage.removeItem('basket');
@@ -171,11 +182,9 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .checkout-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #121212, #000);
   color: #fff;
   font-family: 'Roboto', sans-serif;
 }
@@ -196,8 +205,9 @@ main {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 40px;
 }
-.game-info-header{
-}
+
+.game-info-header {}
+
 .cart-item-image {
   width: 280px;
   height: 150px;
@@ -215,15 +225,34 @@ main {
 .cart-item:hover .cart-item-image img {
   transform: scale(1.05);
 }
+
 .checkout-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+}
+.game-container{
+  display: grid;
+  grid-template-columns: repeat(4,  1fr);
+  gap: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+.payment-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  padding: 40px;
   backdrop-filter: blur(20px);
+  padding: 40px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+
 }
 
 .game-info {
@@ -233,15 +262,18 @@ main {
   margin-bottom: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .game-info:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
 }
+
 .game-info h2 {
   font-size: 24px;
   margin-bottom: 10px;
   color: #fff;
 }
+
 .game-info p {
   font-size: 18px;
   margin: 5px 0;
@@ -250,21 +282,27 @@ main {
 
 .product-like {
   position: relative;
+  display: flex;
+  justify-content: end;
 }
+
 .favourite-btn {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   padding: 10px;
   border-radius: 50%;
   cursor: pointer;
+  left: 0;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .favourite-btn:hover {
   background: rgba(255, 48, 48, 0.2);
 }
+
 .favourite-btn.active {
   background: rgba(255, 48, 48, 0.3);
 }
@@ -274,23 +312,29 @@ main {
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.payment-options:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
-}
+
+
+
 .payment-options h3 {
   font-size: 24px;
   margin-bottom: 15px;
 }
+
 .payment-options p {
   font-size: 18px;
   margin: 5px 0;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
 .complete-btn {
-  padding: 15px 30px;
+  width: 260px;
+  height: 50px;
   background: linear-gradient(90deg, #4CAF50, #8BC34A);
   border: none;
   border-radius: 30px;
@@ -299,18 +343,38 @@ main {
   font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 20px;
   box-shadow: 0 10px 30px rgba(0, 255, 0, 0.4);
 }
+
 .complete-btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 255, 0, 0.6);
 }
+
 .complete-btn:disabled {
   background: #555;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.cancel-btn {
+  width: 260px;
+  height: 50px;
+  background: linear-gradient(90deg, #FF5252, #FF1744);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+}
+
+.cancel-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(255, 0, 0, 0.6);
 }
 
 .empty-checkout {
@@ -321,11 +385,13 @@ main {
   backdrop-filter: blur(15px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
+
 .empty-checkout p {
   font-size: 28px;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 20px;
 }
+
 .back-to-main {
   font-size: 20px;
   color: #4CAF50;
@@ -335,6 +401,7 @@ main {
   border-radius: 30px;
   transition: all 0.3s ease;
 }
+
 .back-to-main:hover {
   background: #4CAF50;
   color: white;
@@ -344,21 +411,27 @@ main {
   .checkout-container {
     grid-template-columns: 1fr;
   }
+
   .checkout-title {
     font-size: 40px;
   }
+
   .game-info h2 {
     font-size: 22px;
   }
+
   .game-info p {
     font-size: 16px;
   }
+
   .payment-options h3 {
     font-size: 20px;
   }
+
   .payment-options p {
     font-size: 16px;
   }
+
   .complete-btn {
     font-size: 16px;
     padding: 12px 20px;
@@ -370,35 +443,45 @@ main {
   main {
     padding: 30px 15px;
   }
+
   .checkout-title {
     font-size: 32px;
   }
+
   .checkout-container {
     padding: 20px;
   }
+
   .game-info h2 {
     font-size: 20px;
   }
+
   .game-info p {
     font-size: 14px;
   }
+
   .payment-options h3 {
     font-size: 18px;
   }
+
   .payment-options p {
     font-size: 14px;
   }
+
   .complete-btn {
     font-size: 14px;
     padding: 10px 15px;
     width: 100%;
   }
+
   .empty-checkout {
     padding: 50px;
   }
+
   .empty-checkout p {
     font-size: 20px;
   }
+
   .back-to-main {
     font-size: 16px;
     padding: 10px 15px;

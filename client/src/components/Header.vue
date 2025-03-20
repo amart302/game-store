@@ -24,10 +24,9 @@
           Баланс: {{ (mainStore.userData) ? mainStore.userData.balance : 0 }} {{ selectedVal }}
         </div>
         <nav class="bl-state">
-          <RouterLink to="#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
+          <RouterLink to="/#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
           <RouterLink to="/guarantee">Гарантии</RouterLink>
           <RouterLink to="#">Как купить</RouterLink>
-          <RouterLink to="#">Накопительная</RouterLink>
           <RouterLink to="/history">История покупок</RouterLink>
         </nav>
         <div class="bl-pr" @click="() => goToProfile()">
@@ -95,6 +94,7 @@ export default {
       searchQuery: '',
       showCashModal: false,
       depositAmount: '',
+      
     };
   },
   setup(){
