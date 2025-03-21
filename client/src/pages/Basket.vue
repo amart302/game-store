@@ -186,13 +186,6 @@ export default {
   overflow: hidden;
 }
 
-main {
-  max-width: 1440px;
-  min-height: calc(100vh - 600px);
-  margin: 0 auto;
-  padding: 60px 20px;
-}
-
 .cart-title {
   font-size: 48px;
   font-weight: 800;

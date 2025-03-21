@@ -73,13 +73,6 @@ export default {
   color: #fff;
 }
 
-main {
-  min-height: calc(100vh - 600px);
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
 .favorites-title {
   font-size: 36px;
   font-weight: 800;

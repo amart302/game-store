@@ -75,14 +75,6 @@ export default {
   color: #fff;
   font-family: 'Manrope', sans-serif;
 }
-
-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  min-height: calc(100vh - 766px);
-}
-
 .history-title {
   font-size: 36px;
   font-weight: 800;
@@ -170,88 +162,5 @@ main {
 .back-to-main:hover {
   background: #77BE1D;
   color: white;
-}
-
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-    min-height: calc(100vh - 700px);
-  }
-
-  .history-title {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  .history-container {
-    padding: 20px;
-  }
-
-  .purchase-date {
-    font-size: 18px;
-  }
-
-  .purchase-summary p {
-    font-size: 14px;
-  }
-
-  .empty-history {
-    padding: 40px;
-  }
-
-  .empty-history p {
-    font-size: 20px;
-  }
-
-  .back-to-main {
-    font-size: 16px;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 15px 10px;
-    min-height: calc(100vh - 650px);
-  }
-
-  .history-title {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-
-  .history-container {
-    padding: 15px;
-  }
-
-  .purchase-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .purchase-summary {
-    text-align: left;
-  }
-
-  .purchase-date {
-    font-size: 16px;
-  }
-
-  .empty-history {
-    padding: 30px;
-  }
-
-  .empty-history p {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-
-  .back-to-main {
-    font-size: 14px;
-    padding: 6px 12px;
-    width: 100%;
-    text-align: center;
-  }
 }
 </style>

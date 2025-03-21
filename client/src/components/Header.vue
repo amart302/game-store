@@ -25,9 +25,8 @@
         </div>
         <nav class="bl-state">
           <RouterLink to="#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
-          <RouterLink to="#">Гарантии</RouterLink>
+          <RouterLink to="/warranty">Гарантии</RouterLink>
           <RouterLink to="#">Как купить</RouterLink>
-          <RouterLink to="#">Накопительная</RouterLink>
           <RouterLink to="/history">История покупок</RouterLink>
         </nav>
         <div class="bl-pr" @click="() => goToProfile()">

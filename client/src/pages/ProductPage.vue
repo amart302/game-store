@@ -113,28 +113,86 @@
             <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
           </div>
           <div v-if="activeTab === 'requirements'" class="product-sisTreb">
-            <div class="product-sisTreb-title">Рекомендованные системные требования</div>
+            <div class="product-sisTreb-title">Минимальные системные требования</div>
             <table class="product-sisTreb-table">
               <tbody>
                 <tr>
-                  <td>Платформы</td>
-                  <td>
-                    <span v-if="currentProduct.windows_available">Windows</span>
-                    <span v-if="currentProduct.mac_available">, Mac</span>
-                    <span v-if="currentProduct.linux_available">, Linux</span>
-                  </td>
+                  <td>ОС:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.OS || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Процессор:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Processor || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Оперативная память:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Memory || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Видеокарта:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Graphics || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>DirectX:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.DirectX || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Место на диске:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Storage || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
                 </tr>
               </tbody>
             </table>
-          </div>
+
+            <div class="product-sisTreb-title">Рекомендуемые системные требования</div>
+            <table class="product-sisTreb-table">
+              <tbody>
+                <tr>
+                  <td>ОС:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.OS || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Процессор:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Processor || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Оперативная память:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Memory || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Видеокарта:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Graphics || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>DirectX:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.DirectX || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Место на диске:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Storage || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>            
           <div v-if="activeTab === 'activation'" class="product-activate">
-            <div class="product-activate-title">Введите цифровой ключ продукта</div>
-            <div class="product-activate-input">
-              <label>
-                Ключ продукта<br />
-                <input type="text" v-model="activationKey" placeholder="XXXX-XXXX-XXXX" />
-              </label>
-            </div>
+              <div class="product-activate-title">Введите цифровой ключ продукта</div>
+              <div class="product-activate-input">
+                <label>
+                  Ключ продукта<br />
+                  <input type="text" v-model="activationKey" placeholder="XXXX-XXXX-XXXX" />
+                </label>
+              </div>
           </div>
         </div>
       </div>
@@ -273,6 +331,18 @@ export default {
           gameData.data.windows_available = productData.windows_available;
           gameData.data.mac_available = productData.mac_available;
           gameData.data.linux_available = productData.linux_available;
+          gameData.data.pc_requirements = {
+            minimum: this.parseRequirements(gameData.data.pc_requirements?.minimum),
+            recommended: this.parseRequirements(gameData.data.pc_requirements?.recommended)
+          };
+          gameData.data.mac_requirements = {
+            minimum: this.parseRequirements(gameData.data.mac_requirements?.minimum),
+            recommended: this.parseRequirements(gameData.data.mac_requirements?.recommended)
+          };
+          gameData.data.linux_requirements = {
+            minimum: this.parseRequirements(gameData.data.linux_requirements?.minimum),
+            recommended: this.parseRequirements(gameData.data.linux_requirements?.recommended)
+          };
           this.currentProduct = gameData.data;
           this.currentProduct.id = this.currentProduct.steam_appid || productData;
         } else {
@@ -282,7 +352,31 @@ export default {
         console.error('Ошибка при загрузке данных продукта:', error);
       }
     },
+    parseRequirements(requirementsString) {
+      const requirements = {};
+      if (!requirementsString) return requirements;
 
+      // Регулярное выражение для извлечения ключей и значений
+      const regex = /<strong>([^:]+):<\/strong>\s*([^<]+)/g;
+      let match;
+
+      while ((match = regex.exec(requirementsString)) !== null) {
+        const key = match[1].trim(); // Ключ (например, "OS", "Processor")
+        const value = match[2].trim(); // Значение (например, "Windows® 10")
+        requirements[key] = value;
+      }
+
+      return requirements;
+    },
+    getRequirementIcon(isRecommended) {
+      return isRecommended
+        ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path d="M6 12L4.59 10.59L8.17 7L4.59 3.41L6 2L10 6L8.59 7.41L12 4L14 6L10 10L12 12H6Z" fill="#77BE1D" />
+         </svg>`
+        : `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <path d="M6 12L4.59 10.59L8.17 7L4.59 3.41L6 2L10 6L8.59 7.41L12 4L14 6L10 10L12 12H6Z" fill="#CCCCCC" />
+         </svg>`;
+    },
     addToFavourites() {
       const product = {
           id: this.productData,
@@ -385,14 +479,6 @@ export default {
   height: 100%;
   background: linear-gradient(to bottom, rgba(10, 7, 26, 0.7), rgba(28, 20, 53, 0.9));
   z-index: 1;
-}
-
-main {
-  position: relative;
-  z-index: 2;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
 }
 
 .product-container {
@@ -893,274 +979,5 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
-}
-
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-  }
-
-  .product-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 20px;
-  }
-
-  .product-img {
-    width: 100%;
-    height: 350px;
-  }
-
-  .product-title {
-    font-size: 32px;
-  }
-
-  .product-now-price {
-    font-size: 28px;
-  }
-
-  .product-skidka {
-    font-size: 20px;
-  }
-
-  .product-old-price {
-    font-size: 16px;
-  }
-
-  .product-deystvia {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .product-buy {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-
-  .product-info table td {
-    font-size: 12px;
-    padding: 5px 10px;
-  }
-
-  .product-deystvia-2 {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .product-moment-dost-but {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-
-  .product-garantia {
-    font-size: 14px;
-  }
-
-  .product-photo-videos {
-    gap: 15px;
-  }
-
-  .product-photo-video {
-    width: 250px;
-    height: 150px;
-  }
-
-  .product-ostas {
-    padding: 20px;
-  }
-
-  .product-ostas-title {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .product-osta-left,
-  .product-osta-center,
-  .product-osta-right {
-    font-size: 16px;
-    padding: 0 10px;
-  }
-
-  .product-opisanie-title,
-  .product-sisTreb-title,
-  .product-activate-title {
-    font-size: 20px;
-  }
-
-  .product-opisanie-txt {
-    font-size: 14px;
-  }
-
-  .vam-budet-interesno-title {
-    font-size: 24px;
-  }
-
-  .vam-budet-interesno-cont {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-
-  .modal-cont {
-    width: 95%;
-  }
-
-  .mySlides img,
-  .mySlides video {
-    width: 600px;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 15px 10px;
-  }
-
-  .product-container {
-    padding: 15px;
-  }
-
-  .product-img {
-    height: 250px;
-  }
-
-  .product-title {
-    font-size: 24px;
-  }
-
-  .product-v-nalichii {
-    font-size: 12px;
-  }
-
-  .product-now-price {
-    font-size: 24px;
-  }
-
-  .product-skidka {
-    font-size: 18px;
-    padding: 4px 8px;
-  }
-
-  .product-old-price {
-    font-size: 14px;
-  }
-
-  .product-deystvia {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .product-buy {
-    padding: 10px 16px;
-    font-size: 12px;
-    width: 100%;
-  }
-
-  .product-info {
-    margin: 15px 0;
-    padding: 10px;
-  }
-
-  .product-info table td {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-
-  .product-deystvia-2 {
-    gap: 8px;
-  }
-
-  .product-moment-dost-but {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .product-garantia {
-    font-size: 12px;
-  }
-
-  .product-garantia-galochka {
-    width: 16px;
-    height: 16px;
-  }
-
-  .product-photo-videos {
-    gap: 10px;
-    padding: 15px 0;
-  }
-
-  .product-photo-video {
-    width: 200px;
-    height: 120px;
-  }
-
-  .product-photo-video-play {
-    width: 50px;
-    height: 50px;
-  }
-
-  .product-photo-video-playy {
-    width: 35px;
-    height: 35px;
-  }
-
-  .product-ostas {
-    padding: 15px;
-  }
-
-  .product-ostas-title {
-    gap: 8px;
-  }
-
-  .product-osta-left,
-  .product-osta-center,
-  .product-osta-right {
-    font-size: 14px;
-    padding: 0 8px;
-  }
-
-  .product-opisanie-title,
-  .product-sisTreb-title,
-  .product-activate-title {
-    font-size: 18px;
-  }
-
-  .product-opisanie-txt {
-    font-size: 12px;
-  }
-
-  .product-activate-input input {
-    max-width: 100%;
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .vam-budet-interesno-title {
-    font-size: 20px;
-  }
-
-  .vam-budet-interesno-cont {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-
-  .modal-cont {
-    width: 95%;
-  }
-
-  .close {
-    font-size: 30px;
-  }
-
-  .mySlides img,
-  .mySlides video {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .prev,
-  .next {
-    font-size: 30px;
-    padding: 8px;
-  }
 }
 </style>

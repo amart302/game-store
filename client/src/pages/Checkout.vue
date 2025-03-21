@@ -172,13 +172,6 @@ export default {
   color: #fff;
 }
 
-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  min-height: calc(100vh - 766px);
-}
-
 .checkout-title {
   font-size: 36px;
   font-weight: 800;
@@ -333,110 +326,5 @@ main {
 .back-to-main:hover {
   background: #77BE1D;
   color: white;
-}
-
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-    min-height: calc(100vh - 700px);
-  }
-
-  .checkout-title {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  .checkout-container {
-    padding: 20px;
-  }
-
-  .game-info h2 {
-    font-size: 24px;
-  }
-
-  .game-info p {
-    font-size: 18px;
-  }
-
-  .payment-options h3 {
-    font-size: 20px;
-  }
-
-  .payment-options p {
-    font-size: 18px;
-  }
-
-  .complete-btn {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-
-  .empty-checkout {
-    padding: 40px;
-  }
-
-  .empty-checkout p {
-    font-size: 20px;
-  }
-
-  .back-to-main {
-    font-size: 16px;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 15px 10px;
-    min-height: calc(100vh - 650px);
-  }
-
-  .checkout-title {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-
-  .checkout-container {
-    padding: 15px;
-  }
-
-  .game-info h2 {
-    font-size: 20px;
-  }
-
-  .game-info p {
-    font-size: 16px;
-  }
-
-  .payment-options h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-
-  .payment-options p {
-    font-size: 16px;
-  }
-
-  .complete-btn {
-    padding: 10px 16px;
-    font-size: 12px;
-    width: 100%;
-  }
-
-  .empty-checkout {
-    padding: 30px;
-  }
-
-  .empty-checkout p {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-
-  .back-to-main {
-    font-size: 14px;
-    padding: 6px 12px;
-    width: 100%;
-    text-align: center;
-  }
 }
 </style>

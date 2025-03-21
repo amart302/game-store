@@ -1,5 +1,5 @@
 <template>
-  <div id="main">
+  <div>
     <Header />
     <Slider />
     <main>
@@ -115,15 +115,6 @@ export default {
 </script>
 
 <style scoped>
-#main {
-  min-height: 100vh;
-  color: #fff;
-}
-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
 .mainBlock1,
 .mainBlock2,
 .mainBlock3,
@@ -206,49 +197,5 @@ h2 {
   font-size: 16px;
   font-weight: 600;
   color: #97E238;
-}
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-  }
-
-  h1, h2 {
-    font-size: 28px;
-  }
-
-  .smallProductCardsConteiner1,
-  .smallProductCardsConteiner2,
-  .bigProductCardsConteiner {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  h1, h2 {
-    font-size: 24px;
-  }
-
-  .smallProductCardsConteiner1,
-  .smallProductCardsConteiner2,
-  .bigProductCardsConteiner {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-
-  .feedbackCard {
-    padding: 15px;
-  }
-
-  .starBlock img {
-    width: 16px;
-    height: 16px;
-  }
-
-  .datePublication,
-  .feedback,
-  .feedbackUserName {
-    font-size: 14px;
-  }
 }
 </style>
