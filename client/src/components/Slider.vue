@@ -1,216 +1,293 @@
 <template>
-  <div class="slider">
-    <div class="arrowLeft" @click="prevSlide">
-      <img src="../assets/images/arrowLeftImg.svg" alt="Previous" />
+  <div class="slider-container">
+    <!-- Основной слайдер -->
+    <div class="slider">
+      <img :src="slides[currentSlide].background" class="slide" ref="productImage" alt="Слайд" />
     </div>
-    <div class="slide" :style="{ marginLeft: `${indent}rem` }">
-      <img src="../assets/images/slideImg1.png" class="slideImg" />
-      <div class="slide_information">
-        <h3>
-          Покорите вершину без шума и пыли. Перехитрите копов и участвуйте в еженедельных квалификационных заездах, чтобы добраться до Гранд-заезда — главной уличной гонки. Заполните свой гараж уникальными модифицированными машинами и покажите на улицах класс.
-        </h3>
-      </div>
-    </div>
-    <div class="slide">
-      <img src="../assets/images/slideImg2.png" class="slideImg" />
-      <div class="slide_information">
-        <h3>
-          Культовая серия гоночных видеоигр от компании Electronic Arts. Смысл игры заключается в управлении различными автомобилями на различных трассах. Существуют варианты игры как для персональных компьютеров, так и для различных игровых приставок, таких как Xbox и PlayStation.
-        </h3>
-        <div class="slide_priceBlock">
-          <span class="slide_priceWithDiscount">4 999 ₽</span>
-          <span class="slide_discount">-25%</span>
-          <span class="slide_priceWithoutDiscount">6 999 ₽</span>
-        </div>
-        <div class="slide_btnsBlock">
-          <button class="slideBtn" @click.stop="addToCart">В корзину</button>
-          <button class="slideBtn" @click.stop="addToFavourites">В избранное</button>
+
+    <!-- Список игр справа -->
+    <div class="game-list-container">
+      <div class="game-list">
+        <div class="game-item" v-for="(game, index) in ads" :key="index" @click="goToSlide(index)"
+          :class="{ active: currentSlide === index }">
+          <img :src="game.cover" alt="Game Cover" class="game-cover" />
+          <div class="game-info">
+            <span class="game-title">{{ game.title }}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="slide">
-      <img src="../assets/images/slideImg3.png" class="slideImg" />
-      <div class="slide_information">
-        <h3>
-          Компьютерная игра серии Need for Speed в жанре аркадных автогонок, разработанная студией Ghost Games и изданная компанией Electronic Arts для игровых приставок PlayStation 4 и Xbox One в ноябре 2015 года. Выход игры на персональные компьютеры состоялся в марте 2016 года[2]. Это двадцать вторая часть серии Need for Speed.
-        </h3>
-      </div>
-    </div>
-    <div class="arrowRight" @click="nextSlide">
-      <img src="../assets/images/arrowRightImg.svg" alt="Next" />
-    </div>
-    <div class="counterClides">
-      <div class="counter" :class="{ active: index === 1 }" id="counter1"></div>
-      <div class="counter" :class="{ active: index === 2 }" id="counter2"></div>
-      <div class="counter" :class="{ active: index === 3 }" id="counter3"></div>
     </div>
   </div>
 </template>
 
 <script>
+import { useMainStore } from '@/store/store';
+
 export default {
-  name: 'Slider',
+  name: 'GameSlider',
   data() {
     return {
-      index: 2,
-      indent: 0,
-      slideWidth: 160.6,
+      currentSlide: 0,
+      props: {
+        game: {
+          type: Object,
+          required: true,
+        },
+        isTopOnly: {
+          type: Boolean,
+          default: false,
+        },
+      },
+      slides: [
+        {
+          title: 'Grand Theft Auto V Enhanced',
+          background: 'https://cdn.akamai.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg',
+          description: 'Легендарные хиты Grand Theft Auto V и Grand Theft Auto Online — теперь с обновлением для нового поколения!',
+          price: 14.99,
+          oldPrice: 29.99
+        },
+        {
+          title: 'Split Fiction',
+          background: '',
+          description: 'Новый боевик с кооперативным режимом!',
+          price: 24.99
+        },
+        {
+          title: 'Honkai: Star Rail',
+          background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
+          description: 'Красочный мир приключений!',
+          price: 'Бесплатно'
+        }
+      ],
+      ads: [
+        { title: 'Counter-Strike 2', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg?t=1729703045' },
+        { title: 'Split Fiction', cover: '' },
+        { title: 'Detroit: Become Human', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/header.jpg?t=1667468479' },
+        { title: 'Rocket League', cover: 'https://example.com/rocket-league.jpg' },
+        { title: 'Assassin\'s Creed', cover: 'https://example.com/ac-shadows.jpg' }
+      ],
+      autoSlideInterval: null
     };
   },
-  methods: {
-    prevSlide() {
-      if (this.index > 1) {
-        this.indent += this.slideWidth;
-        this.index--;
-      }
-    },
-    nextSlide() {
-      if (this.index < 3) {
-        this.indent -= this.slideWidth;
-        this.index++;
-      }
-    },
-    addToCart() {
-      console.log('Добавлено в корзину из слайдера');
-    },
-    addToFavourites() {
-      console.log('Добавлено в избранное из слайдера');
-    },
+  setup(){
+    const mainStore = useMainStore();
+    console.log(mainStore.topGames);
+    
+    return { mainStore };
   },
+  methods: {
+    goToSlide(index) {
+      this.currentSlide = index;
+    },
+    navigateToProductPage() {
+      sessionStorage.setItem('currentProductInGames', JSON.stringify({
+        id: this.game.id,
+        price: this.game.final_price,
+        windows_available: this.game.windows_available,
+        mac_available: this.game.mac_available,
+        linux_available:this.game.linux_available
+      }));
+      this.$router.push('/product');
+    },
+    startAutoSlide() {
+      this.autoSlideInterval = setInterval(() => {
+        this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+      }, 5000);
+    },
+    stopAutoSlide() {
+      clearInterval(this.autoSlideInterval);
+    }
+  },
+  mounted() {
+    this.startAutoSlide();
+  },
+  beforeDestroy() {
+    this.stopAutoSlide();
+  }
 };
 </script>
 
 <style scoped>
-.slider {
-  max-width: 1600px;
-  height: 750px;
+/* Основной контейнер */
+.slider-container {
+  display: grid;
+  grid-template-columns: 1fr 0.3fr;
+  width: 1440px;
   margin-inline: auto;
-  margin-block: 60px;
-  overflow: hidden;
+  padding: 20px;
+  color: white;
+  gap: 10px;
+  border-radius: 10px;
+}
+
+/* Основной слайдер */
+.slider {
+  background-color: #111;
   position: relative;
-  display: flex;
-  gap: 60px;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 56px;
-}
-
-.arrowLeft {
-  position: absolute;
-  left: 9.2%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-  background-color: rgba(196, 196, 196, 0.05);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  z-index: 1;
-  transition: all 0.2s;
-}
-
-.arrowRight {
-  position: absolute;
-  right: 9.2%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-  background-color: rgba(196, 196, 196, 0.05);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  z-index: 1;
-  transition: all 0.2s;
-}
-
-.arrowRight:hover,
-.arrowLeft:hover {
-  background-color: rgba(196, 196, 196, 0.1);
-}
-
-.slideImg {
-  border-radius: 24px;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .slide {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide-background {
+  width: 100%;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
   position: relative;
-  transition: all 0.6s;
+  border-radius: 10px;
 }
 
-.slide_information {
-  width: 86%;
-  display: grid;
+.slide-overlay {
   position: absolute;
-  top: 36%;
-  left: 8%;
-  gap: 16px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.slide_priceBlock {
-  display: flex;
-  gap: 50px;
+/* Контент внутри слайда */
+.slide-content {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
 }
 
-.slide_priceWithDiscount,
-.slide_discount,
-.slide_priceWithoutDiscount {
-  font-size: 22px;
+.game-logo {
+  width: 200px;
+  margin-bottom: 10px;
 }
 
-.slide_discount {
-  color: #77be1d;
+.available {
+  font-size: 14px;
+  color: #bbb;
+  text-transform: uppercase;
 }
 
-.slide_priceWithoutDiscount {
-  color: rgba(255, 255, 255, 0.3);
+.description {
+  font-size: 18px;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.price {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.old-price {
   text-decoration: line-through;
+  color: #aaa;
+  margin-right: 10px;
 }
 
-.slide_btnsBlock {
+.discount {
+  color: #00c8ff;
+  background: rgba(0, 200, 255, 0.2);
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.final-price {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Кнопки */
+.buttons {
   display: flex;
-  gap: 20px;
-}
-
-.slideBtn {
-  border: none;
-  background-color: rgba(255, 255, 255, 0.05);
-  padding-inline: 28px;
-  padding-block: 24px;
-  border-radius: 12px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.slideBtn:hover {
-  background-color: white;
-  color: black;
-}
-
-.counterClides {
-  width: 300px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-  position: absolute;
-  bottom: 0;
   gap: 10px;
-  z-index: 1;
 }
 
-.counter {
-  height: 3px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 1px;
-  transition: all 0.4s;
+.primary-btn {
+  background: white;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s ease;
 }
 
-.counter.active {
-  background-color: white;
-  height: 5px;
+.primary-btn:hover {
+  transform: scale(1.05);
+}
+
+.secondary-btn {
+  background: transparent;
+  color: white;
+  padding: 10px 20px;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Список игр */
+.game-list-container {
+  min-width: 280px;
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #222;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.game-item.active {
+  background: #444;
+}
+
+.game-cover {
+  height: 75px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.game-info {
+  flex: 1;
+}
+
+.game-title {
+  font-size: 14px;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Анимация слайдов */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
