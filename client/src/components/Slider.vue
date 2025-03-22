@@ -86,6 +86,8 @@ export default {
   methods: {
     goToSlide(index) {
       this.currentSlide = index;
+      this.stopAutoSlide();
+      this.startAutoSlide();
     },
     navigateToProductPage() {
       sessionStorage.setItem('currentProductInGames', JSON.stringify({
@@ -100,7 +102,7 @@ export default {
     startAutoSlide() {
       this.autoSlideInterval = setInterval(() => {
         this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-      }, 4000);
+      }, 5000);
     },
     stopAutoSlide() {
       clearInterval(this.autoSlideInterval);

@@ -15,8 +15,8 @@
                                     <!-- <img :src="upload" for="upload" name="upload" alt=""> -->
                                     <img src="../assets/images/upload.svg" alt="">
                                 </label>
-                            
                         </div>
+                        <button type="button" @click="() => logOut()">Выйти из аккаунта</button>
                     </div>
                     <div class="form-child-container">
                         <div class="profile-group">
@@ -71,7 +71,6 @@ const mainStore = useMainStore();
 const router = useRouter();
 
 if (!mainStore.userData) {
-    console.log(123);
     router.push('/');
 }
 const toast = useToast();
@@ -149,6 +148,11 @@ const handleFileChange = (event) => {
     }
 };
 
+const logOut = () => {
+    sessionStorage.clear();
+    setTimeout(() => window.location.reload(), 600);
+};
+
 const updateUserData = () => {
     validateData();
     if (errors.generalError || errors.email || errors.username || 
@@ -223,18 +227,23 @@ form{
 .form-child-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 50%;
 }
 
 .form-avatar-container {
     padding-top: 30px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
-    flex-direction: row;
     gap: 20px;
     width: 1000px;
     height: 700px;
+}
+.form-avatar-container button{
+    width: 200px;
+    background-color: red;
 }
 
 .form-avatar-container .upload {

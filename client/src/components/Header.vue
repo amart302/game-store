@@ -296,7 +296,7 @@ export default {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 3px solid #77BE1D;
+  border: 2px solid #77BE1D;
   background-color: #fff;
   object-fit: cover;
 }
