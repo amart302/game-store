@@ -40,20 +40,32 @@ export default {
       },
       slides: [
         {
-          title: 'Grand Theft Auto V Enhanced',
+          title: 'Counter-Strike 2',
           background: 'https://cdn.akamai.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg',
           description: 'Легендарные хиты Grand Theft Auto V и Grand Theft Auto Online — теперь с обновлением для нового поколения!',
           price: 14.99,
           oldPrice: 29.99
         },
         {
-          title: 'Split Fiction',
-          background: '',
+          title: 'Baldur\'s Gate 3',
+          background: 'https://pic.rutubelist.ru/video/2025-01-17/95/9f/959f18ca903d57d7d062befcfc4d642f.jpg',
+          description: 'Красочный мир приключений!',
+          price: 'Бесплатно'
+        },
+        {
+          title: 'Detroit: Become Human',
+          background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
+          description: 'Красочный мир приключений!',
+          price: 'Бесплатно'
+        },
+        {
+          title: 'Rust',
+          background: 'https://www.hardwareinside.de/wp-content/uploads/2021/07/article-thumb-1200x630@2x.jpg',
           description: 'Новый боевик с кооперативным режимом!',
           price: 24.99
         },
         {
-          title: 'Honkai: Star Rail',
+          title: 'Detroit: Become Human',
           background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
           description: 'Красочный мир приключений!',
           price: 'Бесплатно'
@@ -61,9 +73,9 @@ export default {
       ],
       ads: [
         { title: 'Counter-Strike 2', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg?t=1729703045' },
-        { title: 'Split Fiction', cover: '' },
+        { title: 'Baldur\'s Gate 3', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/capsule_616x353.jpg?t=1740386911' },
         { title: 'Detroit: Become Human', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/header.jpg?t=1667468479' },
-        { title: 'Rocket League', cover: 'https://example.com/rocket-league.jpg' },
+        { title: 'Rust', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/capsule_616x353.jpg?t=1738927718' },
         { title: 'Assassin\'s Creed', cover: 'https://example.com/ac-shadows.jpg' }
       ],
       autoSlideInterval: null
@@ -111,7 +123,7 @@ export default {
 /* Основной контейнер */
 .slider-container {
   display: grid;
-  grid-template-columns: 1fr 0.3fr;
+  grid-template-columns: 1fr 0.35fr;
   width: 1440px;
   margin-inline: auto;
   padding: 20px;
@@ -126,6 +138,7 @@ export default {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .slide {
@@ -264,6 +277,7 @@ export default {
 
 .game-cover {
   height: 75px;
+  width: 156px;
   object-fit: cover;
   border-radius: 5px;
 }

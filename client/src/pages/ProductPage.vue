@@ -1,6 +1,6 @@
 <template>
   <div class="product-page">
-    <Header @currency-changed="updateCurrency" />
+    <Header />
 
     <main v-if="currentProduct.name">
       <div class="product-information">
@@ -17,9 +17,9 @@
             </div>
 
             <div class="product-prices">
-              <div class="product-now-price">{{ convertedFinalPrice }} {{ selectedCurrency }}</div>
+              <div class="product-now-price">{{ (convertedFinalPrice > 0) ? `${convertedFinalPrice} ₽` : "Бесплатно" }}</div>
               <div v-if="currentProduct.discounted" class="product-skidka">-{{ currentProduct.discount_percent }}%</div>
-              <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} {{ selectedCurrency }}</div>
+              <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} ₽</div>
             </div>
 
             <div class="product-deystvia">
@@ -252,14 +252,6 @@ export default {
       basketCount: 0,
       showHeartAnimation: false,
       productData: null,
-      language: 'RU',
-      selectedCurrency: '₽',
-      
-      exchangeRates: {
-        '₽': { '$': 1 / 92, '€': 1 / 100, '₽': 1 },
-        '$': { '₽': 92, '€': 92 / 100, '$': 1 },
-        '€': { '₽': 100, '$': 100 / 92, '€': 1 },
-      },
     };
   },
   setup(){
@@ -297,15 +289,13 @@ export default {
       }else{
         priceInRub = 0;
       }
-      const rate = this.exchangeRates['₽'][this.selectedCurrency];
       
-      return (priceInRub * rate).toFixed(2);
+      return priceInRub.toFixed(2);
     },
     convertedOriginalPrice() {
       if (!this.currentProduct.discounted) return '';
-      const priceInRub = parseFloat(this.currentProduct.original_price); // Цена в RUB
-      const rate = this.exchangeRates['₽'][this.selectedCurrency];
-      return (priceInRub * rate).toFixed(2);
+      const priceInRub = parseFloat(this.currentProduct.original_price);
+      return priceInRub.toFixed(2);
     },
   },
   created(){
@@ -315,7 +305,6 @@ export default {
     document.title = `Playnchill`;
     this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
     this.addEventListeners();
-    this.loadCurrencyAndLanguage();    
   },
 
   methods: {
@@ -356,13 +345,12 @@ export default {
       const requirements = {};
       if (!requirementsString) return requirements;
 
-      // Регулярное выражение для извлечения ключей и значений
       const regex = /<strong>([^:]+):<\/strong>\s*([^<]+)/g;
       let match;
 
       while ((match = regex.exec(requirementsString)) !== null) {
-        const key = match[1].trim(); // Ключ (например, "OS", "Processor")
-        const value = match[2].trim(); // Значение (например, "Windows® 10")
+        const key = match[1].trim();
+        const value = match[2].trim();
         requirements[key] = value;
       }
 
@@ -449,15 +437,6 @@ export default {
       localStorage.setItem('currentProductInGames', game.name);
       this.$router.push('/product');
       this.fetchProducts();
-    },
-    loadCurrencyAndLanguage() {
-      const savedVal = localStorage.getItem('selectedVal');
-      const savedLang = localStorage.getItem('language');
-      this.selectedCurrency = savedVal || '₽';
-      this.language = savedLang || 'RU';
-    },
-    updateCurrency(newCurrency) {
-      this.selectedCurrency = newCurrency;
     },
   },
 };
