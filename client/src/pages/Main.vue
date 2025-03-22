@@ -99,7 +99,7 @@ export default {
   },
   computed: {
     catalogGames() {
-      return this.mainStore.gameCatalog.slice(0, 24);
+      return this.mainStore.gameCatalog.slice(0, 44);
     },
     discountedGames() {
       return this.mainStore.gameCatalog.filter(game => game.discounted).slice(-9);

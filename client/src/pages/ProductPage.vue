@@ -261,23 +261,29 @@ export default {
   },
   computed: {
     galleryImages() {
-      if (!this.currentProduct.name) return [];
-      return [
-        this.currentProduct.screenshots[0].path_thumbnail,
-        this.currentProduct.screenshots[1].path_thumbnail,
-        this.currentProduct.screenshots[2].path_thumbnail,
-        this.currentProduct.screenshots[3].path_thumbnail,
-        {
-          poster: this.currentProduct.screenshots[4].path_thumbnail,
-          video: (this.currentProduct.movies) ? this.currentProduct.movies[0].mp4.max : null,
-        },
-      ];
+  if (!this.currentProduct.name) return [];
+  return [
+    this.currentProduct.screenshots[0].path_thumbnail,
+    this.currentProduct.screenshots[1].path_thumbnail,
+    this.currentProduct.screenshots[2].path_thumbnail,
+    this.currentProduct.screenshots[3].path_thumbnail,
+    {
+      poster: this.currentProduct.screenshots[4].path_thumbnail,
+      video: this.currentProduct.movies ? this.currentProduct.movies[0].mp4.max : null,
     },
+  ];
+},
 
-    slides() {
-      return this.galleryImages.length ? [...this.galleryImages] : [];
-    },
-
+slides() {
+  return this.galleryImages.length
+    ? this.galleryImages.map((item, index) => {
+        if (index !== this.galleryImages.length - 1) {
+          return item.replace("600x338", "1920x1080");
+        }
+        return item;
+      })
+    : [];
+},
     isFavourite() {
       return this.mainStore.favourites.some(fav => String(fav.id) === String(this.productData));
     },
@@ -837,7 +843,7 @@ export default {
 
 .mySlides img,
 .mySlides video {
-  width: 800px;
+  width: 1200px;
   border-radius: 12px;
 }
 

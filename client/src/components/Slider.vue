@@ -1,7 +1,7 @@
 <template>
   <div class="slider-container">
     <div class="slider">
-      <img :src="slides[currentSlide].background" class="slide" ref="productImage" alt="Слайд" />
+      <img :src="slides[currentSlide].background" @click="() => navigateToProductPage(slides[currentSlide].id)" class="slide" ref="productImage" alt="Слайд" />
     </div>
 
     <div class="game-list-container">
@@ -38,35 +38,32 @@ export default {
       },
       slides: [
         {
+          id: 730,
           title: 'Counter-Strike 2',
           background: 'https://cdn.akamai.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg',
           description: 'Легендарные хиты Grand Theft Auto V и Grand Theft Auto Online — теперь с обновлением для нового поколения!',
-          price: 14.99,
-          oldPrice: 29.99
         },
         {
+          id: 1086940,
           title: 'Baldur\'s Gate 3',
           background: 'https://pic.rutubelist.ru/video/2025-01-17/95/9f/959f18ca903d57d7d062befcfc4d642f.jpg',
           description: 'Красочный мир приключений!',
-          price: 'Бесплатно'
         },
         {
+          id: 1222140,
           title: 'Detroit: Become Human',
           background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
           description: 'Красочный мир приключений!',
-          price: 'Бесплатно'
         },
         {
+          id: 252490,
           title: 'Rust',
           background: 'https://www.hardwareinside.de/wp-content/uploads/2021/07/article-thumb-1200x630@2x.jpg',
-          description: 'Новый боевик с кооперативным режимом!',
-          price: 24.99
         },
         {
+          id: 1850570,
           title: 'Death Stranding',
           background: 'https://cdn1.epicgames.com/offer/f4a904fcef2447439c35c4e6457f3027/s1_2560x1440-e56d3a322a94fd7dd18b9c93ee080d01',
-          description: 'Красочный мир приключений!',
-          price: 'Бесплатно'
         }
       ],
       ads: [
@@ -84,20 +81,21 @@ export default {
     return { mainStore };
   },
   methods: {
+    navigateToProductPage(id) {
+      const game = [...this.mainStore.topGames, ...this.mainStore.gameCatalog].find(item => item.id === id);
+      sessionStorage.setItem('currentProductInGames', JSON.stringify({
+        id: id,
+        price: game.final_price,
+        windows_available: game.windows_available,
+        mac_available: game.mac_available,
+        linux_available:game.linux_available
+      }));
+      this.$router.push('/product');
+    },
     goToSlide(index) {
       this.currentSlide = index;
       this.stopAutoSlide();
       this.startAutoSlide();
-    },
-    navigateToProductPage() {
-      sessionStorage.setItem('currentProductInGames', JSON.stringify({
-        id: this.game.id,
-        price: this.game.final_price,
-        windows_available: this.game.windows_available,
-        mac_available: this.game.mac_available,
-        linux_available:this.game.linux_available
-      }));
-      this.$router.push('/product');
     },
     startAutoSlide() {
       this.autoSlideInterval = setInterval(() => {
