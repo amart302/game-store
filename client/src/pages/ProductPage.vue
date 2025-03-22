@@ -837,7 +837,7 @@ export default {
 
 .mySlides img,
 .mySlides video {
-  width: 1600px;
+  width: 800px;
   border-radius: 12px;
 }
 

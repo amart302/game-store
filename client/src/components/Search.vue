@@ -66,6 +66,10 @@ import { useMainStore } from '@/store/store';
         mac_available: game.mac_available,
         linux_available: game.linux_available
       }));
+      if(this.$route.path === "/product"){
+        window.location.reload();
+        return;
+      }
       this.$router.push('/product');
     },
       addToCart(game) {

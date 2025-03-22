@@ -1,11 +1,9 @@
 <template>
   <div class="slider-container">
-    <!-- Основной слайдер -->
     <div class="slider">
       <img :src="slides[currentSlide].background" class="slide" ref="productImage" alt="Слайд" />
     </div>
 
-    <!-- Список игр справа -->
     <div class="game-list-container">
       <div class="game-list">
         <div class="game-item" v-for="(game, index) in ads" :key="index" @click="goToSlide(index)"
@@ -65,8 +63,8 @@ export default {
           price: 24.99
         },
         {
-          title: 'Detroit: Become Human',
-          background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
+          title: 'Death Stranding',
+          background: 'https://cdn1.epicgames.com/offer/f4a904fcef2447439c35c4e6457f3027/s1_2560x1440-e56d3a322a94fd7dd18b9c93ee080d01',
           description: 'Красочный мир приключений!',
           price: 'Бесплатно'
         }
@@ -76,15 +74,13 @@ export default {
         { title: 'Baldur\'s Gate 3', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/capsule_616x353.jpg?t=1740386911' },
         { title: 'Detroit: Become Human', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/header.jpg?t=1667468479' },
         { title: 'Rust', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/capsule_616x353.jpg?t=1738927718' },
-        { title: 'Assassin\'s Creed', cover: 'https://example.com/ac-shadows.jpg' }
+        { title: 'Death Stranding', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/capsule_616x353.jpg?t=1728989088' }
       ],
       autoSlideInterval: null
     };
   },
   setup(){
     const mainStore = useMainStore();
-    console.log(mainStore.topGames);
-    
     return { mainStore };
   },
   methods: {
@@ -104,7 +100,7 @@ export default {
     startAutoSlide() {
       this.autoSlideInterval = setInterval(() => {
         this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-      }, 5000);
+      }, 4000);
     },
     stopAutoSlide() {
       clearInterval(this.autoSlideInterval);
@@ -120,7 +116,6 @@ export default {
 </script>
 
 <style scoped>
-/* Основной контейнер */
 .slider-container {
   display: grid;
   grid-template-columns: 1fr 0.35fr;
@@ -132,7 +127,6 @@ export default {
   border-radius: 10px;
 }
 
-/* Основной слайдер */
 .slider {
   background-color: #111;
   position: relative;
@@ -166,7 +160,6 @@ export default {
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Контент внутри слайда */
 .slide-content {
   position: absolute;
   bottom: 30px;
@@ -215,7 +208,6 @@ export default {
   font-weight: bold;
 }
 
-/* Кнопки */
 .buttons {
   display: flex;
   gap: 10px;
@@ -249,7 +241,6 @@ export default {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Список игр */
 .game-list-container {
   min-width: 280px;
 }
@@ -294,7 +285,6 @@ export default {
   text-overflow: ellipsis;
 }
 
-/* Анимация слайдов */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s;
