@@ -1,5 +1,4 @@
 <template>
-  <div class="product-page">
     <Header />
 
     <main v-if="currentProduct.name">
@@ -224,8 +223,6 @@
     </div>
 
     <Footer v-if="currentProduct.name" />
-    <div class="temnee-bg" v-if="currentProduct.name"></div>
-  </div>
 </template>
 
 <script>
@@ -308,7 +305,6 @@ slides() {
     this.fetchProducts();
   },
   mounted() {
-    document.title = `Playnchill`;
     this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
     this.addEventListeners();
   },
@@ -449,14 +445,6 @@ slides() {
 </script>
 
 <style scoped>
-.product-page {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-  color: #fff;
-}
-
 .temnee-bg {
   top: 0;
   left: 0;

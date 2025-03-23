@@ -1,5 +1,4 @@
 <template>
-  <div>
     <Header />
     <Slider />
     <main>
@@ -70,7 +69,6 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>

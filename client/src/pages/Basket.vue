@@ -1,5 +1,4 @@
 <template>
-  <div class="cart-page">
     <Header />
     <main>
       <h1 class="cart-title">Корзина <span v-if="!mainStore.basket.length">пуста</span></h1>
@@ -43,48 +42,34 @@
                 Накопительный счёт ({{ (mainStore.userData) ? mainStore.userData.balance : 0 }} ₽)
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('wallets')"
-              :class="{ active: selectedPayment === 'wallets' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('sberbank')"
+              :class="{ active: selectedPayment === 'sberbank' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'wallets'" />
-                Электронные кошельки
+                <input type="radio" :checked="selectedPayment === 'sberbank'" />
+                Сбербанк
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/WebMoney_logo_blue 2 1.svg" alt="WebMoney" />
-                <img src="@/assets/images/Logo_qiwi_rgb 1.svg" alt="Qiwi" />
+                <img src="@/assets/images/sberbank.png" alt="Sberbank" />
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('cards')"
-              :class="{ active: selectedPayment === 'cards' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('yoomoney')"
+              :class="{ active: selectedPayment === 'yoomoney' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'cards'" />
-                Банковские карты
+                <input type="radio" :checked="selectedPayment === 'yoomoney'" />
+                ЮMoney
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/mastercard 2.svg" alt="Mastercard" />
-                <img src="@/assets/images/Visa_Inc._logo 1.svg" alt="Visa" />
-                <img src="@/assets/images/1920px-Mir-logo.SVG 1.svg" alt="Mir" />
+                <img src="@/assets/images/iomoney.png" alt="ЮMoney" />
               </div>
             </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('crypto')"
-              :class="{ active: selectedPayment === 'crypto' }">
+            <div class="basket-so-card" @click="selectPaymentMethod('tinkoff')"
+              :class="{ active: selectedPayment === 'Tinkoff' }">
               <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'crypto'" />
-                Криптовалюта
+                <input type="radio" :checked="selectedPayment === 'tinkoff'" />
+                Tinkoff
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/ETHEREUM-YOUTUBE-PROFILE-PIC 1.svg" alt="Ethereum" />
-                <img src="@/assets/images/2560px-Bitcoin_logo 1.svg" alt="Bitcoin" />
-              </div>
-            </div>
-            <div class="basket-so-card" @click="selectPaymentMethod('samsung')"
-              :class="{ active: selectedPayment === 'samsung' }">
-              <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'samsung'" />
-                Samsung Pay
-              </div>
-              <div class="basket-so-card-imgs">
-                <img src="@/assets/images/640px-Samsung_Pay_icon 1.svg" alt="Samsung Pay" />
+                <img src="@/assets/images/tinkoff.png" alt="Tinkoff" />
               </div>
             </div>
           </div>
@@ -94,11 +79,7 @@
             <div class="basket-oformit-zakaz-but" :class="{ active: selectedPayment }" @click="checkout">Оформить заказ</div>
             <div class="basket-oformit-zakaz-uslovia">
               <div class="basket-oformit-zakaz-uslovia-galochka">
-                <svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M3.12817 5.51281L8.23101 0L9 0.656414L3.12817 7L0 3.62051L0.768991 2.9641L3.12817 5.51281Z"
-                    fill="white" />
-                </svg>
+                <input type="checkbox" v-model="approval">
               </div>
               <div class="basket-oformit-zakaz-uslovia-txt">
                 Покупая данный товар, я подтверждаю, что ознакомился и согласен с <a href="#">условиями</a> и <a href="#">условиями магазина</a>
@@ -115,7 +96,6 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
@@ -130,6 +110,7 @@ export default {
   data() {
     return {
       selectedPayment: null,
+      approval: null,
       loading: true,
     };
   },
@@ -171,8 +152,12 @@ export default {
       else if (!this.selectedPayment) {
         this.toast.warning('Пожалуйста, выберите способ оплаты');
         return;
+      }else if (!this.approval){
+        this.toast.warning('Вы должны согласиться с условиями, чтобы продолжить.');
+        return;
       }
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
+      
       this.$router.push('/checkout');
     },
   },
@@ -180,11 +165,6 @@ export default {
 </script>
 
 <style scoped>
-.cart-page {
-  color: #fff;
-  font-family: 'Manrope', sans-serif;
-  overflow: hidden;
-}
 
 .cart-title {
   font-size: 48px;
@@ -426,7 +406,7 @@ export default {
 }
 
 .basket-so-card-imgs img {
-  height: 30px;
+  height: 40px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -482,12 +462,18 @@ export default {
   margin-top: 20px;
   font-size: 14px;
   color: #787b84;
+  gap: 6px;
 }
 
 .basket-oformit-zakaz-uslovia-galochka {
   margin-right: 10px;
   display: flex;
   align-items: center;
+}
+.basket-oformit-zakaz-uslovia-galochka input{
+  accent-color: #77BE1D;
+  transform: scale(1.6);
+  cursor: pointer;
 }
 
 .basket-oformit-zakaz-uslovia-txt a {

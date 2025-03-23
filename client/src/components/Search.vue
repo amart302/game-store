@@ -48,30 +48,28 @@ import { useMainStore } from '@/store/store';
         const allGames = [...mainStore.topGames, ...mainStore.gameCatalog];
         allGames.forEach(item => {
           if(regex.test(item.name)){
+            console.log(this.searchResults);
+            
             this.searchResults.push(item);
           }
         });
       },
     },
     methods: {
-      goToProductPage(game) {
-        localStorage.setItem('currentProductInGames', game.title);
-        window.location.href = '../страница товара/index.html';
-      },
       navigateToProductPage(game) {
-      sessionStorage.setItem('currentProductInGames', JSON.stringify({
-        id: game.id,
-        price: game.final_price,
-        windows_available: game.windows_available,
-        mac_available: game.mac_available,
-        linux_available: game.linux_available
-      }));
-      if(this.$route.path === "/product"){
-        window.location.reload();
-        return;
-      }
-      this.$router.push('/product');
-    },
+        sessionStorage.setItem('currentProductInGames', JSON.stringify({
+          id: game.id,
+          price: game.final_price,
+          windows_available: game.windows_available,
+          mac_available: game.mac_available,
+          linux_available: game.linux_available
+        }));
+        if(this.$route.path === "/product"){
+          window.location.reload();
+          return;
+        }
+        this.$router.push('/product');
+      },
       addToCart(game) {
         let basket = JSON.parse(localStorage.getItem('productsInBasketInGames')) || [];
         const product = {
@@ -104,7 +102,7 @@ import { useMainStore } from '@/store/store';
     overflow-y: auto;
     border-radius: 12px;
     padding: 20px;
-    background-color: #0c061f;
+    background-color: #0b071b;
     z-index: 6;
   }
   
@@ -137,7 +135,7 @@ import { useMainStore } from '@/store/store';
   }
   
   .searchProductCard:hover {
-    background-color: rgb(19, 9, 46);
+    background-color: #06030F;
   }
   
   .searchCardImg {

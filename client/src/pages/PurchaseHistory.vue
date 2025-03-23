@@ -1,5 +1,4 @@
 <template>
-  <div class="history-page">
     <Header />
     <main>
       <h1 class="history-title">История покупок</h1>
@@ -29,7 +28,6 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
@@ -70,11 +68,6 @@ export default {
 </script>
 
 <style scoped>
-.history-page {
-  min-height: 100vh;
-  color: #fff;
-  font-family: 'Manrope', sans-serif;
-}
 .history-title {
   font-size: 36px;
   font-weight: 800;

@@ -97,6 +97,10 @@ export default {
         mac_available: this.game.mac_available,
         linux_available:this.game.linux_available
       }));
+      if(this.$route.path === "/product"){
+        window.location.reload();
+        return;
+      }
       this.$router.push('/product');
     },
     addToBasket(game){

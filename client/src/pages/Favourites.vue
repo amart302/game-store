@@ -1,5 +1,4 @@
 <template>
-  <div class="favorites-page">
     <Header />
     <main>
       <h1 class="favorites-title">Избранное</h1>
@@ -9,7 +8,6 @@
             <ProductCard :game="game" @favourites-updated="updateFavourites" />
           </div>
         </transition-group>
-        <!-- Пагинация -->
         <div class="pagination" v-if="favourites.length > itemsPerPage">
           <button @click="currentPage--" :disabled="currentPage === 1">❮</button>
           <span>{{ currentPage }} из {{ totalPages }}</span>
@@ -25,7 +23,6 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
@@ -68,11 +65,6 @@ export default {
 </script>
 
 <style scoped>
-.favorites-page {
-  min-height: 100vh;
-  color: #fff;
-}
-
 .favorites-title {
   font-size: 36px;
   font-weight: 800;

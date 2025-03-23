@@ -1,20 +1,58 @@
 <template>
-  <div class="slider-container">
+  <div class="slider-container-parent">
+    <div class="slider-container" ref="sliderContainer">
     <div class="slider">
-      <img :src="slides[currentSlide].background" @click="() => navigateToProductPage(slides[currentSlide].id)" class="slide" ref="productImage" alt="Слайд" />
+      <img 
+        :src="slides[currentSlide].background" 
+        @click="() => navigateToProductPage(slides[currentSlide].id)" 
+        class="slide" 
+        loading="lazy" 
+        alt="Слайд" 
+      />
     </div>
 
     <div class="game-list-container">
       <div class="game-list">
-        <div class="game-item" v-for="(game, index) in ads" :key="index" @click="goToSlide(index)"
-          :class="{ active: currentSlide === index }">
-          <img :src="game.cover" alt="Game Cover" class="game-cover" />
-          <div class="game-info">
-            <span class="game-title">{{ game.title }}</span>
+        <div class="game-item">
+          <span class="game-title">{{ slides[currentSlide].title }}</span>
+          <div class="screenshots-container">
+            <img 
+              v-for="(screenshot, index) in ads[currentSlide].screenshots" 
+              :key="index" 
+              :src="screenshot" 
+              alt="Game Cover" 
+              class="game-cover" 
+              loading="lazy"
+            />
+          </div>
+          <span>Уже доступно в Playnchill</span>
+          <div class="game-buttons">
+            <button>В корзину</button>
+            <button>В избранное</button>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="slider-indicators">
+      <span 
+        v-for="(slide, index) in slides" 
+        :key="index" 
+        :class="{ active: currentSlide === index }"
+        @click="goToSlide(index)"
+      ></span>
+    </div>
+  </div>
+  <button class="prev" style="left: -20px;" @click="() => {
+    stopAutoSlide();
+    changeSlide(-1);
+    setTimeout(() => startAutoSlide(), 2000);
+  }">❮</button>
+  <button class="next" style="right: -20px;" @click="() => {
+    stopAutoSlide();
+    changeSlide(1);
+    setTimeout(() => startAutoSlide(), 2000);
+  }">❯</button>
   </div>
 </template>
 
@@ -39,40 +77,68 @@ export default {
       slides: [
         {
           id: 730,
-          title: 'Counter-Strike 2',
           background: 'https://cdn.akamai.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg',
-          description: 'Легендарные хиты Grand Theft Auto V и Grand Theft Auto Online — теперь с обновлением для нового поколения!',
         },
         {
           id: 1086940,
-          title: 'Baldur\'s Gate 3',
           background: 'https://pic.rutubelist.ru/video/2025-01-17/95/9f/959f18ca903d57d7d062befcfc4d642f.jpg',
-          description: 'Красочный мир приключений!',
         },
         {
           id: 1222140,
-          title: 'Detroit: Become Human',
           background: 'https://cdn2.unrealengine.com/Diesel%2Fproductv2%2Fdetroit-become-human%2Fhome%2FDetroit_PC_Carousel-1920x1080-6e90610a5d314ce0c12860770cc38c1b23213000.jpg',
-          description: 'Красочный мир приключений!',
         },
         {
           id: 252490,
-          title: 'Rust',
           background: 'https://www.hardwareinside.de/wp-content/uploads/2021/07/article-thumb-1200x630@2x.jpg',
         },
         {
           id: 1850570,
-          title: 'Death Stranding',
           background: 'https://cdn1.epicgames.com/offer/f4a904fcef2447439c35c4e6457f3027/s1_2560x1440-e56d3a322a94fd7dd18b9c93ee080d01',
         }
       ],
       ads: [
-        { title: 'Counter-Strike 2', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/header.jpg?t=1729703045' },
-        { title: 'Baldur\'s Gate 3', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/capsule_616x353.jpg?t=1740386911' },
-        { title: 'Detroit: Become Human', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/header.jpg?t=1667468479' },
-        { title: 'Rust', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/capsule_616x353.jpg?t=1738927718' },
-        { title: 'Death Stranding', cover: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/capsule_616x353.jpg?t=1728989088' }
+        { title: 'Counter-Strike 2',
+          screenshots: [
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_796601d9d67faf53486eeb26d0724347cea67ddc.600x338.jpg?t=1729703045",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_d830cfd0550fbb64d80e803e93c929c3abb02056.600x338.jpg?t=1729703045",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_13bb35638c0267759276f511ee97064773b37a51.600x338.jpg?t=1729703045",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_0f8cf82d019c614760fd20801f2bb4001da7ea77.600x338.jpg?t=1729703045"
+          ]
+        },
+        { title: 'Baldur\'s Gate 3',
+          screenshots: [
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/ss_c73bc54415178c07fef85f54ee26621728c77504.600x338.jpg?t=1740386911",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/ss_73d93bea842b93914d966622104dcb8c0f42972b.600x338.jpg?t=1740386911",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/ss_b6a6ee6e046426d08ceea7a4506a1b5f44181543.600x338.jpg?t=1740386911",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/ss_0f8cf82d019c614760fd20801f2bb4001da7ea77.600x338.jpg?t=1729703045"
+          ]
+        },
+        { title: 'Detroit: Become Human',
+          screenshots: [
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/ss_9c900def2b1d9a003b7d3e202ea2a7556a36e081.600x338.jpg?t=1667468479",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/ss_3011c05e404043e3bfed1f6de7fe12ffd58ddc9b.600x338.jpg?t=1667468479",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/ss_9e6c271b6d11b1d0f35da336fb57b35fed0079d1.600x338.jpg?t=1667468479",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1222140/ss_b1e2a185bea13cccfc662e1286912bcd6f4ee798.600x338.jpg?t=1667468479"
+          ]
+        },
+        { title: 'Rust',
+          screenshots: [
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/ss_271feae67943bdc141c1249aba116349397e9ba9.600x338.jpg?t=1738927718",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/ss_e825b087b95e51c3534383cfd75ad6e8038147c3.600x338.jpg?t=1738927718",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/ss_0e646f1a70e5cb8eed00efef8adb9579d40d5b2e.600x338.jpg?t=1738927718",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/252490/ss_1c2d0d1eefee54f0c67626c74eb21699bbb0ef52.600x338.jpg?t=1738927718"
+          ]
+        },
+        { title: 'Death Stranding',
+          screenshots: [
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/ss_f64a1140651ff5af30eb63bb6e5b41753d00a98e.600x338.jpg?t=1728989088",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/ss_4b6d7d010d1701b2b57bf8ef1b4975a04b3d632f.600x338.jpg?t=1728989088",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/ss_bc8812817c074772822c1d1e8a6b016983cf05e8.600x338.jpg?t=1728989088",
+            "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1850570/ss_d47bde2e349606b3ef1f641e2d8fb7ccf1adba77.600x338.jpg?t=1728989088"
+          ]
+        }
       ],
+      index: 0,
       autoSlideInterval: null
     };
   },
@@ -92,15 +158,19 @@ export default {
       }));
       this.$router.push('/product');
     },
-    goToSlide(index) {
-      this.currentSlide = index;
-      this.stopAutoSlide();
-      this.startAutoSlide();
+    changeSlide(index) {
+      this.$refs.sliderContainer.style.opacity = 0;
+      setTimeout(() => {
+        this.currentSlide = (this.currentSlide + index + this.slides.length) % this.slides.length;
+      }, 200);
+      setTimeout(() => this.$refs.sliderContainer.style.opacity = 1, 300);
     },
     startAutoSlide() {
+      console.log(123);
+      
       this.autoSlideInterval = setInterval(() => {
-        this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-      }, 5000);
+        this.changeSlide(1);
+      }, 2000);
     },
     stopAutoSlide() {
       clearInterval(this.autoSlideInterval);
@@ -116,17 +186,41 @@ export default {
 </script>
 
 <style scoped>
+.slider-container-parent{
+  position: relative;
+  width: 1440px;
+  height: 530px;
+  margin-inline: auto;
+
+}
 .slider-container {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 0.35fr;
-  width: 1440px;
-  margin-inline: auto;
+  height: 100%;
   padding: 20px;
   color: white;
   gap: 10px;
   border-radius: 10px;
+  transition: opacity 0.2s ease-in-out;
 }
-
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+.prev:hover,
+.next:hover {
+  background: rgba(119, 190, 29, 0.5);
+}
 .slider {
   background-color: #111;
   position: relative;
@@ -134,14 +228,39 @@ export default {
   border-radius: 10px;
   cursor: pointer;
 }
+.slider p{
+  position: absolute;
+  bottom: 140px;
+  left: 60px;
+}
 
 .slide {
   width: 100%;
   height: 100%;
-  position: absolute;
   transition: opacity 1s ease-in-out;
 }
-
+.game-buttons{
+  width: calc(100% - 40px);
+  position: absolute;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  justify-content: space-between;
+}
+.game-buttons button{
+  border: none;
+  background-color: #77be1d;
+  padding-inline: 20px;
+  padding-block: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.slide-buttons button:hover{
+  opacity: 0.8;
+}
 .slide-background {
   width: 100%;
   height: 400px;
@@ -246,16 +365,24 @@ export default {
 }
 
 .game-list {
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+.screenshots-container{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
 
 .game-item {
+  position: relative;
+  height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
-  padding: 10px;
+  padding: 20px;
   background: #222;
   border-radius: 5px;
   cursor: pointer;
@@ -267,8 +394,7 @@ export default {
 }
 
 .game-cover {
-  height: 75px;
-  width: 156px;
+  width: 100%;
   object-fit: cover;
   border-radius: 5px;
 }
@@ -278,7 +404,7 @@ export default {
 }
 
 .game-title {
-  font-size: 14px;
+  font-size: 24px;
   color: white;
   white-space: nowrap;
   overflow: hidden;
