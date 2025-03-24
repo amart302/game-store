@@ -7,7 +7,7 @@ import Basket from '@/pages/Basket.vue';
 import Checkout from '@/pages/Checkout.vue';
 import PurchaseHistory from '@/pages/PurchaseHistory.vue';
 import ProfileUser from '@/pages/ProfileUser.vue';
-import Guarantee from '@/components/Guarantee.vue';
+import Warranty from '@/pages/Warranty.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -41,13 +41,13 @@ const router = createRouter({
       component: Basket
     },
     {
-      path: "/guarantee",
-      component: Guarantee
-    },
-    {
       path: "/profile",
       component: ProfileUser
     },
+    {
+      path: "/warranty",
+      component: Warranty
+    }
   ],
 })
 

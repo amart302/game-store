@@ -24,8 +24,8 @@
           Баланс: {{ (mainStore.userData) ? mainStore.userData.balance : 0 }} {{ selectedVal }}
         </div>
         <nav class="bl-state">
-          <RouterLink to="/#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
-          <RouterLink to="/guarantee">Гарантии</RouterLink>
+          <RouterLink to="#FeedbackForm" @click="scrollToFeedback()">Отзывы</RouterLink>
+          <RouterLink to="/warranty">Гарантии</RouterLink>
           <RouterLink to="#">Как купить</RouterLink>
           <RouterLink to="/history">История покупок</RouterLink>
         </nav>
@@ -51,6 +51,7 @@
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
             </svg>
           </button>
+          <div class="favourites-counter" v-if="mainStore.favourites.length > 0">{{ mainStore.favourites.length }}</div>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
           <div class="uveda" v-if="mainStore.basket.length > 0">{{ mainStore.basket.length }}</div>
         </div>
@@ -59,16 +60,16 @@
 
     <div class="cash-modal" v-if="showCashModal">
       <div class="cash-modal-content">
-        <span class="close-modal" @click="toggleCashModal">×</span>
+        <img src="../assets/images/cross.png" class="close-modal" @click="toggleCashModal" />
         <h3>Пополнить накопительный счёт</h3>
         <input type="number" v-model="depositAmount" placeholder="Введите сумму" min="1" step="1" />
         <button @click="depositCash" class="deposit-btn">Пополнить</button>
       </div>
     </div>
     <Search :searchQuery="searchQuery" />
+    <Register v-if="mainStore.showForm == 'Register'"/>
+    <Login v-if="mainStore.showForm == 'Login'"/>
   </header>
-  <Register v-if="mainStore.showForm == 'Register'"/>
-  <Login v-if="mainStore.showForm == 'Login'"/>
 </template>
 
 <script>
@@ -77,6 +78,7 @@ import ProfileUser from '../pages/ProfileUser.vue';
 import Search from './Search.vue';
 import Login from '@/components/Login.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from 'vue-toastification';
 
 export default {
   components: {
@@ -94,12 +96,12 @@ export default {
       searchQuery: '',
       showCashModal: false,
       depositAmount: '',
-      
     };
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     truncatedUsername() {
@@ -110,12 +112,6 @@ export default {
         return "Гость";
       }
     },
-  },
-  watch: {
-    userData(){
-      console.log(this.userData);
-      
-    }
   },
   mounted() {    
     document.addEventListener('click', this.closeDropdown);    
@@ -161,14 +157,16 @@ export default {
       this.$router.push('/');
     },
     toggleCashModal() {
-      if(this.mainStore.userData){
-        this.showCashModal = !this.showCashModal;
-        if (!this.showCashModal) this.depositAmount = '';
-      }else{
-        this.mainStore.openRegisterForm();
-      }
+      this.showCashModal = !this.showCashModal;
+      if (!this.showCashModal) this.depositAmount = '';
     },
     depositCash() {
+      if(!this.mainStore.userData){
+        this.toast.error("Авторизуйтес, чтобы продолжить");
+        this.showCashModal = false;
+        this.mainStore.openRegisterForm();
+        return;
+      }
       const amount = parseInt(this.depositAmount);
       if (isNaN(amount) || amount <= 0) {
         alert('Пожалуйста, введите корректную сумму');
@@ -299,7 +297,7 @@ export default {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 3px solid #77BE1D;
+  border: 2px solid #77BE1D;
   background-color: #fff;
   object-fit: cover;
 }
@@ -321,6 +319,21 @@ export default {
   opacity: 0.7;
 }
 
+.favourites-counter {
+  position: absolute;
+  top: 1px;
+  left: 24px;
+  width: 18px;
+  height: 20px;
+  background-color: #78be1dc7;
+  opacity: 2;
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
 .uveda {
   position: absolute;
   top: 1px;
@@ -420,8 +433,8 @@ input[type='text']:focus {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -429,28 +442,21 @@ input[type='text']:focus {
 }
 
 .cash-modal-content {
-  background: #1C1435;
-  padding: 20px;
+  background: #13101B;
+  padding: 40px;
   border-radius: 15px;
   text-align: center;
   position: relative;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  width: 500px;
 }
 
 .close-modal {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 30px;
-  color: #fff;
+  top: 30px;
+  right: 30px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.close-modal:hover {
-  color: #77BE1D;
 }
 
 .cash-modal-content h3 {

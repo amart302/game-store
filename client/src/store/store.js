@@ -8,9 +8,9 @@ export const useMainStore = defineStore("main", {
         gameCatalog: [],
         favourites: JSON.parse(localStorage.getItem("favourites")) || [],
         basket: JSON.parse(localStorage.getItem("basket")) || [],
-        purchaseHistory: JSON.parse(localStorage.getItem("purchaseHistory")) || [],
         foundGames: [],
-        showForm: false
+        showForm: false,
+        feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || [],
     }),
     actions: {
         openRegisterForm(){
@@ -42,6 +42,8 @@ export const useMainStore = defineStore("main", {
           const isAlreadyFavourite = this.favourites.some(item => item.id == game.id);
           if (isAlreadyFavourite) {
             this.favourites = this.favourites.filter(fav => fav.id !== game.id);
+            localStorage.setItem('favourites', JSON.stringify(this.favourites));
+            return { status: "deleted" };
           } else {
             this.favourites.push({
               id: game.id,
@@ -54,6 +56,7 @@ export const useMainStore = defineStore("main", {
             });
           }
           localStorage.setItem('favourites', JSON.stringify(this.favourites));
+          return { status: "added" };
         },
         addToBasket(game) {
           const product = {
@@ -64,26 +67,27 @@ export const useMainStore = defineStore("main", {
             windows_available: game.windows_available,
             linux_available: game.linux_available,
             mac_available: game.mac_available,
-            count: 1,
+            quantity: 1,
           };
           const existing = this.basket.find(item => item.id === product.id);
+          
           if (existing) {
-            existing.count += 1;
+            existing.quantity += 1;
           } else {
             this.basket.push(product);
           }
           localStorage.setItem('basket', JSON.stringify(this.basket));          
         },
         increaseQuantity(id) {
-          this.basket = this.basket.map(item => {
-            if (item.id === id) item.count += 1;
+          this.basket.forEach(item => {
+            if (item.id === id) item.quantity += 1;
             return item;
           });
           localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
         },
         decreaseQuantity(id) {
-          this.basket = this.basket.map(item => {
-            if (item.id === id && item.count > 1) item.count -= 1;
+          this.basket.forEach(item => {
+            if (item.id === id && item.quantity > 1) item.quantity -= 1;
             return item;
           });
           localStorage.setItem('productsInBasketInGames', JSON.stringify(this.basket));
@@ -92,5 +96,21 @@ export const useMainStore = defineStore("main", {
           this.basket = this.basket.filter(item => item.id !== id);
           localStorage.setItem('basket', JSON.stringify(this.basket));
         },
+        addFeedback(feedback) {
+          this.feedbacks.push({
+            rating: feedback.rating,
+            date: new Date().toLocaleDateString('ru-RU'),
+            text: feedback.text,
+            userName: feedback.userName,
+          });
+          localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
+        },
+        savePurchaseHistory(purchase){
+          this.userData.purchaseHistory.push(purchase);
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          users.forEach(item => (item.id === this.userData.id) ? item.purchaseHistory = this.userData.purchaseHistory : false);
+          
+          localStorage.setItem("users", JSON.stringify(users));
+        }
     },
 });

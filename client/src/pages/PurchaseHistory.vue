@@ -1,10 +1,13 @@
 <template>
-  <div class="history-page">
     <Header />
     <main>
       <h1 class="history-title">История покупок</h1>
-      <div class="history-container" v-if="purchaseHistory.length">
-        <div class="history-item" v-for="(purchase, index) in purchaseHistory" :key="index">
+      <div v-if="!mainStore.userData || !mainStore.userData.purchaseHistory.length" class="empty-history">
+        <p>История покупок пуста</p>
+        <router-link to="/" class="back-to-main">Начать покупки</router-link>
+      </div>
+      <div class="history-container" v-else>
+        <div class="history-item" v-for="(purchase, index) in mainStore.userData.purchaseHistory" :key="index">
           <div class="purchase-header">
             <div class="purchase-date">{{ purchase.date }}</div>
             <div class="purchase-summary">
@@ -23,20 +26,15 @@
           </div>
         </div>
       </div>
-      <div v-else class="empty-history">
-        <p>История покупок пуста</p>
-        <router-link to="/" class="back-to-main">Начать покупки</router-link>
-      </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import ProductCard from '@/components/ProductCard.vue';
+import { useMainStore } from '@/store/store';
 
 export default {
   name: 'PurchaseHistory',
@@ -44,48 +42,17 @@ export default {
 
   data() {
     return {
-      purchaseHistory: [],
+      purchaseHistory:  [],
       currencySymbol: '₽',
-      products: [],
       loading: true,
     };
   },
-
-  created() {
-    this.loadPurchaseHistory();
-    this.loadCurrencySymbol();
-    this.fetchProducts();
+  setup(){
+    const mainStore = useMainStore();
+    return { mainStore };
   },
 
   methods: {
-    loadPurchaseHistory() {
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      this.purchaseHistory = history;
-    },
-
-    loadCurrencySymbol() {
-      const savedVal = localStorage.getItem('selectedVal');
-      this.currencySymbol = savedVal || '₽';
-    },
-
-    async fetchProducts() {
-      try {
-        this.loading = true;
-        const response = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = response.data[0] || {};
-        this.products = [
-          ...(data.hit_games || []),
-          ...(data.new_games || []),
-          ...(data.top_games || []),
-          ...(data.game_catalog || []),
-        ];
-      } catch (error) {
-        console.error('Ошибка загрузки продуктов:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
-
     paymentMethodDisplay(method) {
       switch (method) {
         case 'account': return 'Накопительный счёт';
@@ -101,19 +68,6 @@ export default {
 </script>
 
 <style scoped>
-.history-page {
-  min-height: 100vh;
-  color: #fff;
-  font-family: 'Manrope', sans-serif;
-}
-
-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  min-height: calc(100vh - 766px);
-}
-
 .history-title {
   font-size: 36px;
   font-weight: 800;
@@ -201,88 +155,5 @@ main {
 .back-to-main:hover {
   background: #77BE1D;
   color: white;
-}
-
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-    min-height: calc(100vh - 700px);
-  }
-
-  .history-title {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  .history-container {
-    padding: 20px;
-  }
-
-  .purchase-date {
-    font-size: 18px;
-  }
-
-  .purchase-summary p {
-    font-size: 14px;
-  }
-
-  .empty-history {
-    padding: 40px;
-  }
-
-  .empty-history p {
-    font-size: 20px;
-  }
-
-  .back-to-main {
-    font-size: 16px;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 15px 10px;
-    min-height: calc(100vh - 650px);
-  }
-
-  .history-title {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-
-  .history-container {
-    padding: 15px;
-  }
-
-  .purchase-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .purchase-summary {
-    text-align: left;
-  }
-
-  .purchase-date {
-    font-size: 16px;
-  }
-
-  .empty-history {
-    padding: 30px;
-  }
-
-  .empty-history p {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-
-  .back-to-main {
-    font-size: 14px;
-    padding: 6px 12px;
-    width: 100%;
-    text-align: center;
-  }
 }
 </style>

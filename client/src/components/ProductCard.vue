@@ -7,13 +7,10 @@
   <div v-else class="productCard" @click="navigateToProductPage">
     <img :src="game.large_capsule_image" class="productImg" ref="productImage" alt="Game Image" />
 
-    <button class="addCardBtn" @click.stop="() => {
-      mainStore.addToBasket(game);
-      animateToCart();
-    }">В корзину</button>
+    <button class="addCardBtn" @click.stop="() => addToBasket(game)">В корзину</button>
 
     <div class="product-like">
-      <button @click.stop="mainStore.addToFavourites(game)" class="favourite-btn" :class="{ 'active': isFavourite }">
+      <button @click.stop="() => addToFavourites(game)" class="favourite-btn" :class="{ 'active': isFavourite }">
         <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
         </svg>
@@ -24,7 +21,7 @@
     </div>
 
     <div class="productCard_podBlock1">
-      <span class="product_priceWithDiscount">{{ game.final_price }} ₽</span>
+      <span class="product_priceWithDiscount">{{ (game.final_price) ? `${game.final_price} ₽` : "Бесплатно"  }}</span>
       <span v-if="game.discounted" class="product_discount">-{{ game.discount_percent }}%</span>
       <span v-if="game.discounted" class="product_priceWithoutDiscount">{{ game.original_price }} ₽</span>
     </div>
@@ -53,6 +50,7 @@
 <script>
 import { useMainStore } from '@/store/store';
 import Skeleton from 'primevue/skeleton';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'ProductCard',
@@ -74,7 +72,8 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     isFavourite() {
@@ -98,35 +97,25 @@ export default {
         mac_available: this.game.mac_available,
         linux_available:this.game.linux_available
       }));
+      if(this.$route.path === "/product"){
+        window.location.reload();
+        return;
+      }
       this.$router.push('/product');
     },
-    animateToCart() {
-      const productImg = this.$refs.productImage;
-      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
-      if (!productImg || !cartIcon) return;
-
-      const cloned = productImg.cloneNode(true);
-      cloned.classList.add('cart-animation');
-      cloned.style.position = 'absolute';
-      cloned.style.width = '50px';
-      cloned.style.height = '30px';
-      cloned.style.zIndex = '1000';
-      cloned.style.left = `${productImg.getBoundingClientRect().left + window.scrollX}px`;
-      cloned.style.top = `${productImg.getBoundingClientRect().top + window.scrollY}px`;
-
-      document.body.appendChild(cloned);
-
-      const targetX = cartIcon.getBoundingClientRect().left + window.scrollX - cloned.getBoundingClientRect().left;
-      const targetY = cartIcon.getBoundingClientRect().top + window.scrollY - cloned.getBoundingClientRect().top;
-
-      requestAnimationFrame(() => {
-        cloned.style.transition = 'all 1s ease-out';
-        cloned.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.5)`;
-        cloned.style.opacity = '0.5';
-        setTimeout(() => cloned.remove(), 1000);
-      });
+    addToBasket(game){
+      this.mainStore.addToBasket(game);
+      this.toast.success("Игра добавлена в корзину");
     },
-    
+    addToFavourites(game){
+      const check = this.mainStore.addToFavourites(game);
+      
+      if(check.status === "added"){
+        this.toast.success("Игра добавлена в избранное");
+      }else{
+        this.toast.success("Игра удалена из избранного");
+      }
+    }
   },
 };
 </script>

@@ -1,5 +1,4 @@
 <template>
-  <div class="cart-page">
     <Header />
     <main>
       <h1 class="cart-title">Корзина <span v-if="!mainStore.basket.length">пуста</span></h1>
@@ -20,8 +19,8 @@
                 <span class="cart-item-old-price" v-if="item.oldPrice">{{ item.oldPrice }}</span>
               </div>
               <div class="cart-item-quantity">
-                <button @click="mainStore.decreaseQuantity(item.id)" :disabled="item.count <= 1">-</button>
-                <span :key="item.count">{{ item.count }}</span>
+                <button @click="mainStore.decreaseQuantity(item.id)" :disabled="item.quantity <= 1">-</button>
+                <span :key="item.quantity">{{ item.quantity }}</span>
                 <button @click="mainStore.increaseQuantity(item.id)">+</button>
               </div>
             </div>
@@ -50,7 +49,7 @@
                 Сбербанк
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/sberbank.png" alt="Сбербанк" />
+                <img src="@/assets/images/sberbank.png" alt="Sberbank" />
               </div>
             </div>
             <div class="basket-so-card" @click="selectPaymentMethod('yoomoney')"
@@ -64,47 +63,30 @@
               </div>
             </div>
             <div class="basket-so-card" @click="selectPaymentMethod('tinkoff')"
-              :class="{ active: selectedPayment === 'tinkoff' }">
+              :class="{ active: selectedPayment === 'Tinkoff' }">
               <div class="basket-so-card-title">
                 <input type="radio" :checked="selectedPayment === 'tinkoff'" />
-                Тинькофф
+                Tinkoff
               </div>
               <div class="basket-so-card-imgs">
-                <img src="@/assets/images/tinkoff.png" alt="Тинькофф" />
+                <img src="@/assets/images/tinkoff.png" alt="Tinkoff" />
               </div>
             </div>
-            <!-- <div class="basket-so-card" @click="selectPaymentMethod('qiwi')"
-              :class="{ active: selectedPayment === 'qiwi' }">
-              <div class="basket-so-card-title">
-                <input type="radio" :checked="selectedPayment === 'qiwi'" />
-                Qiwi
-              </div>
-              <div class="basket-so-card-imgs">
-                <img src="@/assets/images/Qiwi.png" alt="Qiwi" />
-              </div>
-            </div> -->
           </div>
           <div class="cart-total" :key="totalPrice">
             <div class="basket-oformit-zakaz-items_count">{{ itemsCountText }}</div>
             <div class="basket-oformit-zakaz-total_price">{{ totalPrice }} ₽</div>
-            <div class="basket-oformit-zakaz-but" :class="{ active: selectedPayment }" @click="checkout">Оформить заказ
-            </div>
+            <div class="basket-oformit-zakaz-but" :class="{ active: selectedPayment }" @click="checkout">Оформить заказ</div>
             <div class="basket-oformit-zakaz-uslovia">
               <div class="basket-oformit-zakaz-uslovia-galochka">
-                <svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M3.12817 5.51281L8.23101 0L9 0.656414L3.12817 7L0 3.62051L0.768991 2.9641L3.12817 5.51281Z"
-                    fill="white" />
-                </svg>
+                <input type="checkbox" v-model="approval">
               </div>
               <div class="basket-oformit-zakaz-uslovia-txt">
-                Покупая данный товар, я подтверждаю, что ознакомился и согласен с <a href="#">условиями</a> и <a
-                  href="#">условиями магазина</a>
+                Покупая данный товар, я подтверждаю, что ознакомился и согласен с <a href="#">условиями</a> и <a href="#">условиями магазина</a>
               </div>
             </div>
           </div>
         </div>
-
       </div>
       <div v-else class="empty-cart">
         <div class="empty-cart-content">
@@ -114,14 +96,13 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
-import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'Cart',
@@ -129,6 +110,7 @@ export default {
   data() {
     return {
       selectedPayment: null,
+      approval: null,
       loading: true,
     };
   },
@@ -136,7 +118,7 @@ export default {
     totalPrice() {
       const total = this.mainStore.basket.reduce((total, item) => {
         const price = parseFloat(item.final_price.replace(' ₽', '').replace(' ', '')) || 0;
-        return total + price * item.count;
+        return total + price * item.quantity;
       }, 0);
       return total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     },
@@ -147,48 +129,42 @@ export default {
       return `${count} товаров`;
     },
   },
-  setup() {
+  setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   methods: {
     calculatePrice(item) {
       const priceStr = item.final_price.toString().replace(' ₽', '').replace(' ', '');
       const price = parseFloat(priceStr) || 0;
-      return (price * item.count).toFixed(2);
+      return (price * item.quantity).toFixed(2);
     },
     selectPaymentMethod(method) {
       this.selectedPayment = method;
     },
     checkout() {
-      if (!this.mainStore.userData) {
+      if(!this.mainStore.userData){
         this.mainStore.openRegisterForm();
+        this.toast.error("Авторизуйтес, чтобы продолжить");
         return;
       }
       else if (!this.selectedPayment) {
-        alert('Пожалуйста, выберите способ оплаты!');
+        this.toast.warning('Пожалуйста, выберите способ оплаты');
+        return;
+      }else if (!this.approval){
+        this.toast.warning('Вы должны согласиться с условиями, чтобы продолжить.');
         return;
       }
       localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
+      
       this.$router.push('/checkout');
     },
   },
 };
 </script>
-<style scoped>
-.cart-page {
-  color: #fff;
-  font-family: 'Manrope', sans-serif;
-  overflow: hidden;
-  min-height: 100vh;
-}
 
-main {
-  max-width: 1440px;
-  min-height: calc(100vh - 600px);
-  margin: 0 auto;
-  padding: 60px 20px;
-}
+<style scoped>
 
 .cart-title {
   font-size: 48px;
@@ -200,7 +176,6 @@ main {
   text-shadow: 0 2px 6px rgba(119, 190, 29, 0.4);
   margin-bottom: 50px;
   text-align: center;
-  animation: fadeInDown 1s ease;
 }
 
 .cart-title span {
@@ -212,32 +187,19 @@ main {
   display: flex;
   justify-content: space-between;
   gap: 40px;
-  animation: fadeIn 1s ease;
-}
-
-@media (max-width: 768px) {
-  .cart-container {
-    flex-direction: column;
-  }
 }
 
 .cart-items {
   width: 900px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 30px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-@media (max-width: 768px) {
-  .cart-items {
-    width: 100%;
-  }
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .cart-item {
@@ -247,12 +209,11 @@ main {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: slideIn 0.5s ease;
 }
 
 .cart-item:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(119, 190, 29, 0.5);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(119, 190, 29, 0.3);
 }
 
 .cart-item-image {
@@ -270,7 +231,7 @@ main {
 }
 
 .cart-item:hover .cart-item-image img {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .cart-item-details {
@@ -279,18 +240,20 @@ main {
 }
 
 .cart-item-title {
-  font-size: 30px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 700;
   color: #fff;
   margin-bottom: 10px;
-  font-family: 'Manrope', sans-serif;
 }
 
 .cart-item-dop-info {
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 20px;
-  font-family: 'Roboto', sans-serif;
+}
+
+.cart-item-dop-info span {
+  color: #FFFFFF4D;
 }
 
 .cart-item-prices {
@@ -303,7 +266,7 @@ main {
 .cart-item-price {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(90deg, #77BE1D 0%, #97E238 50%, #77BE1D 100%);
+  background: linear-gradient(90deg, #77BE1D, #97E238);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -344,7 +307,7 @@ main {
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 .cart-item-quantity button:disabled {
@@ -354,7 +317,6 @@ main {
 
 .cart-item-quantity button:hover:not(:disabled) {
   background: linear-gradient(90deg, #649E18, #7BC22F);
-  transform: scale(1.1);
 }
 
 .cart-item-quantity span {
@@ -377,14 +339,12 @@ main {
 
 .remove-btn:hover {
   background: rgba(255, 48, 48, 0.9);
-  transform: rotate(180deg);
+  transform: rotate(90deg);
 }
-
-.remove-btn path {
+.remove-btn path{
   transition: all 0.3s;
 }
-
-.remove-btn:hover path {
+.remove-btn:hover path{
   fill-opacity: 1;
 }
 
@@ -393,19 +353,11 @@ main {
   height: 100%;
   position: sticky;
   top: 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   padding: 30px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 6px 20px rgba(0, 0, 0, 0.5);
-  animation: fadeInRight 1s ease;
-}
-
-@media (max-width: 768px) {
-  .cart-summary {
-    width: 100%;
-    margin-top: 20px;
-  }
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .basket-sposobi-oplati {
@@ -454,7 +406,7 @@ main {
 }
 
 .basket-so-card-imgs img {
-  height: 48px;
+  height: 40px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -484,20 +436,25 @@ main {
 }
 
 .basket-oformit-zakaz-but {
-  padding: 14px 30px;
-  background: linear-gradient(90deg, #77BE1D, #97E238);
+  padding: 12px;
+  background: #77BE1D1A;
   border: none;
-  border-radius: 30px;
-  color: white;
+  border-radius: 15px;
+  color: #77BE1D;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.basket-oformit-zakaz-but:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 10px 30px rgba(119, 190, 29, 0.8);
+.basket-oformit-zakaz-but.active {
+  background: linear-gradient(90deg, #77BE1D, #97E238);
+  color: white;
+}
+
+.basket-oformit-zakaz-but.active:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(119, 190, 29, 0.5);
 }
 
 .basket-oformit-zakaz-uslovia {
@@ -505,6 +462,7 @@ main {
   margin-top: 20px;
   font-size: 14px;
   color: #787b84;
+  gap: 6px;
 }
 
 .basket-oformit-zakaz-uslovia-galochka {
@@ -512,24 +470,28 @@ main {
   display: flex;
   align-items: center;
 }
+.basket-oformit-zakaz-uslovia-galochka input{
+  accent-color: #77BE1D;
+  transform: scale(1.6);
+  cursor: pointer;
+}
 
 .basket-oformit-zakaz-uslovia-txt a {
   color: #378ae9;
   text-decoration: none;
 }
 
-.basket-oformit-zakaz-usloia-txt a:hover {
+.basket-oformit-zakaz-uslovia-txt a:hover {
   text-decoration: underline;
 }
 
 .empty-cart {
   text-align: center;
   padding: 100px 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   backdrop-filter: blur(20px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  animation: fadeIn 1s ease;
 }
 
 .empty-cart-content {
@@ -562,61 +524,47 @@ main {
 }
 
 /* Анимации */
+.cart-item-enter-active,
+.cart-item-leave-active {
+  transition: all 0.5s ease;
+}
+
+.cart-item-enter-from,
+.cart-item-leave-to {
+  opacity: 0;
+  transform: translateX(50px) scale(0.95);
+}
+
+.count-enter-active,
+.count-leave-active {
+  transition: all 0.3s ease;
+}
+
+.count-enter-from,
+.count-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(20px);
   }
-  to {
-    opacity: 1;
-  }
-}
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.cart-item-quantity button:hover {
-  animation: pulse 0.8s infinite;
 }
 </style>

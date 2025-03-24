@@ -15,8 +15,8 @@
                                     <!-- <img :src="upload" for="upload" name="upload" alt=""> -->
                                     <img src="../assets/images/upload.svg" alt="">
                                 </label>
-                            
                         </div>
+                        <button type="button" @click="() => logOut()">Выйти из аккаунта</button>
                     </div>
                     <div class="form-child-container">
                         <div class="profile-group">
@@ -63,26 +63,27 @@
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
-import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const mainStore = useMainStore();
 const router = useRouter();
 
-const props = defineProps({
-    showAndHideProfile: Function
-});
+if (!mainStore.userData) {
+    router.push('/');
+}
+const toast = useToast();
 
 const users = JSON.parse(localStorage.getItem("users"));
 
-let avatarIcon = ref(mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png');
-const updateUsername = ref(mainStore.userData.username);
-const updateEmail = ref(mainStore.userData.email);
-const updateFullName = ref(mainStore.userData.fullName || "");
+let avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon : 'src/assets/images/avatarIcon.png');
+const updateUsername = ref((mainStore.userData) ? mainStore.userData.username : "");
+const updateEmail = ref((mainStore.userData) ? mainStore.userData.email : "");
+const updateFullName = ref((mainStore.userData) ? mainStore.userData.fullName : "");
 const updatePassword = ref("");
 const confirmPassword = ref("");
-const updateBirthDate = ref(mainStore.userData.birthDate || "");
+const updateBirthDate = ref((mainStore.userData) ? mainStore.userData.birthDate : "");
 
 const errors = reactive({
     username: "",
@@ -124,7 +125,7 @@ const validateData = () => {
         }
     }
 
-    users.map(item => {
+    users.forEach(item => {
         if (item.email == updateEmail.value && item.id != mainStore.userData.id) {
             errors.email = "Эта почта уже занят";
         }
@@ -147,24 +148,29 @@ const handleFileChange = (event) => {
     }
 };
 
+const logOut = () => {
+    sessionStorage.clear();
+    setTimeout(() => window.location.reload(), 600);
+};
+
 const updateUserData = () => {
     validateData();
     if (errors.generalError || errors.email || errors.username || 
         errors.updatePassword || errors.confirmPassword) return;
-    users.map(item => {
+    users.forEach(item => {
         if (item.id == mainStore.userData.id) {
             item.avatarIcon = avatarIcon.value;
             item.username = updateUsername.value;
             item.email = updateEmail.value;
-            item.password = updatePassword.value;
+            item.password = (updatePassword.value.length) ? updatePassword.value : item.password;
             item.dateOfBirth = updateBirthDate.value;
             item.fullName = updateFullName.value;
         }
     });
     localStorage.setItem("users", JSON.stringify(users));
     mainStore.updateUserData();
-    alert("Данные обновлены");
-    router.push("/");
+    toast.success("Данные обновлены");
+    setTimeout(() => router.push("/"), 1200);
 };
 </script>
 
@@ -221,18 +227,23 @@ form{
 .form-child-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 50%;
 }
 
 .form-avatar-container {
     padding-top: 30px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
-    flex-direction: row;
     gap: 20px;
     width: 1000px;
     height: 700px;
+}
+.form-avatar-container button{
+    width: 200px;
+    background-color: red;
 }
 
 .form-avatar-container .upload {

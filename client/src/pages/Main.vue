@@ -1,5 +1,4 @@
 <template>
-  <div id="main">
     <Header />
     <Slider />
     <main>
@@ -33,7 +32,7 @@
       </div>
 
       <div class="mainBlock3">
-        <h2>Акции и скидки <span>%</span></h2>
+        <h2>Акции и скидки</h2>
         <div class="bigProductCardsConteiner">
           <ProductCard
             v-for="game in discountedGames"
@@ -44,7 +43,7 @@
       </div>
       <div class="mainBlock5" id="FeedbackForm">
         <h2>Отзывы</h2>
-        <FeedbackForm @add-feedback="addFeedback" />
+        <FeedbackForm />
         <div class="feedbackCardsConteiner">
           <div class="feedbackCard">
             <div class="estimationBlock">
@@ -56,7 +55,7 @@
             <p class="feedback">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur repellat illum necessitatibus, deleniti quibusdam quo!</p>
             <p class="feedbackUserName">Amart</p>
           </div>
-          <div class="feedbackCard" v-for="(feedback, index) in feedbacks" :key="index">
+          <div class="feedbackCard" v-for="(feedback, index) in mainStore.feedbacks" :key="index">
             <div class="estimationBlock">
               <div class="starBlock" v-for="n in feedback.rating" :key="n">
                 <img src="../assets/images/star.svg" alt="Star" />
@@ -70,7 +69,6 @@
       </div>
     </main>
     <Footer />
-  </div>
 </template>
 
 <script>
@@ -95,15 +93,14 @@ export default {
   data() {
     return {
       newGames: [],
-      feedbacks: JSON.parse(localStorage.getItem("feedbacks")) || []
     };
   },
   computed: {
     catalogGames() {
-      return this.mainStore.gameCatalog.slice(0, 20);
+      return this.mainStore.gameCatalog.slice(0, 44);
     },
     discountedGames() {
-      return this.mainStore.gameCatalog.filter(game => game.discounted).slice(0, 9);
+      return this.mainStore.gameCatalog.filter(game => game.discounted).slice(-9);
     },
   },
   setup(){
@@ -112,30 +109,10 @@ export default {
       mainStore
     };
   },
-  methods: {
-    addFeedback(feedback) {
-      this.feedbacks.push({
-        rating: feedback.rating,
-        date: new Date().toLocaleDateString('ru-RU'),
-        text: feedback.text,
-        userName: feedback.userName || 'Аноним',
-      });
-      localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
-    },    
-  },
 };
 </script>
 
 <style scoped>
-#main {
-  min-height: 100vh;
-  color: #fff;
-}
-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
 .mainBlock1,
 .mainBlock2,
 .mainBlock3,
@@ -218,49 +195,5 @@ h2 {
   font-size: 16px;
   font-weight: 600;
   color: #97E238;
-}
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-  }
-
-  h1, h2 {
-    font-size: 28px;
-  }
-
-  .smallProductCardsConteiner1,
-  .smallProductCardsConteiner2,
-  .bigProductCardsConteiner {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  h1, h2 {
-    font-size: 24px;
-  }
-
-  .smallProductCardsConteiner1,
-  .smallProductCardsConteiner2,
-  .bigProductCardsConteiner {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-
-  .feedbackCard {
-    padding: 15px;
-  }
-
-  .starBlock img {
-    width: 16px;
-    height: 16px;
-  }
-
-  .datePublication,
-  .feedback,
-  .feedbackUserName {
-    font-size: 14px;
-  }
 }
 </style>

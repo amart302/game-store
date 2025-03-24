@@ -1,206 +1,190 @@
 <template>
-  <div class="product-page" :style="{ backgroundImage: `url(${currentProduct.header_image})` }">
+    <Header />
 
-    <div class="temnee-bg">
-      <Header @currency-changed="updateCurrency" />
-
-      <main v-if="currentProduct.name">
-        <div class="product-information">
-          <div class="product-container">
-            <div class="product-img">
-              <img :src="currentProduct.header_image" ref="productImage" alt="Product Image" />
-            </div>
-
-            <div class="product-other">
-              <div class="product-title">{{ currentProduct.name }}</div>
-              <div class="product-v-nalichii">
-                <div class="product-v-nalichii-tochka"></div>
-                В наличии
-              </div>
-
-              <div class="product-prices">
-                <div class="product-now-price">{{ convertedFinalPrice }} {{ selectedCurrency }}</div>
-                <div v-if="currentProduct.discounted" class="product-skidka">-{{ currentProduct.discount_percent }}%
-                </div>
-                <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} {{
-                  selectedCurrency }}</div>
-              </div>
-
-              <div class="product-deystvia">
-                <div class="product-buy" @click="addToCart">Добавить в корзину</div>
-
-                <div class="product-like">
-                  <button @click="addToFavourites()" class="favourite-btn" :class="{ 'active': isFavourite }">
-                    <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                        fill="#FF3030" />
-                    </svg>
-                    <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                        fill="none" stroke="#FFFFFF" stroke-width="2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="product-info">
-                <table>
-                  <thead>
-                    <tr class="product-tr1">
-                      <td>Платформы</td>
-                      <td>Регион активации</td>
-                      <td>Тип товара</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="product-tr2">
-                      <td>
-                        <span v-if="currentProduct.platforms.windows">Windows</span>
-                        <span v-if="currentProduct.platforms.mac">, Mac</span>
-                        <span v-if="currentProduct.platforms.linux">, Linux</span>
-                      </td>
-                      <td>Страны СНГ</td>
-                      <td>Ключ</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="product-deystvia-2">
-                <div class="product-moment-dost-but">Моментальная доставка</div>
-                <div class="product-garantia">
-                  <div class="product-garantia-galochka">
-                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M3.5837 4.96466L8.49779 0L10 1.51767L3.5837 8L0 4.37942L1.50221 2.86175L3.5837 4.96466Z"
-                        fill="#77BE1D" />
-                    </svg>
-                  </div>
-                  Гарантия качества
-                </div>
-              </div>
-            </div>
+    <main v-if="currentProduct.name">
+      <div class="product-information">
+        <div class="product-container">
+          <div class="product-img">
+            <img :src="currentProduct.header_image" ref="productImage" alt="Product Image" />
           </div>
 
-          <div class="product-photo-videos" ref="photoVideos">
-            <div class="product-photo-video" v-for="(img, index) in galleryImages" :key="index"
-              @click="currentSlide(index + 1)">
-              <div v-if="index === 4 && currentProduct.movies" class="product-photo-video-play">
-                <div class="product-photo-video-playy">
-                  <svg width="25" height="29" viewBox="0 0 25 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M23.2435 16.3123L23.2402 16.3143L3.90243 28.0215C2.63108 28.7903 0.957282 27.8734 0.957282 26.2636V2.84903C0.957282 1.24173 2.62841 0.322778 3.90216 1.09415L3.90222 1.09419L23.2402 12.8015L23.2435 12.8034C23.535 12.977 23.78 13.2297 23.9516 13.538C24.1232 13.8464 24.2144 14.1983 24.2144 14.5579C24.2144 14.9174 24.1232 15.2694 23.9516 15.5778C23.78 15.8861 23.535 16.1387 23.2435 16.3123Z"
-                      fill="white" stroke="#77BE1D" stroke-width="1.05714" />
+          <div class="product-other">
+            <div class="product-title">{{ currentProduct.name }}</div>
+            <div class="product-v-nalichii">
+              <div class="product-v-nalichii-tochka"></div>
+              В наличии
+            </div>
+
+            <div class="product-prices">
+              <div class="product-now-price">{{ (convertedFinalPrice > 0) ? `${convertedFinalPrice} ₽` : "Бесплатно" }}</div>
+              <div v-if="currentProduct.discounted" class="product-skidka">-{{ currentProduct.discount_percent }}%</div>
+              <div v-if="currentProduct.discounted" class="product-old-price">{{ convertedOriginalPrice }} ₽</div>
+            </div>
+
+            <div class="product-deystvia">
+              <div class="product-buy" @click="() => addToCart()">Добавить в корзину</div>
+
+              <div class="product-like">
+                <button @click="addToFavourites()" class="favourite-btn" :class="{ 'active': isFavourite }">
+                  <svg v-if="isFavourite" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3030" />
+                  </svg>
+                  <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="product-info">
+              <table>
+                <thead>
+                  <tr class="product-tr1">
+                    <td>Платформы</td>
+                    <td>Регион активации</td>
+                    <td>Тип товара</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="product-tr2">
+                    <td>
+                      <span v-if="currentProduct.platforms.windows">Windows</span>
+                      <span v-if="currentProduct.platforms.mac">, Mac</span>
+                      <span v-if="currentProduct.platforms.linux">, Linux</span>
+                    </td>
+                    <td>Страны СНГ</td>
+                    <td>Ключ</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="product-deystvia-2">
+              <div class="product-moment-dost-but">Моментальная доставка</div>
+              <div class="product-garantia">
+                <div class="product-garantia-galochka">
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.5837 4.96466L8.49779 0L10 1.51767L3.5837 8L0 4.37942L1.50221 2.86175L3.5837 4.96466Z" fill="#77BE1D" />
                   </svg>
                 </div>
+                Гарантия качества
               </div>
-              <img v-if="index < 4" :src="img" alt="Gallery Image" @click="plusSlides(index)" />
-              <img v-else :src="img.poster" alt="Gallery Image" @click="plusSlides(index)" />
             </div>
           </div>
         </div>
 
-        <div class="product-ostas">
-          <div class="product-ostas-title">
-            <div class="product-osta" @click="activeTab = 'description'">
-              <div :class="{ 'product-osta-left': true, active: activeTab === 'description' }">
-                Описание товара
+        <div class="product-photo-videos" ref="photoVideos">
+          <div class="product-photo-video" v-for="(img, index) in galleryImages" :key="index" @click="currentSlide(index + 1)">
+            <div v-if="index === 4 && currentProduct.movies" class="product-photo-video-play">
+              <div class="product-photo-video-playy">
+                <svg width="25" height="29" viewBox="0 0 25 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.2435 16.3123L23.2402 16.3143L3.90243 28.0215C2.63108 28.7903 0.957282 27.8734 0.957282 26.2636V2.84903C0.957282 1.24173 2.62841 0.322778 3.90216 1.09415L3.90222 1.09419L23.2402 12.8015L23.2435 12.8034C23.535 12.977 23.78 13.2297 23.9516 13.538C24.1232 13.8464 24.2144 14.1983 24.2144 14.5579C24.2144 14.9174 24.1232 15.2694 23.9516 15.5778C23.78 15.8861 23.535 16.1387 23.2435 16.3123Z" fill="white" stroke="#77BE1D" stroke-width="1.05714" />
+                </svg>
               </div>
             </div>
-            <div class="product-osta" @click="activeTab = 'requirements'">
-              <div :class="{ 'product-osta-center': true, active: activeTab === 'requirements' }">
-                Системные требования
-              </div>
-            </div>
-            <div class="product-osta" @click="activeTab = 'activation'">
-              <div :class="{ 'product-osta-right': true, active: activeTab === 'activation' }">
-                Активация
-              </div>
+            <img v-if="index < 4" :src="img" alt="Gallery Image" @click="plusSlides(index)" />
+            <img v-else :src="img.poster" alt="Gallery Image" @click="plusSlides(index)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="product-ostas">
+        <div class="product-ostas-title">
+          <div class="product-osta" @click="activeTab = 'description'">
+            <div :class="['product-osta-center', { active: activeTab === 'description' }]">
+              Описание товара
             </div>
           </div>
-          <div class="product-ostas-container">
-            <div v-if="activeTab === 'description'" class="product-opisanie">
-              <div class="product-opisanie-title">Полное погружение в {{ currentProduct.name }}</div>
-              <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
+          <div class="product-osta" @click="activeTab = 'requirements'">
+            <div :class="['product-osta-center', { active: activeTab === 'requirements' }]">
+              Системные требования
             </div>
-            <div class="product-sisTreb">
-              <div class="product-sisTreb-title">Минимальные системные требования</div>
-              <table class="product-sisTreb-table">
-                <tbody>
-                  <tr>
-                    <td>ОС:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.OS || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                  <tr>
-                    <td>Процессор:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.Processor || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                  <tr>
-                    <td>Оперативная память:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.Memory || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                  <tr>
-                    <td>Видеокарта:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.Graphics || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                  <tr>
-                    <td>DirectX:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.DirectX || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                  <tr>
-                    <td>Место на диске:</td>
-                    <td>{{ currentProduct.pc_requirements.minimum.Storage || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(false)"></td>
-                  </tr>
-                </tbody>
-              </table>
+          </div>
+          <div class="product-osta" @click="activeTab = 'activation'">
+            <div :class="['product-osta-center', { active: activeTab === 'activation' }]">
+              Активация
+            </div>
+          </div>
+        </div>
+        <div class="product-ostas-container">
+          <div v-if="activeTab === 'description'" class="product-opisanie">
+            <div class="product-opisanie-title">Полное погружение в {{ currentProduct.name }}</div>
+            <div class="product-opisanie-txt">{{ currentProduct.short_description }}</div>
+          </div>
+          <div v-if="activeTab === 'requirements'" class="product-sisTreb">
+            <div class="product-sisTreb-title">Минимальные системные требования</div>
+            <table class="product-sisTreb-table">
+              <tbody>
+                <tr>
+                  <td>ОС:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.OS || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Процессор:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Processor || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Оперативная память:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Memory || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Видеокарта:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Graphics || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>DirectX:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.DirectX || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+                <tr>
+                  <td>Место на диске:</td>
+                  <td>{{ currentProduct.pc_requirements.minimum.Storage || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(false)"></td>
+                </tr>
+              </tbody>
+            </table>
 
-              <div class="product-sisTreb-title">Рекомендуемые системные требования</div>
-              <table class="product-sisTreb-table">
-                <tbody>
-                  <tr>
-                    <td>ОС:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.OS || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                  <tr>
-                    <td>Процессор:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.Processor || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                  <tr>
-                    <td>Оперативная память:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.Memory || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                  <tr>
-                    <td>Видеокарта:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.Graphics || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                  <tr>
-                    <td>DirectX:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.DirectX || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                  <tr>
-                    <td>Место на диске:</td>
-                    <td>{{ currentProduct.pc_requirements.recommended.Storage || 'Не указано' }}</td>
-                    <td v-html="getRequirementIcon(true)"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div v-if="activeTab === 'activation'" class="product-activate">
+            <div class="product-sisTreb-title">Рекомендуемые системные требования</div>
+            <table class="product-sisTreb-table">
+              <tbody>
+                <tr>
+                  <td>ОС:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.OS || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Процессор:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Processor || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Оперативная память:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Memory || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Видеокарта:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Graphics || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>DirectX:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.DirectX || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+                <tr>
+                  <td>Место на диске:</td>
+                  <td>{{ currentProduct.pc_requirements.recommended.Storage || 'Не указано' }}</td>
+                  <td v-html="getRequirementIcon(true)"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>            
+          <div v-if="activeTab === 'activation'" class="product-activate">
               <div class="product-activate-title">Введите цифровой ключ продукта</div>
               <div class="product-activate-input">
                 <label>
@@ -208,40 +192,37 @@
                   <input type="text" v-model="activationKey" placeholder="XXXX-XXXX-XXXX" />
                 </label>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="vam-budet-interesno">
-          <div class="vam-budet-interesno-title">Вам будет интересно</div>
-          <div class="vam-budet-interesno-cont">
-            <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
-          </div>
-        </div>
-      </main>
-
-      <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
-        <div class="modal-cont">
-          <span class="close cursor" @click="closeModal">×</span>
-          <div class="modal-content">
-            <div class="mySlides" v-for="(slide, index) in slides" :key="index"
-              :style="{ display: slideIndex === index + 1 ? 'flex' : 'none' }">
-              <img v-if="index < 4" :src="slide" class="product-gallery-img" />
-              <img v-if="index == 4 && !slide.video" :src="slide.poster" class="product-gallery-img" />
-              <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="video-player">
-                <source :src="slide.video" />
-                Ваш браузер не поддерживает видео.
-              </video>
-            </div>
-            <a class="prev" @click="plusSlides(-1)">❮</a>
-            <a class="next" @click="plusSlides(1)">❯</a>
           </div>
         </div>
       </div>
 
-      <Footer v-if="currentProduct.name" />
+      <div class="vam-budet-interesno">
+        <div class="vam-budet-interesno-title">Вам будет интересно</div>
+        <div class="vam-budet-interesno-cont">
+          <ProductCard v-for="ad in ads.slice(0, 4)" :key="ad.id" :game="ad" @click="navigateToProduct(ad)" />
+        </div>
+      </div>
+    </main>
+
+    <div class="modal" :style="{ display: modalOpen ? 'flex' : 'none' }">
+      <div class="modal-cont">
+        <span class="close cursor" @click="closeModal">×</span>
+        <div class="modal-content">
+          <div class="mySlides" v-for="(slide, index) in slides" :key="index" :style="{ display: slideIndex === index + 1 ? 'flex' : 'none' }">
+            <img v-if="index < 4" :src="slide" class="product-gallery-img" />
+            <img v-if="index == 4 && !slide.video" :src="slide.poster" class="product-gallery-img" />
+            <video v-if="slide.video" controls preload="metadata" ref="videoPlayer" class="video-player">
+              <source :src="slide.video" />
+              Ваш браузер не поддерживает видео.
+            </video>
+          </div>
+          <a class="prev" @click="plusSlides(-1)">❮</a>
+          <a class="next" @click="plusSlides(1)">❯</a>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <Footer v-if="currentProduct.name" />
 </template>
 
 <script>
@@ -249,21 +230,17 @@ import axios from 'axios';
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import ProductCard from '@/components/ProductCard.vue';
-import Slider from '@/components/Slider.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'ProductPage',
-  components: { Header, Footer, ProductCard, Slider },
+  components: { Header, Footer, ProductCard },
 
   data() {
     return {
       currentProduct: {},
-      products: [
-        {
-
-        }
-      ],
+      products: [],
       ads: [],
       activeTab: 'description',
       activationKey: '',
@@ -272,69 +249,64 @@ export default {
       basketCount: 0,
       showHeartAnimation: false,
       productData: null,
-      language: 'RU',
-      selectedCurrency: '₽',
-
-      exchangeRates: {
-        '₽': { '$': 1 / 92, '€': 1 / 100, '₽': 1 },
-        '$': { '₽': 92, '€': 92 / 100, '$': 1 },
-        '€': { '₽': 100, '$': 100 / 92, '€': 1 },
-      },
     };
   },
-  setup() {
+  setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     galleryImages() {
-      if (!this.currentProduct.name) return [];
-      return [
-        this.currentProduct.screenshots[0].path_thumbnail,
-        this.currentProduct.screenshots[1].path_thumbnail,
-        this.currentProduct.screenshots[2].path_thumbnail,
-        this.currentProduct.screenshots[3].path_thumbnail,
-        {
-          poster: this.currentProduct.screenshots[4].path_thumbnail,
-          video: (this.currentProduct.movies) ? this.currentProduct.movies[0].mp4.max : null,
-        },
-      ];
+  if (!this.currentProduct.name) return [];
+  return [
+    this.currentProduct.screenshots[0].path_thumbnail,
+    this.currentProduct.screenshots[1].path_thumbnail,
+    this.currentProduct.screenshots[2].path_thumbnail,
+    this.currentProduct.screenshots[3].path_thumbnail,
+    {
+      poster: this.currentProduct.screenshots[4].path_thumbnail,
+      video: this.currentProduct.movies ? this.currentProduct.movies[0].mp4.max : null,
     },
+  ];
+},
 
-    slides() {
-      return this.galleryImages.length ? [...this.galleryImages] : [];
-    },
-
+slides() {
+  return this.galleryImages.length
+    ? this.galleryImages.map((item, index) => {
+        if (index !== this.galleryImages.length - 1) {
+          return item.replace("600x338", "1920x1080");
+        }
+        return item;
+      })
+    : [];
+},
     isFavourite() {
       return this.mainStore.favourites.some(fav => String(fav.id) === String(this.productData));
     },
 
     convertedFinalPrice() {
       let priceInRub;
-      if (this.currentProduct.final_price) {
+      if(this.currentProduct.final_price){
         priceInRub = parseFloat(this.currentProduct.final_price);
-      } else {
+      }else{
         priceInRub = 0;
       }
-      const rate = this.exchangeRates['₽'][this.selectedCurrency];
-
-      return (priceInRub * rate).toFixed(2);
+      
+      return priceInRub.toFixed(2);
     },
     convertedOriginalPrice() {
       if (!this.currentProduct.discounted) return '';
-      const priceInRub = parseFloat(this.currentProduct.original_price); // Цена в RUB
-      const rate = this.exchangeRates['₽'][this.selectedCurrency];
-      return (priceInRub * rate).toFixed(2);
+      const priceInRub = parseFloat(this.currentProduct.original_price);
+      return priceInRub.toFixed(2);
     },
   },
-  created() {
+  created(){
     this.fetchProducts();
   },
   mounted() {
-    document.title = `Playnchill`;
-    this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames')).id;
+    this.productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
     this.addEventListeners();
-    this.loadCurrencyAndLanguage();
   },
 
   methods: {
@@ -343,17 +315,13 @@ export default {
         const productData = JSON.parse(sessionStorage.getItem('currentProductInGames'));
         const response = await axios.get(`http://localhost:3000/api/steam/${productData.id}`);
         const gameData = response.data[productData.id];
-        const responseGameCatalog = await axios.get('https://67bcd30ded4861e07b3c0613.mockapi.io/games');
-        const data = responseGameCatalog.data[0];
-        this.ads = (data.game_catalog).map(game => ({ ...game }));
-
+        const data = this.mainStore.gameCatalog;
+        this.ads = data.map(game => ({ ...game }));
         if (gameData.success) {
           gameData.data.final_price = productData.price;
           gameData.data.windows_available = productData.windows_available;
           gameData.data.mac_available = productData.mac_available;
           gameData.data.linux_available = productData.linux_available;
-
-          // Парсим системные требования
           gameData.data.pc_requirements = {
             minimum: this.parseRequirements(gameData.data.pc_requirements?.minimum),
             recommended: this.parseRequirements(gameData.data.pc_requirements?.recommended)
@@ -366,7 +334,6 @@ export default {
             minimum: this.parseRequirements(gameData.data.linux_requirements?.minimum),
             recommended: this.parseRequirements(gameData.data.linux_requirements?.recommended)
           };
-
           this.currentProduct = gameData.data;
           this.currentProduct.id = this.currentProduct.steam_appid || productData;
         } else {
@@ -380,13 +347,12 @@ export default {
       const requirements = {};
       if (!requirementsString) return requirements;
 
-      // Регулярное выражение для извлечения ключей и значений
       const regex = /<strong>([^:]+):<\/strong>\s*([^<]+)/g;
       let match;
 
       while ((match = regex.exec(requirementsString)) !== null) {
-        const key = match[1].trim(); // Ключ (например, "OS", "Processor")
-        const value = match[2].trim(); // Значение (например, "Windows® 10")
+        const key = match[1].trim();
+        const value = match[2].trim();
         requirements[key] = value;
       }
 
@@ -402,12 +368,7 @@ export default {
          </svg>`;
     },
     addToFavourites() {
-      let favourites = this.mainStore.favourites;
-      const isAlreadyFavourite = this.isFavourite;
-      if (isAlreadyFavourite) {
-        favourites = favourites.filter(fav => fav.id !== this.productData);
-      } else {
-        favourites.push({
+      const product = {
           id: this.productData,
           name: this.currentProduct.name,
           large_capsule_image: this.currentProduct.header_image,
@@ -415,69 +376,36 @@ export default {
           windows_available: this.currentProduct.windows_available,
           mac_available: this.currentProduct.mac_available,
           linux_available: this.currentProduct.linux_available
-        });
+      };
+      const check = this.mainStore.addToFavourites(product);
+      
+      if(check.status === "added"){
+        this.toast.success("Игра добавлена в избранное");
+      }else{
+        this.toast.success("Игра удалена из избранного");
       }
-      this.mainStore.favourites = favourites
-      localStorage.setItem('favourites', JSON.stringify(favourites));
     },
-    addToCart() {
+    addToCart() {      
       const product = {
         id: this.productData,
         name: this.currentProduct.name,
-        image: this.currentProduct.header_image,
-        price: this.currentProduct.final_price,
+        final_price: `${this.currentProduct.final_price} ₽`,
+        large_capsule_image: this.currentProduct.header_image,
         windows_available: this.currentProduct.windows_available,
-        mac_available: this.currentProduct.mac_available,
         linux_available: this.currentProduct.linux_available,
-        quantity: 1
+        mac_available: this.currentProduct.mac_available,
+        count: 1,
       };
 
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-      const existingProduct = cart.find(item => item.id === product.id);
-      if (existingProduct) {
-        existingProduct.quantity += 1;
-      } else {
-        cart.push(product);
-      }
-
-      localStorage.setItem('cart', JSON.stringify(cart));
-      this.basketCount = cart.reduce((total, item) => total + item.quantity, 0);
-    }
-    ,
-    animateToCart() {
-      const productImg = this.$refs.productImage;
-      const cartIcon = document.querySelector('.bl-icon img[alt="Корзина"]');
-      if (!productImg || !cartIcon) return;
-
-      const cloned = productImg.cloneNode(true);
-      cloned.classList.add('cart-animation');
-      cloned.style.position = 'absolute';
-      cloned.style.width = '50px';
-      cloned.style.height = '30px';
-      cloned.style.zIndex = '1000';
-      cloned.style.left = `${productImg.getBoundingClientRect().left + window.scrollX}px`;
-      cloned.style.top = `${productImg.getBoundingClientRect().top + window.scrollY}px`;
-
-      document.body.appendChild(cloned);
-
-      const targetX = cartIcon.getBoundingClientRect().left + window.scrollX - cloned.getBoundingClientRect().left;
-      const targetY = cartIcon.getBoundingClientRect().top + window.scrollY - cloned.getBoundingClientRect().top;
-
-      requestAnimationFrame(() => {
-        cloned.style.transition = 'all 1s ease-out';
-        cloned.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.5)`;
-        cloned.style.opacity = '0.5';
-        setTimeout(() => cloned.remove(), 1000);
-      });
+      this.mainStore.addToBasket(product);
+      this.toast.success("Игра добавлена в корзину");
     },
     closeModal() {
       this.modalOpen = false;
       document.body.style.overflow = 'auto';
-      if (this.$refs.videoPlayer) this.$refs.videoPlayer[0].pause();
+      this.$refs.videoPlayer[0].pause();
     },
     plusSlides(n) {
-      if (this.$refs.videoPlayer && n === 5) this.$refs.videoPlayer[0].play();
       this.modalOpen = true;
       this.showSlides(this.slideIndex + n);
     },
@@ -489,8 +417,8 @@ export default {
       if (n > this.slides.length) this.slideIndex = 1;
       else if (n < 1) this.slideIndex = this.slides.length;
       else this.slideIndex = n;
-      if (this.$refs.videoPlayer && this.slideIndex !== 5) this.$refs.videoPlayer[0].pause();
-      else if (this.$refs.videoPlayer && this.slideIndex === 5) this.$refs.videoPlayer[0].play();
+      if(this.slideIndex === 5) this.$refs.videoPlayer[0].play();
+      else this.$refs.videoPlayer[0].pause();
     },
     addEventListeners() {
       const scrollContainer = this.$refs.photoVideos;
@@ -512,42 +440,18 @@ export default {
       this.$router.push('/product');
       this.fetchProducts();
     },
-    loadCurrencyAndLanguage() {
-      const savedVal = localStorage.getItem('selectedVal');
-      const savedLang = localStorage.getItem('language');
-      this.selectedCurrency = savedVal || '₽';
-      this.language = savedLang || 'RU';
-    },
-    updateCurrency(newCurrency) {
-      this.selectedCurrency = newCurrency;
-    },
   },
 };
 </script>
 
 <style scoped>
-.product-page {
-  background-size: 100%;
-  background-repeat: no-repeat;
-  margin: 0;
-  color: white;
-  padding: 0;
-}
-
 .temnee-bg {
-  width: 100%;
-  height: 1080px;
-  background: linear-gradient(180deg, rgba(77, 9, 247, 0) 0.56%, #101014 63.8%);
-
   top: 0;
-}
-
-main {
-  position: relative;
-  z-index: 2;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(10, 7, 26, 0.7), rgba(28, 20, 53, 0.9));
+  z-index: 1;
 }
 
 .product-container {
@@ -693,17 +597,9 @@ main {
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.2);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .heart-animation {
@@ -738,85 +634,29 @@ main {
   animation: particle-burst 0.8s ease forwards;
 }
 
-.particle:nth-child(1) {
-  animation-delay: 0s;
-  transform: translate(-10px, -10px);
-}
-
-.particle:nth-child(2) {
-  animation-delay: 0.1s;
-  transform: translate(10px, -10px);
-}
-
-.particle:nth-child(3) {
-  animation-delay: 0.2s;
-  transform: translate(-10px, 10px);
-}
-
-.particle:nth-child(4) {
-  animation-delay: 0.3s;
-  transform: translate(10px, 10px);
-}
-
-.particle:nth-child(5) {
-  animation-delay: 0.4s;
-  transform: translate(0, -15px);
-}
-
-.particle:nth-child(6) {
-  animation-delay: 0.5s;
-  transform: translate(0, 15px);
-}
+.particle:nth-child(1) { animation-delay: 0s; transform: translate(-10px, -10px); }
+.particle:nth-child(2) { animation-delay: 0.1s; transform: translate(10px, -10px); }
+.particle:nth-child(3) { animation-delay: 0.2s; transform: translate(-10px, 10px); }
+.particle:nth-child(4) { animation-delay: 0.3s; transform: translate(10px, 10px); }
+.particle:nth-child(5) { animation-delay: 0.4s; transform: translate(0, -15px); }
+.particle:nth-child(6) { animation-delay: 0.5s; transform: translate(0, 15px); }
 
 @keyframes heart-pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.3);
-    opacity: 1;
-  }
-
-  70% {
-    transform: translate(-50%, -50%) scale(0.9);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-  }
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+  70% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 
 @keyframes heart-break {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
 }
 
 @keyframes particle-burst {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translate(20px, -20px) scale(0.5);
-    opacity: 0;
-  }
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: translate(20px, -20px) scale(0.5); opacity: 0; }
 }
 
 .product-info {
@@ -964,7 +804,7 @@ main {
 
 .modal-cont {
   position: relative;
-  width: 90%;
+  width: 100%;
   max-width: 1800px;
 }
 
@@ -1008,13 +848,8 @@ main {
   transition: background 0.3s ease;
 }
 
-.prev {
-  left: 20px;
-}
-
-.next {
-  right: 20px;
-}
+.prev { left: 20px; }
+.next { right: 20px; }
 
 .prev:hover,
 .next:hover {
@@ -1081,15 +916,11 @@ main {
   border-collapse: collapse;
 }
 
-
-.product-sisTreb-table tr {
+.product-sisTreb-table td {
   padding: 10px 15px;
   font-size: 16px;
 }
-.product-sisTreb-table td {
-  text-align: start;
-  
-}
+
 .product-activate-input input {
   width: 100%;
   max-width: 400px;
@@ -1121,274 +952,5 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
-}
-
-@media (max-width: 1024px) {
-  main {
-    padding: 20px 15px;
-  }
-
-  .product-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 20px;
-  }
-
-  .product-img {
-    width: 100%;
-    height: 350px;
-  }
-
-  .product-title {
-    font-size: 32px;
-  }
-
-  .product-now-price {
-    font-size: 28px;
-  }
-
-  .product-skidka {
-    font-size: 20px;
-  }
-
-  .product-old-price {
-    font-size: 16px;
-  }
-
-  .product-deystvia {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .product-buy {
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-
-  .product-info table td {
-    font-size: 12px;
-    padding: 5px 10px;
-  }
-
-  .product-deystvia-2 {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .product-moment-dost-but {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-
-  .product-garantia {
-    font-size: 14px;
-  }
-
-  .product-photo-videos {
-    gap: 15px;
-  }
-
-  .product-photo-video {
-    width: 250px;
-    height: 150px;
-  }
-
-  .product-ostas {
-    padding: 20px;
-  }
-
-  .product-ostas-title {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .product-osta-left,
-  .product-osta-center,
-  .product-osta-right {
-    font-size: 16px;
-    padding: 0 10px;
-  }
-
-  .product-opisanie-title,
-  .product-sisTreb-title,
-  .product-activate-title {
-    font-size: 20px;
-  }
-
-  .product-opisanie-txt {
-    font-size: 14px;
-  }
-
-  .vam-budet-interesno-title {
-    font-size: 24px;
-  }
-
-  .vam-budet-interesno-cont {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-
-  .modal-cont {
-    width: 95%;
-  }
-
-  .mySlides img,
-  .mySlides video {
-    width: 600px;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 15px 10px;
-  }
-
-  .product-container {
-    padding: 15px;
-  }
-
-  .product-img {
-    height: 250px;
-  }
-
-  .product-title {
-    font-size: 24px;
-  }
-
-  .product-v-nalichii {
-    font-size: 12px;
-  }
-
-  .product-now-price {
-    font-size: 24px;
-  }
-
-  .product-skidka {
-    font-size: 18px;
-    padding: 4px 8px;
-  }
-
-  .product-old-price {
-    font-size: 14px;
-  }
-
-  .product-deystvia {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .product-buy {
-    padding: 10px 16px;
-    font-size: 12px;
-    width: 100%;
-  }
-
-  .product-info {
-    margin: 15px 0;
-    padding: 10px;
-  }
-
-  .product-info table td {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-
-  .product-deystvia-2 {
-    gap: 8px;
-  }
-
-  .product-moment-dost-but {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .product-garantia {
-    font-size: 12px;
-  }
-
-  .product-garantia-galochka {
-    width: 16px;
-    height: 16px;
-  }
-
-  .product-photo-videos {
-    gap: 10px;
-    padding: 15px 0;
-  }
-
-  .product-photo-video {
-    width: 200px;
-    height: 120px;
-  }
-
-  .product-photo-video-play {
-    width: 50px;
-    height: 50px;
-  }
-
-  .product-photo-video-playy {
-    width: 35px;
-    height: 35px;
-  }
-
-  .product-ostas {
-    padding: 15px;
-  }
-
-  .product-ostas-title {
-    gap: 8px;
-  }
-
-  .product-osta-left,
-  .product-osta-center,
-  .product-osta-right {
-    font-size: 14px;
-    padding: 0 8px;
-  }
-
-  .product-opisanie-title,
-  .product-sisTreb-title,
-  .product-activate-title {
-    font-size: 18px;
-  }
-
-  .product-opisanie-txt {
-    font-size: 12px;
-  }
-
-  .product-activate-input input {
-    max-width: 100%;
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .vam-budet-interesno-title {
-    font-size: 20px;
-  }
-
-  .vam-budet-interesno-cont {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-
-  .modal-cont {
-    width: 95%;
-  }
-
-  .close {
-    font-size: 30px;
-  }
-
-  .mySlides img,
-  .mySlides video {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .prev,
-  .next {
-    font-size: 30px;
-    padding: 8px;
-  }
 }
 </style>

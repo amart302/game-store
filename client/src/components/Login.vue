@@ -22,10 +22,11 @@
 <script setup>
     import { useMainStore } from "@/store/store";
     import { ref, reactive } from "vue";
+    import { useToast } from "vue-toastification";
     sessionStorage.removeItem("userData");
 
     const mainStore = useMainStore();
-
+    const toast = useToast();
     const email = ref("");
     const password = ref("");
 
@@ -62,11 +63,12 @@
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
         let check = false;
-        users.map(item => {
+        users.forEach(item => {
             if(item.email == email.value && item.password == password.value){
                 check = true;
                 sessionStorage.setItem("userData", JSON.stringify(item));
-                setTimeout(() => window.location.reload(), 1000);
+                toast.success("Успешный вход");
+                setTimeout(() => window.location.reload(), 1200);
             }
         });
         if(!check) errors.generalError = "Неверный логин или пароль";

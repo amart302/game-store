@@ -1,5 +1,4 @@
 <template>
-  <div class="checkout-page">
     <Header />
     <main>
       <h1 class="checkout-title">Оформление заказа</h1>
@@ -12,7 +11,7 @@
               </div>
               <h2>{{ game.name }}</h2>
               <div class="product-like">
-                <button @click="mainStore.addToFavourites(game)" class="favourite-btn"
+                <button @click="() => addToFavourites(game)" class="favourite-btn"
                   :class="{ 'active': isGameFavourite(game.id) }">
                   <svg v-if="isGameFavourite(game.id)" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -60,12 +59,13 @@
     </main>
 
     <Footer />
-  </div>
 </template>
+
 <script>
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import { useMainStore } from '@/store/store';
+import { useToast } from "vue-toastification";
 
 export default {
   name: 'Checkout',
@@ -75,18 +75,18 @@ export default {
     return {
       selectedPaymentMethod: localStorage.getItem('selectedPaymentMethod') || null,
       currencySymbol: '₽',
-      favourites: (localStorage.getItem('favourites')) ? JSON.parse(localStorage.getItem('favourites')) : [],
     };
   },
-  setup() {
+  setup(){
     const mainStore = useMainStore();
-    return { mainStore };
+    const toast = useToast();
+    return { mainStore, toast };
   },
   computed: {
     totalPriceRaw() {
       return this.mainStore.basket.reduce((sum, game) => {
         const price = parseFloat(game.final_price.split(' ')[0]);
-        return sum + price * game.count;
+        return sum + price * game.quantity;
       }, 0);
     },
 
@@ -97,10 +97,9 @@ export default {
     paymentMethodDisplay() {
       switch (this.selectedPaymentMethod) {
         case 'account': return 'Накопительный счёт';
-        case 'wallets': return 'Электронные кошельки';
-        case 'cards': return 'Банковские карты';
-        case 'crypto': return 'Криптовалюта';
-        case 'samsung': return 'Samsung Pay';
+        case 'sberbank': return 'Sberbank';
+        case 'yoomoney': return 'Yoomoney';
+        case 'tinkoff': return 'Tinkoff';
         default: return 'Не выбран';
       }
     },
@@ -113,9 +112,18 @@ export default {
     },
   },
   methods: {
+    addToFavourites(game){
+      const check = this.mainStore.addToFavourites(game);
+      
+      if(check.status === "added"){
+        this.toast.success("Игра добавлена в избранное");
+      }else{
+        this.toast.success("Игра удалена из избранного");
+      }
+    },
     saveAccountBalance() {
       const users = JSON.parse(localStorage.getItem("users"));
-      users.map(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
+      users.forEach(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
       localStorage.setItem("users", JSON.stringify(users));
     },
 
@@ -138,42 +146,33 @@ export default {
         total: this.totalPriceRaw,
         method: this.selectedPaymentMethod,
         date: new Date().toLocaleString('ru-RU'),
-        status: 'Куплен',
+        status: 'Оплачено',
       };
-      this.mainStore.purchaseHistory.push(purchase);
-      localStorage.setItem('purchaseHistory', JSON.stringify(this.mainStore.purchaseHistory));
+      this.mainStore.savePurchaseHistory(purchase);
     },
 
     completePurchase() {
-      if (!this.selectedPaymentMethod) {
-        alert('Способ оплаты не выбран!');
-        return;
-      }
-
       if (this.selectedPaymentMethod === 'account') {
         if (this.mainStore.userData.balance >= this.totalPriceRaw) {
           this.mainStore.userData.balance -= this.totalPriceRaw;
           this.saveAccountBalance();
           this.savePurchaseHistory();
-          alert('Покупка успешно завершена с накопительного счёта!');
+          this.toast.success('Покупка успешно завершена с накопительного счёта');
           this.clearCheckout();
-          this.$router.push('/');
+          setTimeout(() => this.$router.push('/'), 1200);
         } else {
-          alert('Недостаточно средств на накопительном счёте!');
+          this.toast.warning('Недостаточно средств на накопительном счёте!');
         }
       } else {
         this.savePurchaseHistory();
-        alert(`Покупка успешно оплачена через ${this.paymentMethodDisplay}!`);
+        this.toast.success(`Покупка успешно оплачена через ${this.paymentMethodDisplay}!`);
         this.clearCheckout();
-        this.$router.push('/');
+        setTimeout(() => this.$router.push('/'), 1200);
       }
     },
-
-    cancelPurchase() {
-      this.clearCheckout();
-      this.$router.push('*');
+    cancelPurchase(){
+      this.$router.push("/");
     },
-
     clearCheckout() {
       this.mainStore.basket = [];
       localStorage.removeItem('basket');
@@ -182,13 +181,8 @@ export default {
   },
 };
 </script>
-<style scoped>
-.checkout-page {
-  min-height: 100vh;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-}
 
+<style scoped>
 main {
   max-width: 1440px;
   margin: 0 auto;
@@ -206,7 +200,6 @@ main {
   margin-bottom: 40px;
 }
 
-.game-info-header {}
 
 .cart-item-image {
   width: 280px;
@@ -263,13 +256,9 @@ main {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.game-info:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
-}
-
 .game-info h2 {
   font-size: 24px;
+  font-weight: 400;
   margin-bottom: 10px;
   color: #fff;
 }
@@ -343,12 +332,11 @@ main {
   font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0, 255, 0, 0.4);
 }
 
 .complete-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 255, 0, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 255, 0, 0.2);
 }
 
 .complete-btn:disabled {
@@ -369,12 +357,11 @@ main {
   font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
 }
 
 .cancel-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(255, 0, 0, 0.6);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(255, 0, 0, 0.2);
 }
 
 .empty-checkout {
@@ -405,87 +392,5 @@ main {
 .back-to-main:hover {
   background: #4CAF50;
   color: white;
-}
-
-@media (max-width: 1024px) {
-  .checkout-container {
-    grid-template-columns: 1fr;
-  }
-
-  .checkout-title {
-    font-size: 40px;
-  }
-
-  .game-info h2 {
-    font-size: 22px;
-  }
-
-  .game-info p {
-    font-size: 16px;
-  }
-
-  .payment-options h3 {
-    font-size: 20px;
-  }
-
-  .payment-options p {
-    font-size: 16px;
-  }
-
-  .complete-btn {
-    font-size: 16px;
-    padding: 12px 20px;
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  main {
-    padding: 30px 15px;
-  }
-
-  .checkout-title {
-    font-size: 32px;
-  }
-
-  .checkout-container {
-    padding: 20px;
-  }
-
-  .game-info h2 {
-    font-size: 20px;
-  }
-
-  .game-info p {
-    font-size: 14px;
-  }
-
-  .payment-options h3 {
-    font-size: 18px;
-  }
-
-  .payment-options p {
-    font-size: 14px;
-  }
-
-  .complete-btn {
-    font-size: 14px;
-    padding: 10px 15px;
-    width: 100%;
-  }
-
-  .empty-checkout {
-    padding: 50px;
-  }
-
-  .empty-checkout p {
-    font-size: 20px;
-  }
-
-  .back-to-main {
-    font-size: 16px;
-    padding: 10px 15px;
-    width: 100%;
-  }
 }
 </style>

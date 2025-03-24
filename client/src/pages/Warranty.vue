@@ -1,6 +1,7 @@
 <template>
     <Header />
-    <div class="infographic-container">
+    <main>
+        <div class="infographic-container">
         <h1 class="infographic-title">Гарантии и информация</h1>
         <div class="infographic-grid">
             <div v-for="(item, index) in items" :key="index" class="infographic-card"
@@ -11,12 +12,13 @@
             </div>
         </div>
     </div>
+    </main>
     <Footer />
 </template>
 
 <script>
-import Header from './Header.vue';
-import Footer from './Footer.vue';
+import Header from '../components/Header.vue';
+import Footer from '../components/Footer.vue';
 export default {
 
     name: 'InfographicPage',
