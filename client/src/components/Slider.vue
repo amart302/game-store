@@ -3,6 +3,7 @@
     <div class="slider">
       <img :src="slides[currentSlide].background" @click="() => navigateToProductPage(slides[currentSlide].id)" class="slide" ref="productImage" alt="Слайд" />
       <div class="slide-info">
+        <h3>{{ slides[currentSlide].title }}</h3>
         <p>{{ slides[currentSlide].description }}</p>
         <div>
           <button @click="() => addToBasket(slides[currentSlide].id)">В корзину</button>
@@ -72,7 +73,7 @@ export default {
         {
           id: 1850570,
           title: 'Death Stranding',
-          background: 'https://cdn1.epicgames.com/offer/f4a904fcef2447439c35c4e6457f3027/s1_2560x1440-e56d3a322a94fd7dd18b9c93ee080d01',
+          background: 'https://deathstrandingpc.505games.com/wp-content/themes/deathstranding-cyberpunk/img/topimage.jpg',
           description: "Уникальная игра от Хидео Кодзимы, сочетающая элементы экшена, хоррора и философской притчи. В Death Stranding вы играете за курьера, который восстанавливает связи между изолированными поселениями в постапокалиптическом мире. Захватывающий сюжет и необычный геймплей делают игру незабываемым опытом."
         }
       ],
@@ -176,7 +177,7 @@ export default {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 200px;
+  height: 240px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
   color: white;
   padding: 20px;

@@ -51,6 +51,7 @@
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FFFFFF" stroke-width="2" />
             </svg>
           </button>
+          <div class="favourites-counter" v-if="mainStore.favourites.length > 0">{{ mainStore.favourites.length }}</div>
           <img src="../assets/images/cek-i.png" alt="Корзина" @click="goToCart" />
           <div class="uveda" v-if="mainStore.basket.length > 0">{{ mainStore.basket.length }}</div>
         </div>
@@ -318,6 +319,21 @@ export default {
   opacity: 0.7;
 }
 
+.favourites-counter {
+  position: absolute;
+  top: 1px;
+  left: 24px;
+  width: 18px;
+  height: 20px;
+  background-color: #78be1dc7;
+  opacity: 2;
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
 .uveda {
   position: absolute;
   top: 1px;

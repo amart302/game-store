@@ -1,15 +1,15 @@
 <template>
     <div class="offersCardsConteiner">
       <div class="offersCard" style="background: linear-gradient(131.39deg, #1dbe53 -11.11%, #ace238 73.42%)">
-        <h2>Играй уже сейчас в Minecraft</h2>
+        <h2>Играй уже сейчас в Minecraft Legends</h2>
         <div class="offers_priceBlock">
-          <span class="offers_priceWithDiscount">4 999 ₽</span>
-          <span class="offers_discount">-25%</span>
-          <span class="offers_priceWithoutDiscount">6 999 ₽</span>
+          <span class="offers_priceWithDiscount">2 399 ₽</span>
+          <span class="offers_discount">-50%</span>
+          <span class="offers_priceWithoutDiscount">1 399 ₽</span>
         </div>
         <div class="offers_btns">
-          <button class="offersBtn" @click="() => addToBasket(123)">В корзину</button>
-          <button class="offersBtn">В избранное</button>
+          <button class="offersBtn" @click="() => addToBasket(1928870)">В корзину</button>
+          <button class="offersBtn" @click="()=> addToFavourites(1928870)">В избранное</button>
         </div>
         <img src="../assets/images/offersCardImg1.png" class="offersCardImg1" />
       </div>
