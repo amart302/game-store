@@ -8,7 +8,7 @@
           <span class="offers_priceWithoutDiscount">6 999 ₽</span>
         </div>
         <div class="offers_btns">
-          <button class="offersBtn">В корзину</button>
+          <button class="offersBtn" @click="() => addToBasket(123)">В корзину</button>
           <button class="offersBtn">В избранное</button>
         </div>
         <img src="../assets/images/offersCardImg1.png" class="offersCardImg1" />
@@ -16,13 +16,13 @@
       <div class="offersCard" style="background: linear-gradient(131.39deg, #ff3d23 -11.11%, #fda828 73.42%)">
         <h2>Играй уже сейчас в Minecraft dangerous</h2>
         <div class="offers_priceBlock">
-          <span class="offers_priceWithDiscount">4 999 ₽</span>
+          <span class="offers_priceWithDiscount">1 749 ₽</span>
           <span class="offers_discount">-25%</span>
-          <span class="offers_priceWithoutDiscount">6 999 ₽</span>
+          <span class="offers_priceWithoutDiscount">1 999 ₽</span>
         </div>
         <div class="offers_btns">
-          <button class="offersBtn">В корзину</button>
-          <button class="offersBtn">В избранное</button>
+          <button class="offersBtn" @click="() => addToBasket(1672970)">В корзину</button>
+          <button class="offersBtn" @click="()=> addToFavourites(1672970)">В избранное</button>
         </div>
         <img src="../assets/images/offersCardImg2.png" class="offersCardImg2" />
       </div>
@@ -30,8 +30,33 @@
   </template>
   
   <script>
+  import { useMainStore } from '@/store/store';
+  import { useToast } from "vue-toastification";
   export default {
     name: 'OffersCards',
+    setup(){
+      const mainStore = useMainStore();
+      const toast = useToast();
+      return { mainStore, toast };
+    },
+    methods: {
+      addToBasket(id){
+      const addGames = [...this.mainStore.topGames, ...this.mainStore.gameCatalog];
+      const product = addGames.find(item => item.id === id);
+      this.mainStore.addToBasket(product);
+      this.toast.success("Игра добавлена в корзину");
+    },
+    addToFavourites(id){
+      const addGames = [...this.mainStore.topGames, ...this.mainStore.gameCatalog];
+      const product = addGames.find(item => item.id === id);
+      const check = this.mainStore.addToFavourites(product);
+      if(check.status === "added"){
+        this.toast.success("Игра добавлена в избранное");
+      }else{
+        this.toast.success("Игра удалена из избранного");
+      }
+    }
+    }
   };
   </script>
   <style scoped>
