@@ -77,7 +77,7 @@ const toast = useToast();
 
 const users = JSON.parse(localStorage.getItem("users"));
 
-let avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon : 'src/assets/images/avatarIcon.png');
+let avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png' : 'src/assets/images/avatarIcon.png');
 const updateUsername = ref((mainStore.userData) ? mainStore.userData.username : "");
 const updateEmail = ref((mainStore.userData) ? mainStore.userData.email : "");
 const updateFullName = ref((mainStore.userData) ? mainStore.userData.fullName : "");

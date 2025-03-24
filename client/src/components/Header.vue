@@ -31,7 +31,7 @@
         </nav>
         <div class="bl-pr" @click="() => goToProfile()">
           <p>{{ truncatedUsername }}</p>
-          <img :src="(mainStore.userData) ? mainStore.userData.avatarIcon : 'src/assets/images/avatarIcon.png'" class="pr-img" />
+          <img :src="(mainStore.userData) ? mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png' : 'src/assets/images/avatarIcon.png'" class="pr-img" />
         </div>
       </div>
 
