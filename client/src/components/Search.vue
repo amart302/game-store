@@ -48,8 +48,6 @@ import { useMainStore } from '@/store/store';
         const allGames = [...mainStore.topGames, ...mainStore.gameCatalog];
         allGames.forEach(item => {
           if(regex.test(item.name)){
-            console.log(this.searchResults);
-            
             this.searchResults.push(item);
           }
         });
@@ -84,9 +82,6 @@ import { useMainStore } from '@/store/store';
         else basket.push(product);
         localStorage.setItem('productsInBasketInGames', JSON.stringify(basket));
         this.$emit('update-basket', basket.length);
-      },
-      addToFavourites(game) {
-        console.log('Добавлено в избранное:', game.title);
       },
     },
   };
