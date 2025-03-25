@@ -42,24 +42,68 @@
         <img src="../assets/images/instagram.png" alt="Instagram" />
       </div>
     </div>
+    <img 
+      class="scroll-to-header" 
+      ref="scrollButton" 
+      @click="scrollToHeader" 
+      src="../assets/images/up-arrow.png" 
+      alt="Вверх"
+    >
   </footer>
 </template>
 
 <script>
+import { ref, onMounted, onUnmounted } from 'vue';
+
 export default {
-  name: 'Footer',
-  data() {
-    return {
-      showLangCurren: false,
-      currentLang: 'RU',
-      currentCurrency: '₽',
+  name: "Footer",
+  setup() {
+    const showLangCurren = ref(false);
+    const currentLang = ref('RU');
+    const currentCurrency = ref('₽');
+    const scrollButton = ref(null);
+    const lastScrollY = ref(0);
+    const isScrollingDown = ref(false);
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      isScrollingDown.value = currentScrollY > lastScrollY.value;
+      lastScrollY.value = currentScrollY;
+
+      if (!scrollButton.value) return;
+
+      if (currentScrollY > 300 && isScrollingDown.value) {
+        scrollButton.value.classList.add("visible");
+      } else {
+        scrollButton.value.classList.remove("visible");
+      }
     };
-  },
-  methods: {
-    toggleLangCurren() {
-      this.showLangCurren = !this.showLangCurren;
-    },
-  },
+
+    const scrollToHeader = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const toggleLangCurren = () => {
+      showLangCurren.value = !showLangCurren.value;
+    };
+
+    onMounted(() => {
+      window.addEventListener("scroll", handleScroll);
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener("scroll", handleScroll);
+    });
+
+    return { 
+      showLangCurren,
+      currentLang,
+      currentCurrency,
+      scrollButton,
+      scrollToHeader,
+      toggleLangCurren
+    };
+  }
 };
 </script>
 <style scoped>
@@ -68,7 +112,24 @@ footer {
   padding-block: 80px;
   margin-top: 80px;
 }
-
+.scroll-to-header {
+  width: 50px;
+  height: 50px;
+  background-color: #77be1d;
+  border-radius: 2px;
+  padding: 12px;
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-to-header.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 .footerParentBlock {
   max-width: 1400px;
   margin-inline: auto;
