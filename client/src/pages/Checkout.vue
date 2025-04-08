@@ -131,11 +131,29 @@ export default {
       return this.mainStore.favourites.some(fav => fav.id === gameId);
     },
 
+    createGameKey(){
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      const charactersLength = characters.length;
+
+      for (let i = 0; i < 19; i++) {
+        if(result.length == 4 || result.length == 9 || result.length == 14){
+          result += "-";
+        }else{
+          const randomIndex = Math.floor(Math.random() * charactersLength);
+          result += characters[randomIndex];
+        }
+      }
+
+      return result;
+    },
+
     savePurchaseHistory() {
       const purchase = {
         items: this.mainStore.basket.map(item => ({
           id: item.id,
           name: item.name,
+          key: this.createGameKey(),
           final_price: item.final_price.replace(' ₽', '').replace(' ', ''),
           count: item.count,
           large_capsule_image: item.large_capsule_image,

@@ -29,7 +29,11 @@
     <div class="productCard_podBlock2">
       <span class="productName">{{ game.name }}</span>
     </div>
-
+    <div class="productCard-key" v-if="game.key">
+      <p>Ключ:</p>
+      <span class="productKey" @click="copyKey(game.key)">{{ game.key }}</span>
+      <button @click="copyKey(game.key)">#</button>
+    </div>
     <div class="productCard_podBlock3">
       <div v-if="game.windows_available" class="category">
         <div class="bullet windows"></div>
@@ -84,6 +88,10 @@ export default {
     this.startLoading();
   },
   methods: {
+    copyKey(key){
+      navigator.clipboard.writeText(key);
+      this.toast.success("Ключ успешно скопирован");
+    },
     startLoading() {
       setTimeout(() => {
         this.loading = false;

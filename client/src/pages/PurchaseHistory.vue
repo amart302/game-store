@@ -22,6 +22,7 @@
               :key="item.id"
               :game="item"
               :isTopOnly="false"
+              :opened="false"
             />
           </div>
         </div>
@@ -42,16 +43,16 @@ export default {
 
   data() {
     return {
-      purchaseHistory:  [],
       currencySymbol: '₽',
       loading: true,
     };
   },
   setup(){
     const mainStore = useMainStore();
+    console.log(JSON.parse(JSON.stringify(mainStore.userData.purchaseHistory)));
+    
     return { mainStore };
   },
-
   methods: {
     paymentMethodDisplay(method) {
       switch (method) {
