@@ -68,6 +68,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    opened: {
+      type: Boolean
+    }
   },
   data() {
     return {
