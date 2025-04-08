@@ -30,7 +30,7 @@
             <p>Цена: {{ game.final_price }}</p>
             <p v-if="game.skidka">Скидка: {{ game.skidka }}</p>
             <p v-if="game.oldPrice">Старая цена: {{ game.oldPrice }}</p>
-            <p>Количество: {{ game.count }}</p>
+            <p>Количество: {{ game.quantity }}</p>
           </div>
         </div>
         <div class="payment-container">
@@ -192,11 +192,8 @@ main {
 .checkout-title {
   font-size: 48px;
   font-weight: bold;
-  background: linear-gradient(90deg, #4CAF50, #8BC34A);
-  -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: #77be1d;
   margin-bottom: 40px;
 }
 
