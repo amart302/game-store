@@ -63,16 +63,14 @@ export default {
     const currentCurrency = ref('₽');
     const scrollButton = ref(null);
     const lastScrollY = ref(0);
-    const isScrollingDown = ref(false);
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      isScrollingDown.value = currentScrollY > lastScrollY.value;
       lastScrollY.value = currentScrollY;
 
       if (!scrollButton.value) return;
 
-      if (currentScrollY > 300 && isScrollingDown.value) {
+      if (currentScrollY > 300 ) {
         scrollButton.value.classList.add("visible");
       } else {
         scrollButton.value.classList.remove("visible");
