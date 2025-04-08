@@ -29,12 +29,11 @@
     <div class="productCard_podBlock2">
       <span class="productName">{{ game.name }}</span>
     </div>
-    <div class="productCard-key" v-if="game.key">
-      <p>Ключ:</p>
-      <span class="productKey" @click="copyKey(game.key)">{{ game.key }}</span>
-      <button @click="copyKey(game.key)">#</button>
+    <div class="productCard_podBlock3" style="justify-content: space-between; gap: 0;" v-if="game.key">
+      <span class="product-key">Ключ: {{ game.key }}</span>
+      <button class="button-copy" @click.stop="copyKey(game.key)">Copy</button>
     </div>
-    <div class="productCard_podBlock3">
+    <div class="productCard_podBlock3" v-if="!game.key">
       <div v-if="game.windows_available" class="category">
         <div class="bullet windows"></div>
         <span>Windows</span>
@@ -189,7 +188,7 @@ export default {
   padding: 10px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .productCard:hover .addCardBtn,
@@ -282,7 +281,18 @@ export default {
   gap: 36px;
   align-items: center;
 }
-
+.button-copy{
+  background-color: #97E238;
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.button-copy:hover{
+  background-color: #649e18;
+}
 .category {
   display: flex;
   align-items: center;
@@ -305,92 +315,5 @@ export default {
   0% { background-color: rgba(224, 224, 224, 0.6); }
   50% { background-color: rgba(224, 224, 224, 0.8); }
   100% { background-color: rgba(224, 224, 224, 0.6); }
-}
-
-@media (max-width: 1024px) {
-  .productCard {
-    height: 300px;
-  }
-
-  .productImg {
-    height: 180px;
-  }
-
-  .addCardBtn {
-    font-size: 14px;
-    padding: 8px 12px;
-  }
-
-  .productName {
-    font-size: 14px;
-  }
-
-  .productCard_podBlock1 {
-    gap: 4px;
-  }
-
-  .product_priceWithDiscount,
-  .product_discount,
-  .product_priceWithoutDiscount {
-    font-size: 12px;
-  }
-
-  .productCard_podBlock3 {
-    gap: 20px;
-  }
-
-  .category {
-    gap: 10px;
-    font-size: 12px;
-  }
-
-  .bullet {
-    width: 12px;
-    height: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .productCard {
-    height: 260px;
-  }
-
-  .productImg {
-    height: 160px;
-  }
-
-  .addCardBtn{
-    font-size: 12px;
-    padding: 6px 10px;
-    width: 90%;
-  }
-
-  .productName {
-    font-size: 12px;
-  }
-
-  .productCard_podBlock1 {
-    gap: 2px;
-  }
-
-  .product_priceWithDiscount,
-  .product_discount,
-  .product_priceWithoutDiscount {
-    font-size: 10px;
-  }
-
-  .productCard_podBlock3 {
-    gap: 10px;
-  }
-
-  .category {
-    gap: 6px;
-    font-size: 10px;
-  }
-
-  .bullet {
-    width: 10px;
-    height: 10px;
-  }
 }
 </style>

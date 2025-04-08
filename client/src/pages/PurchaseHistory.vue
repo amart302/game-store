@@ -49,8 +49,6 @@ export default {
   },
   setup(){
     const mainStore = useMainStore();
-    console.log(JSON.parse(JSON.stringify(mainStore.userData.purchaseHistory)));
-    
     return { mainStore };
   },
   methods: {

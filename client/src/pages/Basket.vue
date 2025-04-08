@@ -156,7 +156,7 @@ export default {
         this.toast.warning('Вы должны согласиться с условиями, чтобы продолжить.');
         return;
       }
-      localStorage.setItem('selectedPaymentMethod', this.selectedPayment);
+      sessionStorage.setItem('selectedPaymentMethod', this.selectedPayment);
       
       this.$router.push('/checkout');
     },

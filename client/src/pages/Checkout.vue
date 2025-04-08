@@ -73,7 +73,7 @@ export default {
 
   data() {
     return {
-      selectedPaymentMethod: localStorage.getItem('selectedPaymentMethod') || null,
+      selectedPaymentMethod: sessionStorage.getItem('selectedPaymentMethod') || null,
       currencySymbol: '₽',
     };
   },
