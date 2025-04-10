@@ -889,7 +889,7 @@ slides() {
 .product-osta-center.active,
 .product-osta-right.active {
   color: #97E238;
-  border-bottom: 3px solid #77BE1D;
+  border-bottom: 2px solid #77BE1D;
 }
 
 .product-ostas-container {
