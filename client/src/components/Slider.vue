@@ -148,7 +148,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 0.35fr;
   width: 1440px;
-  height: 560px;
+  height: 515px;
   margin-inline: auto;
   padding: 20px;
   color: white;
@@ -181,7 +181,6 @@ export default {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
   color: white;
   padding: 20px;
-  box-sizing: border-box;
 }
 .slide-info p{
   width: 660px;

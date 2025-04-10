@@ -111,8 +111,8 @@ footer {
   margin-top: 80px;
 }
 .scroll-to-header {
-  width: 50px;
-  height: 50px;
+  width: 20px;
+  height: 20px;
   background-color: #77be1d;
   border-radius: 2px;
   padding: 12px;
