@@ -1,13 +1,13 @@
 <template>
   <div class="slider-container">
-    <div class="slider">
-      <img :src="slides[currentSlide].background" @click="() => navigateToProductPage(slides[currentSlide].id)" class="slide" ref="productImage" alt="Слайд" />
+    <div class="slider"  @click="() => navigateToProductPage(slides[currentSlide].id)">
+      <img :src="slides[currentSlide].background" class="slide" ref="productImage" alt="Слайд" />
       <div class="slide-info">
         <h3>{{ slides[currentSlide].title }}</h3>
         <p>{{ slides[currentSlide].description }}</p>
         <div>
-          <button @click="() => addToBasket(slides[currentSlide].id)">В корзину</button>
-          <button @click="() => addToFavourites(slides[currentSlide].id)">В избранное</button>
+          <button @click.stop="() => addToBasket(slides[currentSlide].id)">В корзину</button>
+          <button @click.stop="() => addToFavourites(slides[currentSlide].id)">В избранное</button>
         </div>
       </div>
     </div>
