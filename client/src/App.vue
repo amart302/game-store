@@ -13,7 +13,7 @@ export default {
   },
   created(){
     this.mainStore.fetchGames();
-    this.mainStore.updateUserData();
+    this.mainStore.getUserData();
   }
 };
 </script>

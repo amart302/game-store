@@ -79,6 +79,7 @@ import Search from './Search.vue';
 import Login from '@/components/Login.vue';
 import { useMainStore } from '@/store/store';
 import { useToast } from 'vue-toastification';
+import axios from 'axios';
 
 export default {
   components: {
@@ -122,7 +123,7 @@ export default {
   methods: {
     goToProfile(){
       if(!this.mainStore.userData){
-        this.mainStore.openRegisterForm();
+        this.mainStore.openLoginForm();
         return;
       }
       this.$router.push('/profile');
@@ -160,24 +161,31 @@ export default {
       this.showCashModal = !this.showCashModal;
       if (!this.showCashModal) this.depositAmount = '';
     },
-    depositCash() {
-      if(!this.mainStore.userData){
-        this.toast.error("Авторизуйтес, чтобы продолжить");
-        this.showCashModal = false;
-        this.mainStore.openRegisterForm();
-        return;
-      }
-      const amount = parseInt(this.depositAmount);
-      if (isNaN(amount) || amount <= 0) {
-        alert('Пожалуйста, введите корректную сумму');
-        return;
-      }
-      this.mainStore.userData.balance += amount;
-      const users = localStorage.getItem("users");
-      const usersArr = JSON.parse(users);
-      usersArr.map(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
-      localStorage.setItem("users", JSON.stringify(usersArr));
-      window.location.reload();
+    async depositCash() {
+      try {
+        if(!this.mainStore.userData){
+          this.toast.warning("Авторизуйтесь, чтобы продолжить");
+          this.showCashModal = false;
+          this.mainStore.openLoginForm();
+          return;
+        }
+        const amount = parseInt(this.depositAmount);
+        if (isNaN(amount) || amount <= 0) {
+          this.toast.warning('Пожалуйста, введите корректную сумму');
+          return;
+        }
+        console.log(this.mainStore.userData);
+        
+        const response = await axios.post("http://localhost:3000/api/topUpYourBalance", { id: this.mainStore.userData._id, cash: amount });
+
+        window.location.reload();
+      } catch (error) {
+        if(error.response){
+            console.error(error.response.data.message);
+        }else{
+            console.error(error.message);
+        }
+    }
     },
     scrollToFeedback() {
       const feedbackSection = document.querySelector('#FeedbackForm');
@@ -443,7 +451,7 @@ input[type='text']:focus {
 
 .cash-modal-content {
   background: #13101B;
-  padding: 40px;
+  padding: 50px;
   border-radius: 15px;
   text-align: center;
   position: relative;

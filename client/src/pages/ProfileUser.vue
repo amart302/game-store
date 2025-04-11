@@ -25,11 +25,6 @@
                             <p v-if="errors.username" class="error-message">{{ errors.username }}</p>
                         </div>
                         <div class="profile-group">
-                            <label>Полное имя:</label>
-                            <input type="text" v-model="updateFullName" placeholder="Введите ваше имя">
-                            <p v-if="errors.fullName" class="error-message">{{ errors.fullName }}</p>
-                        </div>
-                        <div class="profile-group">
                             <label>Электронная почта:</label>
                             <input type="email" v-model="updateEmail" placeholder="example@mail.com">
                             <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
@@ -63,27 +58,41 @@
 import Footer from '@/components/Footer.vue';
 import Header from '@/components/Header.vue';
 import { useMainStore } from '@/store/store';
-import { reactive, ref } from 'vue';
+import axios from 'axios';
+import { reactive, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 
 const mainStore = useMainStore();
 const router = useRouter();
+const userId = sessionStorage.getItem("userId");
 
-if (!mainStore.userData) {
+if (!userId) {
     router.push('/');
 }
 const toast = useToast();
 
-const users = JSON.parse(localStorage.getItem("users"));
 
-let avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon || 'src/assets/images/avatarIcon.png' : 'src/assets/images/avatarIcon.png');
-const updateUsername = ref((mainStore.userData) ? mainStore.userData.username : "");
-const updateEmail = ref((mainStore.userData) ? mainStore.userData.email : "");
-const updateFullName = ref((mainStore.userData) ? mainStore.userData.fullName : "");
 const updatePassword = ref("");
 const confirmPassword = ref("");
-const updateBirthDate = ref((mainStore.userData) ? mainStore.userData.birthDate : "");
+const avatarIcon = ref((mainStore.userData) ? mainStore.userData.avatarIcon : "src/assets/images/avatarIcon.png");
+const updateUsername = ref((mainStore.userData) ? mainStore.userData.username : "");
+const updateEmail = ref((mainStore.userData) ? mainStore.userData.email : "");
+const updateBirthDate = ref((mainStore.userData) ? mainStore.userData.dateOfBirth : "");
+
+watch(() => mainStore.userData, (newUserData) => {
+    if (newUserData) {
+        updateUsername.value = newUserData.username;
+        updateEmail.value = newUserData.email;
+        updateBirthDate.value = newUserData.dateOfBirth;
+        avatarIcon.value = newUserData.avatarIcon;
+    } else {
+        updateUsername.value = "";
+        updateEmail.value = "";
+        updateBirthDate.value = "";
+        avatarIcon.value = 'src/assets/images/avatarIcon.png';
+    }
+}, { deep: true });
 
 const errors = reactive({
     username: "",
@@ -107,7 +116,7 @@ const validateData = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!updateEmail.value.trim()) {
         errors.email = "Это поле обязательно для заполнения";
-    } else if (!emailPattern.test(updateEmail.value)) {
+    } else if (!emailPattern.test(mainStore.userData.email)) {
         errors.email = "Некорректная формат почты";
     }
     
@@ -124,16 +133,6 @@ const validateData = () => {
             errors.generalError  = "Пароли не совпадают";
         }
     }
-
-    users.forEach(item => {
-        if (item.email == updateEmail.value && item.id != mainStore.userData.id) {
-            errors.email = "Эта почта уже занят";
-        }
-        
-        if(item.username == updateUsername.value && item.id != mainStore.userData.id){
-            errors.username = "Этот ник уже занят";
-        }
-    });
 };
 
 const handleFileChange = (event) => {
@@ -142,7 +141,7 @@ const handleFileChange = (event) => {
     if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            avatarIcon.value = e.target.result;
+            mainStore.userData.avatarIcon = e.target.result;
         };
         reader.readAsDataURL(file);
     }
@@ -153,25 +152,34 @@ const logOut = () => {
     setTimeout(() => window.location.reload(), 600);
 };
 
-const updateUserData = () => {
-    validateData();
-    if (errors.generalError || errors.email || errors.username || 
-        errors.updatePassword || errors.confirmPassword) return;
-    users.forEach(item => {
-        if (item.id == mainStore.userData.id) {
-            item.avatarIcon = avatarIcon.value;
-            item.username = updateUsername.value;
-            item.email = updateEmail.value;
-            item.password = (updatePassword.value.length) ? updatePassword.value : item.password;
-            item.dateOfBirth = updateBirthDate.value;
-            item.fullName = updateFullName.value;
+const updateUserData = async () => {
+    try {
+        validateData();
+        if (errors.generalError || errors.email || errors.username || 
+            errors.updatePassword || errors.confirmPassword) return;
+        
+        const response = await axios.post("http://localhost:3000/api/updateUserData", 
+            {
+                id: userId,
+                avatarIcon: mainStore.userData.avatarIcon,
+                username: updateUsername.value,
+                email: updateEmail.value,
+                password: updatePassword.value,
+                dateOfBirth: updateBirthDate.value
+            }
+        );
+        mainStore.getUserData();
+        toast.success("Данные обновлены");
+        setTimeout(() => router.push("/"), 1200);
+    } catch (error) {
+        if(error.response){
+            errors.generalError = error.response.data.message;
+        }else{
+            errors.generalError = error.message;
         }
-    });
-    localStorage.setItem("users", JSON.stringify(users));
-    mainStore.updateUserData();
-    toast.success("Данные обновлены");
-    setTimeout(() => router.push("/"), 1200);
+    }
 };
+// 
 </script>
 
 <style scoped>

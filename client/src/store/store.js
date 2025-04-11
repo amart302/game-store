@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 export const useMainStore = defineStore("main", {
     state: () => ({
-        userData: JSON.parse(sessionStorage.getItem("userData")) || null,
+        userData: null,
         topGames: [],
         gameCatalog: [],
         favourites: JSON.parse(localStorage.getItem("favourites")) || [],
@@ -32,11 +32,17 @@ export const useMainStore = defineStore("main", {
               console.error('Ошибка загрузки игр:', error);
             }
         },
-        updateUserData(){
-          if(!this.userData) return;
-          const users = JSON.parse(localStorage.getItem('users')) || [];
-          const foundUser = users.find(item => item.id === this.userData.id);
-          this.userData = foundUser;
+        async getUserData(){
+          const userId = sessionStorage.getItem("userId");
+          
+          if(!userId) return;
+          try {
+            const response = await axios.get(`http://localhost:3000/api/getUserData/${userId}`);
+            this.userData = response.data.data;            
+          } catch (error) {
+            console.error('Ошибка попытке получить данные пользователя:', error);
+            sessionStorage.clear();
+          }
         },
         addToFavourites(game) {
           const isAlreadyFavourite = this.favourites.some(item => item.id == game.id);
@@ -105,12 +111,13 @@ export const useMainStore = defineStore("main", {
           });
           localStorage.setItem("feedbacks", JSON.stringify(this.feedbacks));
         },
-        savePurchaseHistory(purchase){
-          this.userData.purchaseHistory.push(purchase);
-          const users = JSON.parse(localStorage.getItem("users")) || [];
-          users.forEach(item => (item.id === this.userData.id) ? item.purchaseHistory = this.userData.purchaseHistory : false);
-          
-          localStorage.setItem("users", JSON.stringify(users));
+        async savePurchaseHistory(purchase){
+          try {
+            const response = await axios.post("http://localhost:3000/api/makingAnOrder", { id: this.userData._id, purchase });
+            await this.getUserData();
+          } catch (error) {
+            console.error('Ошибка попытке оформлении заказа:', error);
+          }
         }
     },
 });

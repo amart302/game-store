@@ -123,6 +123,7 @@ footer {
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  z-index: 10;
 }
 .scroll-to-header.visible {
   opacity: 1;

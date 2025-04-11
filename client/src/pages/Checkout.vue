@@ -121,11 +121,6 @@ export default {
         this.toast.success("Игра удалена из избранного");
       }
     },
-    saveAccountBalance() {
-      const users = JSON.parse(localStorage.getItem("users"));
-      users.forEach(item => (item.id == this.mainStore.userData.id) ? item.balance = this.mainStore.userData.balance : false);
-      localStorage.setItem("users", JSON.stringify(users));
-    },
 
     isGameFavourite(gameId) {
       return this.mainStore.favourites.some(fav => fav.id === gameId);
@@ -172,8 +167,7 @@ export default {
     completePurchase() {
       if (this.selectedPaymentMethod === 'account') {
         if (this.mainStore.userData.balance >= this.totalPriceRaw) {
-          this.mainStore.userData.balance -= this.totalPriceRaw;
-          this.saveAccountBalance();
+          // this.mainStore.userData.balance -= this.totalPriceRaw;
           this.savePurchaseHistory();
           this.toast.success('Покупка успешно завершена с накопительного счёта');
           this.clearCheckout();

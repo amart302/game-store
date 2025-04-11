@@ -33,7 +33,7 @@
     import { ref, reactive } from "vue";
     import { useRouter } from "vue-router";
     import { useToast } from "vue-toastification";
-    sessionStorage.removeItem("userData");
+    import axios from "axios";
 
     const mainStore = useMainStore();
     const toast = useToast();
@@ -80,49 +80,30 @@
         }else if(confirmPassword.value.trim().length < 6){
             errors.confirmPassword = "Минимальная длина пароля 6 символов";
         }
-    };
 
-    const handleSubmitRegister = () => {
-        validateData();
-        
-        if(errors.username || errors.email || errors.password || errors.confirmPassword) return 1;
-        else if(password.value != confirmPassword.value){
+        if(password.value != confirmPassword.value){
             errors.generalError = "Пароли не совпадают";
-            return 1;
         }
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-
-        
-        users.forEach(item => {
-            if(item.username == username.value){
-                errors.generalError = "Пользователь с таким ником уже существует";
-            }else if(item.email == email.value){
-                errors.generalError = "Пользователь с такой почтой уже существует";
-            }
-        });
-
-        if(errors.generalError){
-            return 1;
-        }
-
-        const newUser = {
-            id: users.length + 1,
-            username: username.value,
-            email: email.value,
-            password: password.value,
-            avatarIcon: "src/assets/images/avatarIcon.png",
-            fullName: null,
-            dateOfBirth: null,
-            balance: 10000,
-            purchaseHistory: []
-        };
-        users.push(newUser);
-        sessionStorage.setItem('userData', JSON.stringify(newUser));
-        localStorage.setItem("users", JSON.stringify(users));
-        toast.success("Успешная регистрация");
-        setTimeout(() => window.location.reload(), 1200);
     };
 
+    const handleSubmitRegister = async () => {
+        try {
+            validateData();
+            if(errors.username || errors.email || errors.password || errors.confirmPassword || errors.generalError) return 1;
+            
+            const response = await axios.post("http://localhost:3000/api/registerData", { username: username.value, email: email.value, password: password.value });
+            
+            sessionStorage.setItem("userId", JSON.stringify(response.data.userId));
+            toast.success("Успешная регистрация");
+            setTimeout(() => window.location.reload(), 1200);
+        } catch (error) {
+            if(error.response){
+                errors.generalError = error.response.data.message;
+            }else{
+                errors.generalError = error.message;
+            }
+        }
+    };
     
 </script>
 
