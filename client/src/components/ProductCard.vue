@@ -96,7 +96,9 @@ export default {
     },
     startLoading() {
       setTimeout(() => {
-        this.loading = false;
+        if(this.mainStore.gameCatalog.length){
+          this.loading = false;
+        }
       }, 600);
     },
     navigateToProductPage() {
